@@ -81,7 +81,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC','Micr
 .store-sep{width:1px;height:20px;background:#e2e8f0;display:inline-block;margin:0 4px;vertical-align:middle}
 
 /* ── Group ── */
-.activity-group{margin-top:12px;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.activity-group{margin-top:12px;border:1px solid #e2e8f0;border-radius:14px;overflow:clip;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .group-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#f8fafc;cursor:pointer;user-select:none;transition:background .15s;border-bottom:1px solid #e2e8f0}
 .group-header:hover{background:#f1f5f9}
 .group-header-left{display:flex;align-items:center;gap:12px}
@@ -168,9 +168,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC','Micr
 @media(max-width:1000px){
   .act-inner{grid-template-columns:1fr}
   .act-left{border-right:none;border-bottom:1px solid #e2e8f0}
-  .stats-topbar{grid-template-columns:1fr 1fr 1fr}
-  .content{padding-left:16px;padding-right:16px}
+  .act-right{padding:12px 8px}
+  .stats-topbar{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .stb-cell{min-width:100px;flex-shrink:0}
+  .content{padding-left:12px;padding-right:12px}
   .filters{padding:12px 16px}
+  .twrap{border-radius:8px}
+  .stbl{min-width:480px}
 }
 
 /* ── Tab bar ── */
@@ -1351,6 +1355,8 @@ const TIMELINE=[
     {a:'加碼（台中）', gid:'gb-yq-a',actKey:'熊貓針',    d:'熊貓針1cc＋瑞斯朗玻尿酸1cc $18,888（台中丁醫師診｜限新客｜限購一組）'},
     {a:'加碼',         gid:'gb-yq-a',actKey:'外三點升級',        d:'外三點拉提升級喬雅登方案 $48,000，贈肉毒拉提40U（不限組數，贈品一次）'},
    ]},
+  {b:'原綺',a:'孫淑媚套餐',s:'2026-05-28',e:'2026-06-30',c:'#c026d3',gid:null,
+   d:'肉毒小臉40U ／ 海芙音波200發 ／ 超玩美電波100發（限購一組，不參與任何折扣）'},
   // ── 原渥 ─────────────────────────────────────────────────────────────────
   {b:'原渥',a:'過年活動',s:'2026-01-05',e:'2026-02-28',c:'#3b82f6',gid:'gb-rh-ny',actKey:'過年刮刮卡',
    d:'滿16,888即贈1,688折價券 ／ 滿3,600即贈刮刮卡 ／ 16,888馬年福袋大禮包'},
@@ -1399,7 +1405,6 @@ const BRAND_DEFAULT_COLOR={'原綺':'#ec4899','原渥':'#3b82f6','產品':'#10b9
 function _parseGanttCSV(csv){
   const lines=csv.trim().split('\n');
   if(lines.length<2)return null;
-  // Parse CSV respecting quoted fields
   function parseRow(line){
     const fields=[];let cur='';let inQ=false;
     for(let i=0;i<line.length;i++){
@@ -1409,35 +1414,74 @@ function _parseGanttCSV(csv){
       else{cur+=ch;}
     }
     fields.push(cur.trim());
-    return fields;
+    return fields.map(f=>f.replace(/^"|"$/g,'').trim());
   }
-  const headers=parseRow(lines[0]).map(h=>h.replace(/"/g,'').trim());
-  // Column index by common Chinese/English header names
-  const ci=(names)=>{for(const n of names){const i=headers.findIndex(h=>h===n);if(i>=0)return i;}return -1;};
-  const iB=ci(['品牌','brand','Brand']);
-  const iA=ci(['活動名稱','名稱','活動','name','Name']);
-  const iS=ci(['開始日期','開始','start','Start','起始日期']);
-  const iE=ci(['結束日期','結束','end','End','截止日期']);
-  const iD=ci(['說明','備註','描述','description','Description','詳細']);
-  const iC=ci(['顏色','color','Color']);
-  const iG=ci(['群組ID','gid','GID']);
-  const iK=ci(['活動Key','actKey','Key']);
-  if(iB<0||iA<0||iS<0||iE<0){console.warn('Gantt CSV missing required columns',headers);return null;}
-  // Parse date: YYYY/MM/DD or YYYY-MM-DD → YYYY-MM-DD
-  const pd=s=>{if(!s)return'';s=s.replace(/["']/g,'').trim();return s.replace(/\//g,'-');}; 
+  const headers=parseRow(lines[0]);
+  // ── Detect format: "月份欄" (1月,2月…) vs "日期欄" (開始日期,結束日期) ──
+  const MONTH_HDRS=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const monthCols=MONTH_HDRS.map(m=>headers.indexOf(m));
+  const hasMonthCols=monthCols.some(c=>c>=0);
+  const iB=headers.findIndex(h=>['品牌','brand'].includes(h));
+  const iA=headers.findIndex(h=>['活動名稱','活動','name'].includes(h));
+  const iD=headers.findIndex(h=>['內容','說明','備註','描述','description'].includes(h));
+  if(iB<0||iA<0)return null;
+  // ── Parse short date: "25/12/1"→"2025-12-01", "5/28"→"2026-05-28" ──
+  const pd=s=>{
+    s=s.replace(/["'＊\s]/g,'').trim();
+    if(!s)return null;
+    const p=s.split('/');
+    if(p.length===3){let y=parseInt(p[0]);if(y<100)y+=2000;return`${y}-${String(parseInt(p[1])).padStart(2,'0')}-${String(parseInt(p[2])).padStart(2,'0')}`;}
+    if(p.length===2)return`2026-${String(parseInt(p[0])).padStart(2,'0')}-${String(parseInt(p[1])).padStart(2,'0')}`;
+    return null;
+  };
+  // ── Parse date-range cell: "1/5-2/28", "25/12/1-26/2/28", "4/1起" ──
+  const parseDateCell=cell=>{
+    cell=cell.replace(/["']/g,'').trim();
+    if(!cell)return null;
+    if(cell.endsWith('起')){const s=pd(cell.slice(0,-1));return s?{s,e:'2026-12-31'}:null;}
+    // Split: find dash between two date portions (each portion has at least one slash)
+    // Strategy: split on all '-', then try to pair up into start/end dates
+    const parts=cell.split('-');
+    if(parts.length<2)return null;
+    // Try parts[0] as start, rest as end
+    const s=pd(parts[0]);
+    const e=pd(parts.slice(1).join('-'));
+    return(s&&e)?{s,e}:null;
+  };
   const result=[];
+  let lastBrand='';
+  let lastAct='';
   for(let r=1;r<lines.length;r++){
     const row=parseRow(lines[r]);
-    const b=(row[iB]||'').replace(/"/g,'').trim();
-    const a=(row[iA]||'').replace(/"/g,'').trim();
-    const s=pd(row[iS]||'');
-    const e=pd(row[iE]||'');
-    if(!b||!a||!s||!e)continue;
-    const d=iD>=0?(row[iD]||'').replace(/"/g,'').trim():'';
-    const c=iC>=0&&row[iC]?(row[iC]||'').replace(/"/g,'').trim():(BRAND_DEFAULT_COLOR[b]||'#6366f1');
-    const gid=iG>=0?(row[iG]||'').replace(/"/g,'').trim():null;
-    const actKey=iK>=0?(row[iK]||'').replace(/"/g,'').trim():null;
-    result.push({b,a,s,e,c:c||BRAND_DEFAULT_COLOR[b]||'#6366f1',d,gid:gid||null,actKey:actKey||null});
+    const brand=(row[iB]||'').trim()||lastBrand;
+    if(brand)lastBrand=brand;
+    if(!lastBrand)continue;
+    const act=(row[iA]||'').trim()||lastAct;
+    if(row[iA]&&row[iA].trim())lastAct=row[iA].trim();
+    if(!act)continue;
+    const desc=iD>=0?(row[iD]||''):'';
+    const color=BRAND_DEFAULT_COLOR[lastBrand]||'#6366f1';
+    if(hasMonthCols){
+      // Month-column format: scan each month column for a date-range cell
+      for(let mi=0;mi<MONTH_HDRS.length;mi++){
+        const ci=monthCols[mi];
+        if(ci<0||ci>=row.length)continue;
+        const cell=(row[ci]||'').trim();
+        if(!cell)continue;
+        const range=parseDateCell(cell);
+        if(!range)continue;
+        result.push({b:lastBrand,a:act,s:range.s,e:range.e,c:color,d:desc,gid:null,actKey:null});
+      }
+    } else {
+      // Fallback: dedicated start/end date columns
+      const iS=headers.findIndex(h=>['開始日期','開始','start'].includes(h));
+      const iE=headers.findIndex(h=>['結束日期','結束','end'].includes(h));
+      if(iS<0||iE<0)continue;
+      const s=(row[iS]||'').replace(/\//g,'-').trim();
+      const e=(row[iE]||'').replace(/\//g,'-').trim();
+      if(!s||!e)continue;
+      result.push({b:lastBrand,a:act,s,e,c:color,d:desc,gid:null,actKey:null});
+    }
   }
   return result.length?result:null;
 }
