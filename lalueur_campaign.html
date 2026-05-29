@@ -1592,15 +1592,44 @@ async function _fetchGanttData(){
   }catch(err){console.warn('Gantt fetch failed:',err.message);}
   return null;
 }
+// ── Build gid/actKey/subs lookup from hardcoded TIMELINE (before GS overrides it) ──
+// Key = activity name (trimmed). Used to restore stats buttons after GS fetch.
+const _GID_MAP=(()=>{
+  const m=new Map();
+  TIMELINE.forEach(t=>{
+    if(t.gid||t.subs)m.set(t.a.trim(),{gid:t.gid||null,actKey:t.actKey||null,subs:t.subs||null});
+  });
+  return m;
+})();
+// Fuzzy match: try exact, then startsWith in either direction (≥4 CJK chars)
+function _lookupGid(name){
+  const n=name.trim();
+  if(_GID_MAP.has(n))return _GID_MAP.get(n);
+  for(const[k,v]of _GID_MAP){
+    const minLen=Math.min(k.length,n.length);
+    if(minLen>=4&&(k.startsWith(n.slice(0,minLen))||n.startsWith(k.slice(0,minLen))))return v;
+  }
+  return null;
+}
+
 // Trigger fetch on page load; if successful, override TIMELINE and clear built flag
 (async()=>{
   const fresh=await _fetchGanttData();
   if(fresh){
     TIMELINE.length=0;
-    fresh.forEach(r=>TIMELINE.push(r));
+    fresh.forEach(r=>{
+      // Restore gid/actKey/subs from hardcoded map by name matching
+      const meta=_lookupGid(r.a);
+      if(meta){
+        if(meta.gid)r.gid=meta.gid;
+        if(meta.actKey)r.actKey=meta.actKey;
+        if(meta.subs)r.subs=meta.subs;
+      }
+      TIMELINE.push(r);
+    });
     const gc=document.getElementById('gantt-container');
-    if(gc)gc._built=false; // allow rebuild with fresh data
-    console.log('Gantt TIMELINE updated from Sheets');
+    if(gc)gc._built=false;
+    console.log('Gantt TIMELINE updated from Sheets ('+TIMELINE.length+' rows, gids merged)');
   }
 })();
 
