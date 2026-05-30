@@ -529,7 +529,9 @@ let SS='全集團', SM='全部', SD='', ED='', ACTF='', CUR_MO='';
 const fm=n=>'$'+Math.round(n).toLocaleString('zh-TW');
 const pc=(n,t)=>t>0?Math.round(n/t*100):0;
 const _MEDAL_BG=['#f0b429','#9ea8b3','#b87333'];
-const mkMedal=n=>'<span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:'+_MEDAL_BG[n-1]+';color:#fff;font-size:10px;font-weight:800;margin-right:5px;flex-shrink:0">'+n+'</span>';
+const mkMedal=n=>n<=3
+  ?'<span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:'+_MEDAL_BG[n-1]+';color:#fff;font-size:10px;font-weight:800;margin-right:5px;flex-shrink:0">'+n+'</span>'
+  :'<span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;font-size:11px;font-weight:600;color:#9ca3af;margin-right:5px;flex-shrink:0">'+n+'</span>';
 // Assign competition ranks (1,1,3 style) — primary: 組數 desc, secondary: 成交+衍伸 desc
 function mkRankMap(arr){
   // arr: [{s, tg, t2}, ...] already filtered (tg>0)
@@ -542,7 +544,7 @@ function mkRankMap(arr){
       const prev=sorted[i-1];
       if(item.tg!==prev.tg) rank=i+1; // same 組數 = same rank regardless of revenue
     }
-    if(rank<=3) map[item.s]=rank;
+    map[item.s]=rank;
   });
   return map;
 }
@@ -747,7 +749,7 @@ function rHIST(act,gk){
   const sr=_sortedSt.map(s=>{
     const b=bs[s];if(!b||!b.g)return'';
     const rk=_rkM[s]?mkMedal(_rkM[s]):'';
-    return'<tr><td data-v="'+s+'">'+rk+'<span class="sdot" style="background:#1e293b"></span>'+s+'</td>'
+    return'<tr><td data-v="'+s+'">'+rk+s+'</td>'
       +'<td data-v="'+b.g+'">'+b.g+'</td><td data-v="'+b.n+'" class="tn">'+b.n+'</td><td data-v="'+b.o+'" class="to">'+b.o+'</td>'
       +'<td data-v="'+(b.d||0)+'" class="td2">'+(b.d?fm(b.d):'—')+'</td><td data-v="'+(b.e||0)+'" class="te">'+(b.e?fm(b.e):'—')+'</td><td data-v="'+(b.d+b.e)+'" class="tt">'+fm(b.d+b.e)+'</td></tr>';
   }).join('');
@@ -925,7 +927,7 @@ function rA(act, data, gk){
   const sr=_sortedST.map(s=>{
     const b=bs[s];if(!b||!b.g)return'';
     const rk=_raM[s]?mkMedal(_raM[s]):'';
-    return'<tr><td data-v="'+s+'">'+rk+'<span class="sdot" style="background:#1e293b"></span>'+s+'</td>'
+    return'<tr><td data-v="'+s+'">'+rk+s+'</td>'
       +'<td data-v="'+b.g+'">'+b.g+'</td><td data-v="'+b.n+'" class="tn">'+b.n+'</td><td data-v="'+b.o+'" class="to">'+b.o+'</td>'
       +'<td data-v="'+b.d+'" class="td2">'+fm(b.d)+'</td><td data-v="'+b.e+'" class="te">'+fm(b.e)+'</td><td data-v="'+(b.d+b.e)+'" class="tt">'+fm(b.d+b.e)+'</td></tr>';
   }).join('');
@@ -1012,7 +1014,7 @@ function rYQ(act, gk, unit){
   const sr=_sortedSt.map(s=>{
     const b=bs[s];if(!b||!b.g)return'';
     const rk=_rkM[s]?mkMedal(_rkM[s]):'';
-    return'<tr><td data-v="'+s+'">'+rk+'<span class="sdot" style="background:#1e293b"></span>'+s+'</td>'
+    return'<tr><td data-v="'+s+'">'+rk+s+'</td>'
       +'<td data-v="'+b.g+'">'+b.g+'</td><td data-v="'+b.n+'" class="tn">'+b.n+'</td><td data-v="'+b.o+'" class="to">'+b.o+'</td>'
       +'<td data-v="'+(b.d||0)+'" class="td2">'+(b.d?fm(b.d):'—')+'</td><td data-v="'+(b.e||0)+'" class="te">'+(b.e?fm(b.e):'—')+'</td><td data-v="'+(b.d+b.e)+'" class="tt">'+fm(b.d+b.e)+'</td></tr>';
   }).join('');
