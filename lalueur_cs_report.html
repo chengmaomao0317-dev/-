@@ -1138,14 +1138,8 @@ async function syncAll() {
 
   const results = {};
 
-  // ① 績效
-  try {
-    const n = await syncPerfData();
-    results.perf = `✓ 績效`;
-  } catch(e) {
-    results.perf = `✗ 績效（${e.message}）`;
-    console.warn('[syncAll] perf 失敗:', e);
-  }
+  // ① 績效：結構待確認，暫時跳過自動覆蓋（靜態資料為準）
+  results.perf = `⚠ 績效(靜態)`;
 
   // ② 來源
   try {
