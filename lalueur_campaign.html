@@ -1225,33 +1225,51 @@ function build(){
     C.appendChild(body);
   }
 
+  // ── Hide zero-data groups when a date filter is active ───────────────────
+  const _dateFiltered=SD!==''||SM!=='全部';
+  function _hiddenNote(target,names){
+    if(!names.length)return;
+    const p=document.createElement('p');
+    p.style.cssText='padding:6px 20px 14px;font-size:11.5px;color:#94a3b8;margin:0';
+    p.textContent='已隱藏 '+names.length+' 個無資料活動（'+names.join('、')+'）';
+    target.appendChild(p);
+  }
+
   // 原渥 brand section
   if(actualShowRW){
     const rwGroupCount=filtGS_HIST.length+filtGS.length;
     if(bothVisible){
       brandSection('rw','bh-yuanwo','🏬 原渥｜全部活動','2026/01 – 2026/06',rwGroupCount,body=>{
+        const hidden=[];
         filtGS_HIST.forEach(g=>{
           let gg=0,gd=0,ge=0;
           g.acts.forEach(a=>{const{t}=ca_hist(a.k);gg+=t.g;gd+=t.d;ge+=t.e;});
+          if(gg===0&&_dateFiltered){hidden.push(g.lb);return;}
           body.appendChild(makeGroupCard(g,'rh-',g.acts.map(a=>rHIST(a,g.k)).join(''),gg,gd,ge));
         });
         filtGS.forEach(g=>{
           let gg=0,gd=0,ge=0;
           g.acts.forEach(a=>{const{t}=ca(data,a.k);gg+=t.g;gd+=t.d;ge+=t.e;});
+          if(gg===0&&_dateFiltered){hidden.push(g.lb);return;}
           body.appendChild(makeGroupCard(g,'',g.acts.map(a=>rA(a,data,g.k)).join(''),gg,gd,ge));
         });
+        _hiddenNote(body,hidden);
       });
     } else {
+      const hidden=[];
       filtGS_HIST.forEach(g=>{
         let gg=0,gd=0,ge=0;
         g.acts.forEach(a=>{const{t}=ca_hist(a.k);gg+=t.g;gd+=t.d;ge+=t.e;});
+        if(gg===0&&_dateFiltered){hidden.push(g.lb);return;}
         C.appendChild(makeGroupCard(g,'rh-',g.acts.map(a=>rHIST(a,g.k)).join(''),gg,gd,ge));
       });
       filtGS.forEach(g=>{
         let gg=0,gd=0,ge=0;
         g.acts.forEach(a=>{const{t}=ca(data,a.k);gg+=t.g;gd+=t.d;ge+=t.e;});
+        if(gg===0&&_dateFiltered){hidden.push(g.lb);return;}
         C.appendChild(makeGroupCard(g,'',g.acts.map(a=>rA(a,data,g.k)).join(''),gg,gd,ge));
       });
+      _hiddenNote(C,hidden);
     }
   }
 
@@ -1259,18 +1277,24 @@ function build(){
   if(actualShowYQ){
     if(bothVisible){
       brandSection('yq','bh-yuanqi','🌸 原綺｜全部活動','2025/12 – 2026/06',filtGS_YQ.length,body=>{
+        const hidden=[];
         filtGS_YQ.forEach(g=>{
           let gg=0,gd=0,ge=0;
           g.acts.forEach(a=>{const{t}=ca2(a.k);gg+=t.g;gd+=t.d;ge+=t.e;});
+          if(gg===0&&_dateFiltered){hidden.push(g.lb);return;}
           body.appendChild(makeGroupCard(g,'yq-',g.acts.map(a=>rYQ(a,g.k,g.unit)).join(''),gg,gd,ge,g.unit));
         });
+        _hiddenNote(body,hidden);
       });
     } else {
+      const hidden=[];
       filtGS_YQ.forEach(g=>{
         let gg=0,gd=0,ge=0;
         g.acts.forEach(a=>{const{t}=ca2(a.k);gg+=t.g;gd+=t.d;ge+=t.e;});
+        if(gg===0&&_dateFiltered){hidden.push(g.lb);return;}
         C.appendChild(makeGroupCard(g,'yq-',g.acts.map(a=>rYQ(a,g.k,g.unit)).join(''),gg,gd,ge,g.unit));
       });
+      _hiddenNote(C,hidden);
     }
   }
 
