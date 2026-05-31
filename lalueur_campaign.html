@@ -1874,18 +1874,21 @@ function buildTimeline(){
     }
   };
   window._gjump=function(gid,actName,actKey){
-    // Show back-bar before switching tab
     const bb=document.getElementById('timeline-back');
     const hint=document.getElementById('back-hint-text');
-    if(bb){bb.classList.add('show');}
+    if(bb)bb.classList.add('show');
     if(hint&&actName)hint.textContent='來自「'+actName+'」';
     switchTab('stats');
     if(!gid)return;
-    // Open the group if it's collapsed, then scroll to it
     setTimeout(function(){
-      const gb=document.getElementById(gid);
-      if(!gb)return;
-      // Expand parent brand section if it's collapsed
+      // Find target element; if missing, widen store filter to 全集團 and rebuild
+      let gb=document.getElementById(gid);
+      if(!gb){
+        setStore('全集團');  // setStore() synchronously calls build()
+        gb=document.getElementById(gid);
+        if(!gb)return;
+      }
+      // Expand parent brand section if collapsed
       const brandBody=gb.closest('[id$="-body"]');
       if(brandBody&&brandBody.style.display==='none'){
         brandBody.style.display='';
@@ -1896,7 +1899,7 @@ function buildTimeline(){
       if(!gb.classList.contains('open'))gb.classList.add('open');
       const chev=document.getElementById('cg-'+gid.replace('gb-',''));
       if(chev&&!chev.classList.contains('open'))chev.classList.add('open');
-      // Scroll to specific activity card if actKey provided
+      // Scroll to specific activity section if actKey provided
       let target=gb;
       if(actKey){
         const secs=gb.querySelectorAll('.act-section');
