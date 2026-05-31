@@ -1620,22 +1620,59 @@ async function _fetchGanttData(){
 }
 // ── Build gid/actKey/subs lookup from hardcoded TIMELINE (before GS overrides it) ──
 // Key = activity name (trimmed). Used to restore stats buttons after GS fetch.
-const _GID_MAP=(()=>{
-  const m=new Map();
+// ── Build brand-aware gid map from hardcoded TIMELINE ────────────────────────
+const _GID_MAP_BY_BRAND=(()=>{
+  const bm={};
   TIMELINE.forEach(t=>{
-    if(t.gid||t.subs)m.set(t.a.trim(),{gid:t.gid||null,actKey:t.actKey||null,subs:t.subs||null});
+    if(!bm[t.b])bm[t.b]=[];
+    if(t.gid||t.subs)bm[t.b].push({k:t.a,v:{gid:t.gid||null,actKey:t.actKey||null,subs:t.subs||null}});
   });
-  return m;
+  return bm;
 })();
-// Fuzzy match: try exact, then startsWith in either direction (≥4 CJK chars)
-function _lookupGid(name){
-  const n=name.trim();
-  if(_GID_MAP.has(n))return _GID_MAP.get(n);
-  for(const[k,v]of _GID_MAP){
-    const minLen=Math.min(k.length,n.length);
-    if(minLen>=4&&(k.startsWith(n.slice(0,minLen))||n.startsWith(k.slice(0,minLen))))return v;
+
+// Manual overrides for GS names that differ from hardcoded TIMELINE names
+// [brand, normalized_gs_name, {gid, actKey}]
+const _GID_OVERRIDES=[
+  ['原綺','埋線贈肉毒方案限劉醫生', {gid:'gb-yq-el',actKey:'埋線方案'}],
+  ['原綺','埋線贈肉毒方案限劉醫師', {gid:'gb-yq-el',actKey:'埋線方案'}],
+  ['原綺','肉毒吃到飽限沈醫師',     {gid:'gb-yq-bx',actKey:'肉毒吃到飽'}],
+  ['原綺','肉毒吃到飽限沈醫生',     {gid:'gb-yq-bx',actKey:'肉毒吃到飽'}],
+  ['原綺','過年活動',               {gid:'gb-yq-ny',actKey:'過年刮刮卡'}],
+  ['原綺','母親節',                 {gid:'gb-yq-mn',actKey:'母親節'}],
+  ['原綺','母親節無雙',             {gid:'gb-yq-mn',actKey:'無雙電波組'}],
+  ['原綺','母親節無雙台中限定加購', {gid:'gb-yq-mn',actKey:'無雙加購'}],
+  ['原綺','母親節拉提',             {gid:'gb-yq-mn',actKey:'拉提A'}],
+  ['原綺','母親節加碼台中限定',     {gid:'gb-yq-a', actKey:'熊貓針'}],
+  ['原綺','母親節加碼',             {gid:'gb-yq-a', actKey:'外三點升級'}],
+  ['原渥','限時加碼',               {gid:'gb-rh-tc',actKey:'童顏V臉限時加碼'}],
+  ['原渥','女神節',                 {gid:'gb-rh-gs',actKey:'3月女神節'}],
+  ['原渥','母親節',                 {gid:'gb-rh-mn',actKey:'母親節'}],
+  ['原渥','母親節無針水光加碼',     {gid:'gb-w',    actKey:'母親節無針水光加碼'}],
+  ['原渥','母親節童顏加碼',         {gid:'gb-t',    actKey:'母親節童顏V臉加碼'}],
+  ['產品','女神節',                 {gid:'gb-rh-gs',actKey:'極萃皙任選6盒'}],
+  ['產品','母親節',                 {gid:'gb-rh-mn',actKey:'極萃皙P4'}],
+  ['產品','母親節加碼',             {gid:'gb-j',    actKey:'母親節加碼極萃皙'}],
+];
+
+// Normalize: strip spaces, full-width parens, brackets, lowercased
+function _norm(s){return(s||'').trim().replace(/\s+/g,'').replace(/[（）()【】「」]/g,'');}
+
+// Brand-aware lookup: overrides → exact normalized → best prefix (3+ chars)
+function _lookupGid(name,brand){
+  const n=_norm(name);if(!n)return null;
+  // 1. Manual overrides (brand-specific)
+  for(const[b,k,v]of _GID_OVERRIDES){if(b===brand&&_norm(k)===n)return v;}
+  // 2. Hardcoded TIMELINE entries for this brand
+  const bList=_GID_MAP_BY_BRAND[brand]||[];
+  for(const{k,v}of bList){if(_norm(k)===n)return v;}
+  // 3. Best prefix match (longest match wins; tiebreak: prefer similar length)
+  let best=null,bestScore=-1;
+  for(const{k,v}of bList){
+    const kn=_norm(k);const minLen=Math.min(kn.length,n.length);
+    let ml=0;for(let i=0;i<minLen;i++){if(kn[i]===n[i])ml++;else break;}
+    if(ml>=3){const sc=ml-Math.abs(kn.length-n.length)*0.4;if(sc>bestScore){best=v;bestScore=sc;}}
   }
-  return null;
+  return best;
 }
 
 // Trigger fetch on page load; if successful, override TIMELINE and clear built flag
@@ -1644,8 +1681,7 @@ function _lookupGid(name){
   if(fresh){
     TIMELINE.length=0;
     fresh.forEach(r=>{
-      // Restore gid/actKey/subs from hardcoded map by name matching
-      const meta=_lookupGid(r.a);
+      const meta=_lookupGid(r.a,r.b);  // brand-aware lookup
       if(meta){
         if(meta.gid)r.gid=meta.gid;
         if(meta.actKey)r.actKey=meta.actKey;
