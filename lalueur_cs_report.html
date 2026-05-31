@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>客服部成效統計</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",Arial,sans-serif;background:#f5f3f0;color:#1a1a1a;font-size:13px}
+header{background:#1a1a1a;color:#fff;padding:12px 28px;display:flex;align-items:center;gap:24px}
+.logo-wrap{display:flex;flex-direction:column;border-right:1px solid #333;padding-right:24px;margin-right:4px}
+.logo-en{font-size:19px;font-weight:800;letter-spacing:5px;color:#fff;line-height:1}
+.logo-zh{font-size:9px;letter-spacing:7px;color:#888;margin-top:3px}
+.hdr-title{font-size:16px;font-weight:600;color:#e8e4de;letter-spacing:.5px}
+.hdr-sub{font-size:10px;color:#555;margin-top:2px}
+.filter-bar{background:#fff;padding:10px 28px;display:flex;gap:12px;align-items:center;border-bottom:1px solid #e8e4de;flex-wrap:wrap;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.filter-bar label{font-weight:700;font-size:12px;color:#6b6460}
+.btn-group{display:flex;gap:3px}
+.btn{padding:4px 12px;border:1px solid #d4cfc8;border-radius:5px;cursor:pointer;background:#f5f3f0;font-size:12px;font-family:inherit;color:#4a4a4a;transition:all .15s}
+.btn.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.btn:hover:not(.active){background:#ece8e1}
+.mon-sel{padding:4px 10px;border:1px solid #d4cfc8;border-radius:5px;font-size:12px;background:#f5f3f0;color:#1a1a1a;font-family:inherit;cursor:pointer;outline:none}
+.tab-nav{display:flex;gap:2px;margin-left:auto}
+.tab-btn{padding:5px 16px;border:1px solid #d4cfc8;border-radius:5px;cursor:pointer;background:#f5f3f0;font-size:12px;font-family:inherit;color:#6b6460;transition:all .15s}
+.tab-btn.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.tab-btn:hover:not(.active){background:#ece8e1}
+.main{padding:16px 28px;display:flex;flex-direction:column;gap:16px}
+.section-title{font-size:13px;font-weight:700;color:#1a1a1a;padding:0 0 8px;border-bottom:2px solid #e8e4de;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 5px rgba(0,0,0,.05);border:1px solid #ece8e1}
+.team-block{display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:start}
+.team-kpi-col{display:flex;flex-direction:column;gap:8px}
+.team-kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.team-kpi-card{border-radius:8px;padding:12px 14px;text-align:center;border:1px solid #e8e4de}
+.grp{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block}
+.grp-w{background:#dbeafe;color:#1e40af}
+.grp-q{background:#fce7f3;color:#9d174d}
+.target-num{font-size:11px;color:#9a9490;margin-bottom:2px}
+.progress-num{font-size:22px;font-weight:800;line-height:1}
+.ach{font-size:15px;font-weight:800;margin-top:4px}
+.ach.green{color:#15803d}.ach.yellow{color:#b45309}.ach.red{color:#dc2626}
+.diff{font-size:11px;font-weight:600;margin-top:2px}
+.diff.pos{color:#15803d}.diff.neg{color:#dc2626}
+.prog-bar-wrap{margin-top:6px;background:#f1ede8;border-radius:99px;height:6px;overflow:hidden}
+.prog-bar{height:6px;border-radius:99px;transition:width .4s}
+.team-detail{overflow-x:auto;margin-top:0}
+.team-detail table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:500px}
+.team-detail th{background:#1a1a1a;color:#fff;padding:5px 6px;text-align:center;font-weight:600;white-space:nowrap}
+.team-detail th[colspan="2"]{border-right:1px solid #333}
+.team-detail td{padding:5px 7px;text-align:center;border-bottom:1px solid #f1ede8;white-space:nowrap}
+.team-detail tr:nth-child(even) td{background:#faf9f7}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi-card{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 5px rgba(0,0,0,.05);border:1px solid #ece8e1;border-left-width:4px}
+.kpi-title{font-size:14px;color:#1a1a1a;margin-bottom:6px;font-weight:700}
+.kpi-period{font-size:10px;color:#aea9a4;margin-top:8px}
+.kpi-brand-row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:6px}
+.kpi-num{font-size:20px;font-weight:800;color:#1a1a1a;line-height:1}
+.kpi-rate{font-size:13px;font-weight:700}
+.pill-w{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;background:#dbeafe;color:#1e40af;white-space:nowrap}
+.pill-q{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;background:#fce7f3;color:#9d174d;white-space:nowrap}
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.staff-card{border-radius:10px;border:1px solid #ece8e1;overflow:hidden;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.05)}
+.staff-card-header{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;background:#1a1a1a}
+.staff-name{font-weight:800;font-size:14px;color:#fff}
+.staff-name span{display:block;font-size:11px;font-weight:400;color:#fff;margin-top:1px}
+.staff-body{display:grid;grid-template-columns:172px 1fr}
+.staff-left{padding:10px 12px;border-right:1px solid #f1ede8}
+/* 左欄 CSS grid：label | 原渥 | 原綺 — 三欄完美對齊 */
+.staff-left-inner{display:grid;row-gap:2px;column-gap:4px}
+.ch-spacer{grid-column:1}
+.ch-val{font-size:10px;color:#aea9a4;text-align:center;padding-bottom:4px;border-bottom:1px solid #f1ede8}
+.metric-label{font-size:11px;color:#6b6460;font-weight:600;white-space:nowrap;padding:4px 0;align-self:center}
+.metric-val{font-size:13px;font-weight:700;text-align:center;padding:4px 0;display:flex;align-items:center;justify-content:center}
+.metric-val.red{color:#dc2626}.metric-val.green{color:#15803d}.metric-val.orange{color:#b45309}.metric-val.grey{color:#aea9a4}
+.staff-right{padding:10px 18px}
+.mini-table{width:100%;border-collapse:collapse;font-size:11px}
+.mini-table th{background:#faf9f7;color:#4a4a4a;padding:4px 5px;text-align:center;font-weight:700;border-bottom:1px solid #e8e4de}
+.mini-table td{padding:4px 5px;text-align:center;border-bottom:1px solid #faf9f7;color:#1a1a1a}
+.mini-table tr:last-child td{border-bottom:none}
+.mini-table .row-label{text-align:left;color:#6b6460;font-weight:600}
+.ach-badge{display:inline-block;padding:1px 6px;border-radius:20px;font-weight:800;font-size:11px}
+.bg-g{background:#dcfce7;color:#15803d}.bg-y{background:#fef9c3;color:#92400e}.bg-r{background:#fee2e2;color:#b91c1c}.bg-x{background:#f1ede8;color:#6b6460}
+.badge-w{background:#1e40af;color:#fff;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px}
+.badge-q{background:#9d174d;color:#fff;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px}
+.bdg-lbl{font-size:10px;opacity:.8}
+.bdg-num{font-size:13px;font-weight:800}
+.bdg-tag{font-size:9px;opacity:.72}
+.charts-row{display:grid;grid-template-columns:1.5fr 1fr;gap:12px}
+.chart-card h2{font-size:13px;font-weight:700;margin-bottom:10px;color:#1a1a1a}
+canvas{max-height:240px}
+.legend-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;font-size:11px;color:#6b6460}
+.ldot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:3px;vertical-align:middle}
+.staff-sel-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.ssel-btn{padding:5px 14px;border:1px solid #d4cfc8;border-radius:20px;cursor:pointer;background:#f5f3f0;font-size:12px;font-family:inherit;color:#4a4a4a;transition:all .15s}
+.ssel-btn.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.ssel-btn:hover:not(.active){background:#ece8e1}
+.perf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.perf-kpi{background:#fff;border-radius:10px;padding:14px;border:1px solid #ece8e1;border-left-width:4px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.perf-kpi-label{font-size:11px;color:#6b6460;margin-bottom:4px;font-weight:600}
+.perf-num{font-size:22px;font-weight:800;color:#1a1a1a}
+.staff-charts-row{display:grid;grid-template-columns:1.5fr 1fr;gap:12px}
+/* 週報 */
+.weekly-wrap{display:flex;flex-direction:column;gap:16px}
+.weekly-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.weekly-controls label{font-size:12px;font-weight:700;color:#6b6460}
+.weekly-controls input[type="text"]{padding:5px 10px;border:1px solid #d4cfc8;border-radius:5px;font-size:12px;font-family:inherit;background:#f5f3f0;color:#1a1a1a;width:120px;outline:none}
+.report-box{width:100%;min-height:340px;background:#faf9f7;border:1px solid #e8e4de;border-radius:8px;padding:16px;font-family:"Courier New",monospace;font-size:13px;line-height:1.7;color:#1a1a1a;resize:vertical;outline:none}
+.copy-btn{padding:6px 18px;border:1px solid #1a1a1a;border-radius:6px;cursor:pointer;background:#1a1a1a;color:#fff;font-size:12px;font-family:inherit;transition:all .15s}
+.copy-btn:hover{background:#333}
+.copy-btn.copied{background:#15803d;border-color:#15803d}
+/* 來源分析表 */
+.source-table{width:100%;border-collapse:collapse;font-size:12px;min-width:500px}
+.source-table th{padding:6px 10px;font-weight:700;text-align:center;white-space:nowrap;border-bottom:2px solid #e8e4de}
+.source-table td{padding:5px 10px;text-align:center;border-bottom:1px solid #f1ede8}
+.source-table tr:nth-child(even) td{background:#faf9f7}
+.source-table .row-lbl{text-align:left;font-weight:700;color:#6b6460;background:#faf9f7!important;position:sticky;left:0;z-index:2;white-space:nowrap}
+@media(max-width:860px){.team-block,.charts-row,.staff-charts-row{grid-template-columns:1fr}.staff-grid{grid-template-columns:1fr}.kpi-grid,.perf-grid{grid-template-columns:1fr 1fr}.tab-nav{margin-left:0}}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo-en">LA LUEUR</div>
+    <div class="logo-zh">原&nbsp;&nbsp;渥&nbsp;&nbsp;集&nbsp;&nbsp;團</div>
+  </div>
+  <div style="flex:1">
+    <div class="hdr-title">客服部成效統計</div>
+    <div class="hdr-sub" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:3px">
+      <span>資料來源：Google Sheets</span>
+      <button id="sync-all-btn" onclick="syncAll()"
+        style="padding:3px 11px;border:1px solid #4ade80;border-radius:5px;cursor:pointer;background:transparent;color:#4ade80;font-size:11px;font-family:inherit;transition:all .15s;white-space:nowrap">⟳ 全部同步</button>
+      <span id="sync-all-status" style="font-size:10px;color:#555"></span>
+    </div>
+  </div>
+</header>
+
+<div class="filter-bar">
+  <label>品牌：</label>
+  <div class="btn-group" id="grp-btns">
+    <button class="btn active" onclick="setGroup('all',this)">全部</button>
+    <button class="btn" onclick="setGroup('渥',this)">原渥</button>
+    <button class="btn" onclick="setGroup('綺',this)">原綺</button>
+  </div>
+  <label style="margin-left:10px">月份：</label>
+  <select class="mon-sel" id="mon-sel" onchange="setMonthDrop(this)">
+    <option value="0">全期</option>
+    <option value="1">1月</option>
+    <option value="2">2月</option>
+    <option value="3">3月</option>
+    <option value="4">4月</option>
+    <option value="5">5月</option>
+  </select>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="setTab('main',this)">成效總覽</button>
+    <button class="tab-btn" onclick="setTab('staff',this)">客服個人成效</button>
+    <button class="tab-btn" onclick="setTab('weekly',this)">月報</button>
+  </div>
+</div>
+
+<!-- TAB 1: 成效總覽 -->
+<div id="view-main" class="main">
+  <div class="card">
+    <div class="section-title">🏟 團隊績效達成率總覽</div>
+    <div class="team-block">
+      <div id="team-kpi"></div>
+      <div class="team-detail" id="team-detail"></div>
+    </div>
+  </div>
+  <div class="kpi-grid" id="kpi-row"></div>
+  <!-- 各來源預約分析 -->
+  <div class="card" id="source-card">
+    <div class="section-title">🔍 各來源客服預約分析</div>
+    <div id="source-table-wrap" style="overflow-x:auto"></div>
+  </div>
+  <!-- 客服到店圖表（依品牌篩選顯示）-->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+    <div id="main-chart-w" class="card chart-card" style="padding:0;overflow:hidden">
+      <div style="background:#1e3a8a;color:#fff;padding:10px 16px;font-size:13px;font-weight:700">📊 原渥　詢問 vs 預約 vs 到店</div>
+      <div style="padding:14px 16px 16px"><canvas id="mainChartW"></canvas></div>
+    </div>
+    <div id="main-chart-q" class="card chart-card" style="padding:0;overflow:hidden">
+      <div style="background:#831843;color:#fff;padding:10px 16px;font-size:13px;font-weight:700">📊 原綺　詢問 vs 預約 vs 到店</div>
+      <div style="padding:14px 16px 16px"><canvas id="mainChartQ"></canvas></div>
+    </div>
+  </div>
+  <!-- 歷年指標區塊 -->
+  <div class="card" style="padding:16px">
+    <!-- 頂部標題列 -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="section-title" style="border:none;margin:0;padding:0">📈 歷年同期比較趨勢</div>
+      </div>
+      <button class="btn" id="fetch-btn" onclick="fetchLatest2026()" style="display:none;font-size:11px;color:#15803d;border-color:#15803d">⟳ 即時同步</button>
+    </div>
+    <!-- 年度面板 -->
+    <div id="year-panels-wrap"></div>
+    <!-- 歷年年度指標總表 -->
+    <div style="margin-top:18px;border-top:1px solid #f1ede8;padding-top:14px">
+      <div style="font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:10px">📊 歷年月份指標明細</div>
+      <div id="history-table-wrap" style="overflow-x:auto"></div>
+      <div id="fetch-status" style="font-size:10px;color:#aea9a4;margin-top:6px;text-align:right"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 2: 客服個人成效 -->
+<div id="view-staff" class="main" style="display:none">
+  <!-- 選擇器 + 個人卡片 + KPI -->
+  <div class="card">
+    <div class="section-title">👤 客服個人成效</div>
+    <div class="staff-sel-bar" id="staff-sel"></div>
+    <div id="staff-card-kpi-wrap" style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+      <div id="staff-grid" style="flex:1 1 auto;min-width:280px;max-width:100%"></div>
+      <div id="staff-kpi" class="perf-grid" style="flex:1 1 320px;grid-template-columns:1fr 1fr;min-width:320px;max-width:520px"></div>
+    </div>
+  </div>
+  <!-- 個人每月達標（個人模式才顯示） -->
+  <div class="card" id="staff-monthly-card" style="display:none">
+    <div class="section-title">📅 每月達標狀況</div>
+    <div id="staff-monthly-ach"></div>
+  </div>
+  <!-- 排行榜（全體才顯示） -->
+  <div class="card" id="rank-card" style="padding:16px"></div>
+  <!-- 跨月比較表（全體才顯示） -->
+  <div class="card" id="cross-table-card">
+    <div class="section-title">📋 各人員成效比較表（月別）</div>
+    <div id="staff-cross-table" style="overflow-x:auto;position:relative"></div>
+  </div>
+</div>
+
+<!-- TAB 3: 週報 -->
+<div id="view-weekly" class="main" style="display:none">
+  <div class="card" style="padding:14px 16px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="section-title" style="border:none;margin:0;padding:0">📋 月報</div>
+      <button class="btn active" onclick="generateReport()" style="color:#15803d;border-color:#15803d">▶ 產生報告</button>
+    </div>
+    <!-- 週報資料同步列 -->
+    <div id="wk-sync-bar" style="margin-top:10px;padding-top:10px;border-top:1px solid #f1ede8;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-size:12px;font-weight:700;color:#6b6460;white-space:nowrap">📂 週報來源：</span>
+      <input type="text" id="weekly-sheet-url" placeholder="貼上 Google Sheets 分頁網址"
+        style="flex:1;min-width:260px;padding:4px 10px;border:1px solid #d4cfc8;border-radius:5px;font-size:12px;font-family:inherit;background:#f5f3f0;outline:none;color:#1a1a1a"
+        oninput="onWeeklyUrlInput(this.value)">
+      <button id="weekly-sync-btn" class="btn" onclick="syncWeeklySheet()" style="white-space:nowrap;color:#15803d;border-color:#15803d">⟳ 同步</button>
+      <span id="weekly-sync-status" style="font-size:11px;flex-basis:100%"></span>
+    </div>
+  </div>
+  <div id="report-output"></div>
+</div>
+
+<script>
+const STAFF_INFO=[
+  {en:"Tracy",  zh:"陳薇如"},
+  {en:"Fiona",  zh:"吳維君"},
+  {en:"Chloe",  zh:"曾宥蓁"},
+  {en:"Sabrina",zh:"陳暄穎"},
+  {en:"Jenny",  zh:"童怡君"},
+];
+const ML=["1月","2月","3月","4月","5月"];
+
+// ── perf 資料來源：Google Sheets「預約人數2026/01」~「預約人數2026/05」
+// 　　透過 gviz/tq API 驗證 (Row4=詢問數, Row37=預約, Row38=到店)
+// 　　人員順序：[Tracy, Fiona, Chloe, Sabrina, Jenny]（各品牌獨立）
+// ── 新增月份：複製最後一組 [...] 並依相同欄位填入新月份資料
+// 　　目標若尚未設定請填 0，達成率=到店/目標×100（渥用新客、綺用新客+舊客）
+// perf 資料來源：Google Sheets「客服個人績效總表」gid=377263112，2026/05/30 校正
+// 人員順序：[Tracy(0), Fiona(1), Chloe(2), Sabrina(3), Jenny(4)]
+// 原渥達標 = 新客到店/目標；原綺達標 = (新客到店+舊客到店)/目標
+const perf={
+  渥:{
+    詢問數:  [[41,238,385,0,0],[40,144,410,406,389],[8,1,787,488,491],[4,19,768,630,646],[59,1,293,251,356]],
+    預約數:  [[67,35,77,0,0],[9,25,60,87,47],[6,3,177,133,99],[2,4,180,187,82],[6,1,83,89,86]],
+    新客到店:[[10,28,38,0,0],[21,25,55,39,18],[2,4,100,86,62],[3,1,111,125,80],[1,1,74,80,49]],
+    舊客到店:[[5,2,5,0,0],[5,2,8,2,4],[2,0,12,8,13],[3,0,14,3,4],[1,0,9,0,13]],
+    目標:    [[50,65,30,0,0],[20,50,50,30,30],[0,0,90,65,65],[0,0,70,75,75],[0,0,70,75,75]],
+    達成率:  [[20,43,127,0,0],[105,50,110,130,60],[0,0,111,132,95],[0,0,159,167,107],[0,0,106,107,65]],
+  },
+  綺:{
+    詢問數:  [[621,657,28,0,0],[404,678,319,2,0],[411,636,326,24,20],[181,432,289,56,155],[184,370,185,29,52]],
+    預約數:  [[140,102,2,0,0],[67,64,22,0,0],[94,93,24,5,2],[59,83,21,8,6],[33,83,17,6,7]],
+    新客到店:[[69,81,0,0,0],[41,52,11,0,0],[55,56,15,0,1],[23,57,12,3,6],[17,47,18,3,7]],
+    舊客到店:[[8,1,0,0,0],[6,10,1,0,0],[9,6,1,0,1],[11,12,2,2,2],[7,16,4,0,1]],
+    目標:    [[70,50,0,0,0],[60,55,15,0,0],[50,60,0,0,0],[20,60,20,10,10],[20,60,20,10,10]],
+    達成率:  [[110,164,0,0,0],[78,113,80,0,0],[128,103,0,0,0],[170,115,70,50,80],[120,105,110,30,80]],
+  },
+};
+const history={
+  渥:{
+    2024:{p:[206,172,176,207,212,174,168,238,260,226,207,244],n:[116,90,103,125,123,95,69,139,133,98,117,160]},
+    2025:{p:[492,443,560,321,329,291,293,305,340,174,176,244],n:[148,123,155,249,205,145,186,160,225,158,121,153]},
+    2026:{p:[239,228,418,457,243,null,null,null,null,null,null,null],n:[124,159,254,320,205,null,null,null,null,null,null,null]},
+  },
+  綺:{
+    2024:{p:[110,128,134,106,135,89,82,100,104,87,119,87],n:[49,66,61,54,51,37,35,50,51,43,58,42]},
+    2025:{p:[131,126,151,137,195,169,152,146,99,179,202,194],n:[61,57,77,106,136,107,73,87,69,98,137,125]},
+    2026:{p:[260,155,218,177,144,null,null,null,null,null,null,null],n:[156,105,127,101,92,null,null,null,null,null,null,null]},
+  },
+};
+
+let curGroup='all',curMonth=0,curStaff=-1,curTab='main';
+
+function setGroup(g,btn){curGroup=g;document.querySelectorAll('#grp-btns .btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');refresh()}
+function setMonthDrop(sel){curMonth=parseInt(sel.value);refresh()}
+function setTab(tab,btn){
+  curTab=tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('view-main').style.display=tab==='main'?'flex':'none';
+  document.getElementById('view-staff').style.display=tab==='staff'?'flex':'none';
+  document.getElementById('view-weekly').style.display=tab==='weekly'?'flex':'none';
+  if(tab==='staff'){renderStaffPerf();renderStaff();renderStaffCrossTable();}
+  if(tab==='weekly'){generateReport();}
+}
+function getGroups(){return curGroup==='all'?['渥','綺']:[curGroup]}
+function getMonthIdxs(){return curMonth===0?[0,1,2,3,4]:[curMonth-1]}
+function sumArr(a){return a.reduce((s,v)=>s+(v||0),0)}
+function achColor(v){return v>=100?'#15803d':v>0?'#dc2626':'#aea9a4'}
+function achLabel(v){return v>=100?'green':v>0?'red':'grey'}
+function achClass(v){return v>=100?'bg-g':v>0?'bg-r':'bg-x'}
+function pill(g){return g==='渥'?'<span class="pill-w">原渥</span>':'<span class="pill-q">原綺</span>'}
+function pillAch(v){
+  const s='display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700';
+  if(!v||v===0)return `<span style="${s};background:#f1ede8;color:#6b6460">—</span>`;
+  if(v>=100)return `<span style="${s};background:#dcfce7;color:#15803d">✓ ${v}%</span>`;
+  return `<span style="${s};background:#dc2626;color:#fff">✗ ${v}%</span>`;
+}
+
+// ─── ① TEAM ───────────────────────────────────────────
+function renderTeam(){
+  const groups=getGroups(),midxs=getMonthIdxs();
+  function tt(g,m){return midxs.reduce((s,mi)=>s+sumArr(perf[g][m][mi]),0)}
+  const info={};
+  groups.forEach(g=>{
+    const target=tt(g,'目標');
+    const progress=g==='渥'?tt(g,'新客到店'):tt(g,'新客到店')+tt(g,'舊客到店');
+    const ach=target>0?Math.round(progress/target*100):0;
+    info[g]={target,progress,ach,diff:progress-target};
+  });
+  const ANNUAL={渥:2650,綺:1500};
+  const allMidxs=[0,1,2,3,4];
+  let lh='<div class="team-kpi-col">';
+  if(groups.length===2)lh+='<div class="team-kpi-row">';
+  groups.forEach(g=>{
+    const d=info[g],bw=Math.min(d.target>0?Math.round(d.progress/d.target*100):0,100);
+    lh+=`<div class="team-kpi-card">
+      <div class="grp grp-${g==='渥'?'w':'q'}">${g==='渥'?'原渥':'原綺'}</div>
+      <div class="target-num">目標 ${d.target}</div>
+      <div class="progress-num">${d.progress}</div>
+      <div class="prog-bar-wrap"><div class="prog-bar" style="width:${bw}%;background:${achColor(d.ach)}"></div></div>
+      <div class="ach ${achLabel(d.ach)}">${d.ach>0?d.ach+'%':'—'}</div>
+      <div class="diff ${d.diff>=0?'pos':'neg'}">${d.diff>=0?'+':''}${d.diff} vs 目標</div>
+    </div>`;
+  });
+  if(groups.length===2)lh+='</div>';
+  // ── 年度達標進度（左欄下方，不受月份篩選影響）
+  lh+=`<div style="border-top:1px solid #f1ede8;padding-top:10px;margin-top:4px">
+    <div style="font-size:11px;font-weight:700;color:#6b6460;margin-bottom:8px">📅 年度達標進度</div>`;
+  groups.forEach(g=>{
+    const annTar=ANNUAL[g];
+    let prog=0;
+    allMidxs.forEach(mi=>{
+      const n=sumArr(perf[g].新客到店[mi]);
+      const o=sumArr(perf[g].舊客到店[mi]);
+      prog+=g==='渥'?n:n+o;
+    });
+    const pct=Math.round(prog/annTar*100);
+    const bar=Math.min(pct,100);
+    const clr=pct>=100?'#15803d':pct>=70?'#b45309':'#dc2626';
+    const remaining=annTar-prog;
+    const pb=g==='渥'?'#dbeafe':'#fce7f3';
+    const pc=g==='渥'?'#1e40af':'#9d174d';
+    lh+=`<div class="team-kpi-card" style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;background:${pb};color:${pc}">${g==='渥'?'原渥':'原綺'}</span>
+        <span style="font-size:10px;color:#aea9a4">年度目標 ${annTar.toLocaleString()}</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:6px">
+        <span style="font-size:20px;font-weight:800;color:${clr}">${prog.toLocaleString()}</span>
+        <span style="font-size:13px;font-weight:700;color:${clr}">${pct}%</span>
+      </div>
+      <div class="prog-bar-wrap"><div class="prog-bar" style="width:${bar}%;background:${clr}"></div></div>
+      <div style="font-size:11px;font-weight:600;color:${clr}">${remaining>0?`距目標還差 ${remaining.toLocaleString()} 人`:`已超標 +${Math.abs(remaining).toLocaleString()} 人`}</div>
+    </div>`;
+  });
+  lh+='</div>';
+  lh+='</div>';
+  document.getElementById('team-kpi').innerHTML=lh;
+
+  const stickyMon='position:sticky;left:0;z-index:3;background:#1a1a1a;white-space:nowrap';
+  const stickyBrd='position:sticky;left:54px;z-index:3;background:#1a1a1a;white-space:nowrap';
+  const stickyMonTd='position:sticky;left:0;z-index:2;background:#fff;white-space:nowrap;font-weight:700;padding:5px 7px;border-bottom:1px solid #f1ede8';
+  const stickyBrdTd='position:sticky;left:54px;z-index:2;background:#fff;white-space:nowrap;padding:5px 7px;border-bottom:1px solid #f1ede8';
+  let t=`<table><thead><tr>
+    <th rowspan="2" style="${stickyMon};min-width:54px">月份</th><th rowspan="2" style="${stickyBrd};min-width:72px">品牌</th>
+    ${STAFF_INFO.map(s=>`<th colspan="2">${s.zh}<br><span style="font-size:10px;font-weight:400;opacity:.7">${s.en}</span></th>`).join('')}
+    <th rowspan="2" style="background:#2d2d2d">月目標</th>
+    <th rowspan="2" style="background:#2d2d2d">到店數</th>
+    <th rowspan="2" style="background:#2d2d2d">達成率</th>
+  </tr><tr>
+    ${STAFF_INFO.map(()=>`<th style="font-size:10px;background:#2d2d2d">新</th><th style="font-size:10px;background:#2d2d2d">舊</th>`).join('')}
+  </tr></thead><tbody>`;
+  midxs.forEach(mi=>{
+    groups.forEach(g=>{
+      const tar=sumArr(perf[g].目標[mi]);
+      const nT=sumArr(perf[g].新客到店[mi]),oT=sumArr(perf[g].舊客到店[mi]);
+      const prog=g==='渥'?nT:nT+oT;
+      const a=tar>0?Math.round(prog/tar*100):0;
+      const pb=g==='渥'?'#dbeafe':'#fce7f3',pc=g==='渥'?'#1e40af':'#9d174d';
+      const rowEven=(midxs.indexOf(mi)*2+(g==='綺'?1:0))%2===1;
+      const evenBg=rowEven?'#faf9f7':'#fff';
+      t+=`<tr>
+        <td style="${stickyMonTd};background:${evenBg}">${ML[mi]}</td>
+        <td style="${stickyBrdTd};background:${evenBg}"><span style="padding:1px 7px;border-radius:20px;font-size:11px;font-weight:700;background:${pb};color:${pc}">${g==='渥'?'原渥':'原綺'}</span></td>
+        ${perf[g].新客到店[mi].map((v,i)=>`<td>${v||'-'}</td><td style="color:#aea9a4">${perf[g].舊客到店[mi][i]||'-'}</td>`).join('')}
+        <td style="font-weight:700">${tar}</td>
+        <td style="font-weight:700">${prog}</td>
+        <td><span class="ach-badge ${achClass(a)}">${a>0?a+'%':'—'}</span></td>
+      </tr>`;
+    });
+  });
+  t+='</tbody></table>';
+  document.getElementById('team-detail').innerHTML=t;
+
+}
+
+// ─── ② KPI CARDS ──────────────────────────────────────
+function renderKPI(){
+  const midxs=getMonthIdxs(),showAll=curGroup==='all';
+  const shownGs=showAll?['渥','綺']:[curGroup];
+  const periodLabel=curMonth===0?'2026年 1–5月':ML[curMonth-1];
+  const bd={};
+  ['渥','綺'].forEach(g=>{
+    let inq=0,book=0,newC=0,oldC=0;
+    midxs.forEach(mi=>{
+      perf[g].詢問數[mi].forEach(v=>inq+=v);
+      perf[g].預約數[mi].forEach(v=>book+=v);
+      perf[g].新客到店[mi].forEach(v=>newC+=v);
+      perf[g].舊客到店[mi].forEach(v=>oldC+=v);
+    });
+    const arrive=g==='渥'?newC:newC+oldC;
+    bd[g]={inq,book,newC,oldC,arrive,
+      bookRate:inq>0?Math.round(book/inq*100):0,
+      arrRate:book>0?Math.round(arrive/book*100):0};
+  });
+
+  const c1=`<div class="kpi-card" style="border-left-color:#3a3330">
+    <div class="kpi-title">💬 總詢問數</div>
+    ${shownGs.map(g=>`<div class="kpi-brand-row">${pill(g)}<span class="kpi-num">${bd[g].inq.toLocaleString()}</span></div>`).join('')}
+    <div class="kpi-period">${periodLabel}</div>
+  </div>`;
+
+  const c2=`<div class="kpi-card" style="border-left-color:#2563eb">
+    <div class="kpi-title">📋 預約數 / 預約率</div>
+    ${shownGs.map(g=>`<div class="kpi-brand-row">${pill(g)}
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <span class="kpi-num">${bd[g].book.toLocaleString()}</span>
+        <span class="kpi-rate" style="color:${bd[g].bookRate>=30?'#15803d':bd[g].bookRate>=15?'#b45309':'#6b6460'}">${bd[g].bookRate}%</span>
+      </div>
+    </div>`).join('')}
+  </div>`;
+
+  const c3=`<div class="kpi-card" style="border-left-color:#8B7355">
+    <div class="kpi-title">🏠 到店數</div>
+    ${shownGs.map(g=>{
+      const lbl=g==='渥'?'新客':'新客+舊客';
+      return `<div class="kpi-brand-row">
+        <div style="display:flex;align-items:center;gap:7px">${pill(g)}<span style="font-size:13px;color:#6b6460;font-weight:600">${lbl}</span></div>
+        <span class="kpi-num">${bd[g].arrive.toLocaleString()}</span>
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  const c4=`<div class="kpi-card" style="border-left-color:#1e3a5f">
+    <div class="kpi-title">📊 到店率</div>
+    ${shownGs.map(g=>`<div class="kpi-brand-row">${pill(g)}<span class="kpi-num">${bd[g].arrRate}%</span></div>`).join('')}
+  </div>`;
+
+  document.getElementById('kpi-row').innerHTML=c1+c2+c3+c4;
+}
+
+// ─── ③ INDIVIDUAL PERF CARDS ──────────────────────────
+function renderStaff(){
+  const groups=getGroups(),midxs=getMonthIdxs();
+  const si=curStaff;
+  const staffToShow=si===-1?STAFF_INFO.map((_,i)=>i):[si];
+  let html='';
+  staffToShow.forEach(si=>{
+    const s=STAFF_INFO[si];
+    const bg={};
+    groups.forEach(g=>{
+      let inqS=0,bookS=0,newS=0,oldS=0,tarS=0;
+      midxs.forEach(mi=>{
+        inqS+=perf[g].詢問數[mi][si];bookS+=perf[g].預約數[mi][si];
+        newS+=perf[g].新客到店[mi][si];oldS+=perf[g].舊客到店[mi][si];
+        tarS+=perf[g].目標[mi][si];
+      });
+      const achieved=g==='渥'?newS:newS+oldS;
+      const conv=inqS>0?Math.round(achieved/inqS*100):0;
+      const ach=tarS>0?Math.round(achieved/tarS*100):0;
+      bg[g]={inq:inqS,book:bookS,new:newS,old:oldS,tar:tarS,conv,ach,diff:tarS-achieved,achieved};
+    });
+
+    html+=`<div class="staff-card">
+      <div class="staff-card-header">
+        <div class="staff-name">${s.zh}<span>${s.en}</span></div>
+        <div style="display:flex;gap:6px;padding-right:18px">
+          ${groups.map(g=>`<span class="badge-${g==='渥'?'w':'q'}">
+            <span class="bdg-lbl">${g==='渥'?'原渥':'原綺'}</span>
+            <span class="bdg-num">${bg[g].tar>0?bg[g].tar:'—'}</span>
+          </span>`).join('')}
+        </div>
+      </div>
+      <div class="staff-body">
+        <div class="staff-left">
+          <div class="staff-left-inner" style="grid-template-columns:1fr ${groups.map(()=>'40px').join(' ')}">
+            <div class="ch-spacer"></div>
+            ${groups.map(g=>`<div class="ch-val">${g==='渥'?'原渥':'原綺'}</div>`).join('')}
+            ${[['個人目標',groups.map(g=>({val:bg[g].tar>0?bg[g].tar:'—',cls:''}))],
+               ['新客到店',groups.map(g=>({val:bg[g].new,cls:''}))],
+               ['月追',groups.map(g=>({val:bg[g].tar>0?(bg[g].diff>0?'+':'')+bg[g].diff:'—',cls:bg[g].tar>0?(bg[g].diff<=0?'green':'red'):'grey'}))],
+               ['達成率',groups.map(g=>({val:bg[g].ach>0?bg[g].ach+'%':'—',cls:achLabel(bg[g].ach)}))],
+            ].map(([lbl,vals])=>`
+              <span class="metric-label">${lbl}</span>
+              ${vals.map(v=>`<span class="metric-val ${v.cls}">${v.val}</span>`).join('')}
+            `).join('')}
+          </div>
+        </div>
+        <div class="staff-right">
+          <table class="mini-table">
+            <thead><tr><th class="row-label">指標</th>${groups.map(g=>`<th>${g==='渥'?'原渥':'原綺'}</th>`).join('')}</tr></thead>
+            <tbody>
+              ${[['詢問數',g=>bg[g].inq],['預約數',g=>bg[g].book],['轉換率',g=>bg[g].conv+'%'],
+                 ['新客到店',g=>bg[g].new],['舊客到店',g=>bg[g].old],
+                 ['達成率',g=>{const a=bg[g].ach;return pillAch(a)}],
+              ].map(([lbl,fn])=>`<tr><td class="row-label">${lbl}</td>${groups.map(g=>`<td>${fn(g)}</td>`).join('')}</tr>`).join('')}
+            </tbody>
+          </table>
+          ${midxs.length>1?`<details style="margin-top:8px">
+            <summary style="font-size:11px;color:#2563eb;cursor:pointer;font-weight:600">各月明細 ▾</summary>
+            <table class="mini-table" style="margin-top:6px">
+              <thead>
+                ${groups.length>1?`<tr><th></th>${groups.map(g=>`<th colspan="4" style="text-align:center;font-size:10px;font-weight:800;padding:3px 4px;background:${g==='渥'?'#dbeafe':'#fce7f3'};color:${g==='渥'?'#1e40af':'#9d174d'};border-bottom:1px solid #e8e4de">${g==='渥'?'原渥':'原綺'}</th>`).join('')}</tr>`:''}
+                <tr><th>月</th>${groups.map(g=>`<th>新</th><th style="color:#aea9a4">舊</th><th>目標</th><th>達成</th>`).join('')}</tr>
+              </thead>
+              <tbody>${midxs.map(mi=>`<tr><td class="row-label">${ML[mi]}</td>
+                ${groups.map(g=>{
+                  const achieved=g==='渥'?perf[g].新客到店[mi][si]:perf[g].新客到店[mi][si]+perf[g].舊客到店[mi][si];
+                  const t=perf[g].目標[mi][si],a=t>0?Math.round(achieved/t*100):0;
+                  return `<td>${perf[g].新客到店[mi][si]}</td><td style="color:#aea9a4">${perf[g].舊客到店[mi][si]}</td><td style="color:#aea9a4">${t||'-'}</td><td>${pillAch(a)}</td>`;
+                }).join('')}</tr>`).join('')}</tbody>
+            </table>
+          </details>`:''}
+        </div>
+      </div>
+    </div>`;
+  });
+  // 全體：響應式多欄格；個人：單卡片
+  document.getElementById('staff-grid').innerHTML = (curStaff===-1)
+    ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:12px;width:100%">${html}</div>`
+    : html;
+}
+
+// ─── ④ CHARTS ─────────────────────────────────────────
+let charts={};
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+
+function renderTrend(){
+  [2024,2025,2026].forEach(y=>destroyChart('yr_'+y));
+  destroyChart('trend');destroyChart('booknew');
+
+  const M12=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+  const groups=getGroups();
+  const sum=arr=>arr.filter(v=>v!=null).reduce((s,v)=>s+v,0);
+
+  // ── 四條數據線
+  function getBook(year){return M12.map((_,i)=>{let s=0,any=false;groups.forEach(g=>{const v=history[g][year]?.p[i];if(v!=null){s+=v;any=true;}});return any?s:null;})}
+  function getArrive(year){return M12.map((_,i)=>{let s=0,any=false;groups.forEach(g=>{const v=sheetTotal[g]?.arrive[year]?.[i]??null;if(v!=null){s+=v;any=true;}});return any?s:null;})}
+  function getNewBook(year){return M12.map((_,i)=>{let s=0,any=false;groups.forEach(g=>{const v=sheetTotal[g]?.booknew[year]?.[i]??null;if(v!=null){s+=v;any=true;}});return any?s:null;})}
+  function getNewArrive(year){return M12.map((_,i)=>{let s=0,any=false;groups.forEach(g=>{const v=history[g][year]?.n[i];if(v!=null){s+=v;any=true;}});return any?s:null;})}
+
+  const yData=[2024,2025,2026].map(y=>({
+    year:y,book:getBook(y),arrive:getArrive(y),newBook:getNewBook(y),newArrive:getNewArrive(y)
+  }));
+
+  yData.forEach(d=>{
+    d.tBook=sum(d.book); d.tArrive=sum(d.arrive);
+    d.tNewBook=sum(d.newBook); d.tNewArrive=sum(d.newArrive);
+    d.validIdxs=d.book.map((v,i)=>v!=null?i:-1).filter(i=>i>=0);
+    d.arrRate=d.tBook>0?Math.round(d.tArrive/d.tBook*100):0;
+    d.newRate=d.tNewBook>0?Math.round(d.tNewArrive/d.tNewBook*100):0;
+  });
+
+  // YOY 比較來客數（同月份）
+  yData.forEach((d,idx)=>{
+    if(idx===0){d.yoy=null;return;}
+    const prev=yData[idx-1],idxs=d.validIdxs;
+    // YOY = 當年累積總數 vs 前一年全年總數（同合計YOY邏輯）
+    const cur=idxs.reduce((s,i)=>s+(d.arrive[i]||0),0);
+    const prv=prev.arrive.reduce((s,v)=>s+(v||0),0);
+    d.yoy=prv>0?Math.round((cur-prv)/prv*100):null;
+    // 新客YOY
+    const cn=idxs.reduce((s,i)=>s+(d.newArrive[i]||0),0);
+    const pn=prev.newArrive.reduce((s,v)=>s+(v||0),0);
+    d.yoyNew=pn>0?Math.round((cn-pn)/pn*100):null;
+  });
+
+  const brandStr=curGroup==='all'?'原渥 + 原綺':(curGroup==='渥'?'原渥':'原綺');
+  const rBg=v=>v>=70?'#16a34a':'#dc2626';
+
+  // ── 色系定義：一對一個 family
+  // Pair1 (總): 藍色系  Pair2 (新客): 琥珀色系
+  const C=(ic)=>({
+    p1bar:   ic?'rgba(56,189,248,.4)' :'rgba(14,165,233,.2)',   // sky bar fill
+    p1brd:   ic?'#38bdf8':'#0ea5e9',                            // sky bar border
+    p1line:  ic?'#7dd3fc':'#0284c7',                            // sky line (darker)
+    p1pt:    ic?'#7dd3fc':'#0369a1',                            // sky point
+    p1lbl:   ic?'#38bdf8':'#0ea5e9',                            // label
+    p1n1:    ic?'#e0f2fe':'#0369a1',                            // 總預約數 number
+    p1n2:    ic?'#7dd3fc':'#0284c7',                            // 來客數 number
+    p2bar:   ic?'rgba(251,191,36,.38)':'rgba(245,158,11,.18)',  // amber bar fill
+    p2brd:   ic?'#fbbf24':'#f59e0b',                            // amber bar border
+    p2line:  ic?'#fde68a':'#b45309',                            // amber line (darker)
+    p2pt:    ic?'#fde68a':'#b45309',
+    p2lbl:   ic?'#fbbf24':'#d97706',
+    p2n1:    ic?'#fef3c7':'#b45309',                            // 新客預約數 number
+    p2n2:    ic?'#fde68a':'#92400e',                            // 新客數 number
+    grid:    ic?'rgba(255,255,255,.07)':'#f5f3f0',
+    tick:    ic?'#64748b':'#c4b8a8',
+    inner:   ic?'#0c1a2e':'#f0f9ff',
+    inner2:  ic?'#1c1100':'#fffbeb',
+    fg:      ic?'#fff':'#1a1a1a',
+    dim:     ic?'#94a3b8':'#6b6460',
+    sep:     ic?'#334155':'#f1ede8',
+  });
+
+  let html=`<div style="display:flex;gap:14px;font-size:11px;color:#6b6460;margin-bottom:12px;align-items:center;flex-wrap:wrap">
+    <span style="font-weight:600;color:#aea9a4">${brandStr}</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(14,165,233,.3);border:1.5px solid #0ea5e9;display:inline-block;border-radius:2px"></span>總預約數</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:0;border-top:2.5px solid #0284c7;display:inline-block"></span>來客數</span>
+    <span style="display:flex;align-items:center;gap:5px;margin-left:4px"><span style="width:12px;height:12px;background:rgba(245,158,11,.25);border:1.5px solid #f59e0b;display:inline-block;border-radius:2px"></span>新客預約數</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:0;border-top:2.5px dashed #b45309;display:inline-block"></span>新客數</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:6px">`;
+
+  yData.forEach((d,idx)=>{
+    const ic=d.year===2026;
+    const c=C(ic);
+    const bg=ic?'#1a1a1a':'#fff';
+    const border=ic?'1.5px solid #334155':'1px solid #e8e4de';
+    const yrClr=ic?'#ffffff':idx===1?'#4a4a4a':'#c4b8a8';
+
+    const yoyBadge=(val,label,clrPos,clrNeg)=>{
+      if(val===null)return '';
+      const pill=val>=0?'#15803d':'#dc2626';
+      const txt=val>=0?clrPos:clrNeg;
+      return `<div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="background:${pill};color:#fff;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700">${label} YOY</span>
+        <span style="font-size:15px;font-weight:800;color:${txt}">${val}%</span>
+      </div>`;
+    };
+
+    html+=`<div style="background:${bg};border:${border};border-radius:12px;overflow:hidden">
+      <div style="padding:14px 16px 14px">
+        <div style="font-size:26px;font-weight:900;color:${yrClr};line-height:1;margin-bottom:10px">
+          ${d.year}${ic?'<span style="font-size:11px;font-weight:400;color:#fff;opacity:.75;margin-left:5px">1–5月</span>':''}
+        </div>
+        <div style="position:relative;height:130px;margin:0 -2px 14px">
+          <canvas id="yr_${d.year}" style="max-height:none"></canvas>
+        </div>
+        <!-- Pair1: 藍色系 -->
+        <div style="background:${c.inner};border-radius:8px;padding:9px 11px;margin-bottom:7px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-size:10px;font-weight:700;color:${c.p1lbl}">總預約數 → 來客數</span>
+            <span style="background:${rBg(d.arrRate)};color:#fff;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800">到店率 ${d.arrRate}%</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span style="font-size:20px;font-weight:800;color:${c.p1n1}">${d.tBook.toLocaleString()}</span>
+            <span style="font-size:14px;color:${c.dim}">→</span>
+            <span style="font-size:20px;font-weight:800;color:${c.p1n2}">${d.tArrive.toLocaleString()}</span>
+          </div>
+        </div>
+        <!-- Pair2: 琥珀色系 -->
+        <div style="background:${c.inner2};border-radius:8px;padding:9px 11px;margin-bottom:${d.yoy!==null?'10px':'0'}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-size:10px;font-weight:700;color:${c.p2lbl}">新客預約數 → 新客數</span>
+            <span style="background:${rBg(d.newRate)};color:#fff;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800">到店率 ${d.newRate}%</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span style="font-size:20px;font-weight:800;color:${c.p2n1}">${d.tNewBook.toLocaleString()}</span>
+            <span style="font-size:14px;color:${c.dim}">→</span>
+            <span style="font-size:20px;font-weight:800;color:${c.p2n2}">${d.tNewArrive.toLocaleString()}</span>
+          </div>
+        </div>
+        ${d.yoy!==null?`<div style="display:flex;flex-direction:column;gap:5px;border-top:1px solid ${c.sep};padding-top:8px">
+          ${yoyBadge(d.yoy,'來客數',ic?'#4ade80':'#15803d',ic?'#f87171':'#dc2626')}
+          ${yoyBadge(d.yoyNew,'新客數',ic?'#4ade80':'#15803d',ic?'#f87171':'#dc2626')}
+        </div>`:''}
+      </div>
+    </div>`;
+  });
+
+  html+='</div>';
+  document.getElementById('year-panels-wrap').innerHTML=html;
+
+  // ── 各年迷你圖（bar = 預約量, line = 來客量，同色系）
+  yData.forEach(d=>{
+    const ic=d.year===2026;
+    const c=C(ic);
+    const ctx=document.getElementById('yr_'+d.year)?.getContext('2d');
+    if(!ctx)return;
+    charts['yr_'+d.year]=new Chart(ctx,{type:'bar',
+      data:{labels:M12,datasets:[
+        {type:'bar',  label:'總預約數',  data:d.book,    backgroundColor:c.p1bar,borderColor:c.p1brd,borderWidth:1.5,borderRadius:3,borderSkipped:false},
+        {type:'line', label:'來客數',    data:d.arrive,  borderColor:c.p1line,backgroundColor:'transparent',tension:.35,pointRadius:2.5,pointBackgroundColor:c.p1pt,borderWidth:2,spanGaps:false},
+        {type:'bar',  label:'新客預約數',data:d.newBook, backgroundColor:c.p2bar,borderColor:c.p2brd,borderWidth:1.5,borderRadius:3,borderSkipped:false},
+        {type:'line', label:'新客數',    data:d.newArrive,borderColor:c.p2line,backgroundColor:'transparent',tension:.35,pointRadius:2.5,pointBackgroundColor:c.p2pt,borderWidth:1.5,spanGaps:false,borderDash:[4,2]},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{beginAtZero:true,grid:{color:c.grid},ticks:{font:{size:9},color:c.tick,maxTicksLimit:4}},
+          x:{grid:{display:false},ticks:{font:{size:9},color:c.tick,maxRotation:0}},
+        }
+      }
+    });
+  });
+
+  renderHistoryTable(groups);
+}
+
+// ── 每月客服人數（請依實際入職/離職時間維護）
+// null = 該月資料待確認，顯示 —
+const staffCount={
+  2024:[2,2,2,2,2,2,2,2,2,2,2,3],    // 2024/12 新增1人→3人
+  2025:[3,3,4,4,3,3,3,3,3,3,3,4],    // 2025/03-04 增至4人，12月再增至4人（確認自「預約狀況同期比較」）
+  2026:[3,5,5,5,5,5,5,5,5,5,5,5],    // 2026/01 = 3人，02起增至5人（確認自「預約狀況同期比較」）
+};
+
+// ── 品牌分開的年度彙整數據（直接來自「預約狀況同期比較」Google Sheet）
+// 原渥：sheet rows 2-21；原綺：sheet rows 22-42
+// null = 尚無資料，顯示 —
+const sheetTotal={
+  渥:{
+    arrive:{ // 總來客數（新客+舊客到店）
+      2024:[153,124,129,154,153,129,124,186,190,133,140,153],
+      2025:[183,150,184,296,241,185,232,196,263,180,148,171],
+      2026:[142,180,289,344,228,null,null,null,null,null,null,null],
+    },
+    booknew:{ // 客服預約新客數
+      2024:[152,124,138,172,171,133,95,169,188,176,164,236],
+      2025:[225,262,324,318,290,218,228,253,302,142,147,206],
+      2026:[183,201,370,436,215,null,null,null,null,null,null,null],
+    },
+  },
+  綺:{
+    arrive:{
+      2024:[75,81,101,67,91,67,55,79,75,60,84,59],
+      2025:[88,80,85,122,175,138,86,97,80,111,155,139],
+      2026:[165,122,144,130,120,null,null,null,null,null,null,null],
+    },
+    booknew:{
+      2024:[80,101,87,79,80,50,49,64,75,58,89,59],
+      2025:[90,86,113,131,154,128,119,119,70,144,165,160],
+      2026:[216,122,182,137,112,null,null,null,null,null,null,null],
+    },
+  },
+};
+
+function renderHistoryTable(groups){
+  const M12=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+
+  // 取得某年某月某指標的數值，null = 無資料
+  function val(year,mi,metric){
+    if(metric==='staff') return staffCount[year]?.[mi]??null;
+    if(metric==='appt'){ // 預約總數：從 history 加總各品牌
+      let s=0,any=false;
+      groups.forEach(g=>{const v=history[g][year].p[mi];if(v!==null){s+=v;any=true;}});
+      return any?s:null;
+    }
+    if(metric==='newc'){ // 新客數（到店）：從 history 加總各品牌
+      let s=0,any=false;
+      groups.forEach(g=>{const v=history[g][year].n[mi];if(v!==null){s+=v;any=true;}});
+      return any?s:null;
+    }
+    if(metric==='arrive'){ // 總來客數：分品牌加總 sheetTotal
+      let s=0,any=false;
+      groups.forEach(g=>{const v=sheetTotal[g]?.arrive[year]?.[mi]??null;if(v!==null){s+=v;any=true;}});
+      return any?s:null;
+    }
+    if(metric==='booknew'){ // 客服預約新客數：分品牌加總 sheetTotal
+      let s=0,any=false;
+      groups.forEach(g=>{const v=sheetTotal[g]?.booknew[year]?.[mi]??null;if(v!==null){s+=v;any=true;}});
+      return any?s:null;
+    }
+    return null;
+  }
+
+  const metrics=[
+    {key:'staff',   label:'客服人數',  suffix:'人', hdr:true},
+    {key:'appt',    label:'預約總數',  suffix:'',   hdr:false},
+    {key:'arrive',  label:'總來客數',  suffix:'',   hdr:false},
+    {key:'booknew', label:'預約新客數', suffix:'',   hdr:false},
+    {key:'newc',    label:'新客數',    suffix:'',   hdr:false, hi:true},
+  ];
+
+  // ── 樣式常數
+  const yrHdrStyle='background:#1a1a1a;color:#fff;font-size:12px;font-weight:800;padding:6px 10px;text-align:left;cursor:pointer;user-select:none';
+  const mHdrStyle='background:#f5f3f0;color:#6b6460;font-size:10px;font-weight:700;padding:4px 8px;text-align:center;white-space:nowrap;border-bottom:1px solid #e8e4de';
+  const rowLblStyle='font-size:11px;color:#6b6460;font-weight:700;padding:5px 10px;white-space:nowrap;border-bottom:1px solid #f1ede8;background:#faf9f7';
+  const cellBase='font-size:12px;font-weight:600;padding:5px 8px;text-align:center;border-bottom:1px solid #f1ede8;min-width:38px';
+  const totalStyle='font-size:11px;font-weight:800;padding:5px 10px;text-align:center;border-bottom:1px solid #f1ede8;background:#f5f3f0;border-left:1px solid #e8e4de';
+
+  // 初始化展開狀態（首次）
+  if(!window._histExp)window._histExp={2024:true,2025:true,2026:true};
+
+  // 新客數顏色：依品牌篩選
+  const newcColor=curGroup==='渥'?'#1e40af':curGroup==='綺'?'#9d174d':'#78350f';
+  const newcBg=curGroup==='渥'?'#f0f7ff':curGroup==='綺'?'#fdf2f8':'#fef3c7';
+
+  let html='<div style="overflow-x:auto;margin-top:4px">';
+  const years=[2024,2025,2026];
+  const prevYears={2025:2024,2026:2025};
+
+  for(const year of years){
+    const hasMon=M12.map((_,mi)=>metrics.some(m=>val(year,mi,m.key)!==null));
+    const cols=M12.length;
+    const exp=window._histExp[year];
+    const prevY=prevYears[year];
+    const showYOY=!!prevY;
+
+    html+=`<table style="border-collapse:collapse;width:100%;margin-bottom:12px;min-width:520px;table-layout:fixed">
+      <colgroup>
+        <col style="width:90px">
+        ${M12.map(()=>'<col style="width:calc((100% - 90px - 54px) / 12)">').join('')}
+        <col style="width:54px">
+      </colgroup>
+      <thead>
+        <tr onclick="window._histExp[${year}]=!window._histExp[${year}];renderTrend()" style="cursor:pointer;user-select:none">
+          <th colspan="${cols+2}" style="background:#1a1a1a;color:#fff;font-size:12px;font-weight:800;padding:6px 10px;text-align:left">
+            ${year} <span style="font-size:10px;opacity:.7;margin-left:6px">${exp?'▼':'▶'}</span>
+          </th>
+        </tr>
+        ${exp?`<tr>
+          <th style="${mHdrStyle};text-align:left">指標</th>
+          ${M12.map(m=>`<th style="${mHdrStyle}">${m}</th>`).join('')}
+          <th style="${mHdrStyle}">合計</th>
+        </tr>`:''}
+      </thead>
+      <tbody>`;
+
+    if(exp){
+      metrics.forEach(m=>{
+        const vals=M12.map((_,mi)=>val(year,mi,m.key));
+        const numVals=vals.filter(v=>v!==null);
+        const total=m.key==='staff'?null:(numVals.length?numVals.reduce((s,v)=>s+v,0):null);
+        const rowBg=m.hi?`background:${newcBg}`:'';
+        const lblClr=m.hi?`color:${newcColor}`:'';
+        html+=`<tr style="${rowBg}">
+          <td style="${rowLblStyle};${lblClr}">${m.label}</td>
+          ${vals.map((v,mi)=>{
+            const fade=!hasMon[mi]?'opacity:.35':'';
+            const txt=v===null?'<span style="color:#d4cfc8">—</span>':v.toLocaleString()+(m.suffix||'');
+            return `<td style="${cellBase};${m.hi?`color:${newcColor}`:'color:#1a1a1a'};${fade}">${txt}</td>`;
+          }).join('')}
+          <td style="${totalStyle};${m.hi?`color:${newcColor}`:'color:#1a1a1a'}">${total!==null?total.toLocaleString()+(m.suffix||''):'—'}</td>
+        </tr>`;
+
+        // 新客YOY 行
+        if(m.key==='newc'&&showYOY){
+          const yoyVals=M12.map((_,mi)=>{
+            const cur=val(year,mi,'newc'),prev=val(prevY,mi,'newc');
+            if(cur===null||prev===null||prev===0)return null;
+            return Math.round((cur-prev)/prev*100);
+          });
+          // 合計 YOY = 今年累積總數 vs 去年全年總數
+          let sumCur=0,sumPrevFull=0;
+          M12.forEach((_,mi)=>{const v=val(year,mi,'newc');if(v!==null)sumCur+=v;});
+          M12.forEach((_,mi)=>{const v=val(prevY,mi,'newc');if(v!==null)sumPrevFull+=v;});
+          const avgYOY=sumPrevFull>0?Math.round((sumCur-sumPrevFull)/sumPrevFull*100):null;
+          html+=`<tr style="background:#fffbeb">
+            <td style="${rowLblStyle};color:#92400e">新客YOY</td>
+            ${yoyVals.map((v,mi)=>{
+              if(v===null)return `<td style="${cellBase};color:#d4cfc8">—</td>`;
+              const clr=v>=0?'#15803d':'#dc2626';
+              return `<td style="${cellBase};color:${clr};font-weight:700">${v}%</td>`;
+            }).join('')}
+            <td style="${totalStyle};color:${avgYOY!==null?(avgYOY>=0?'#15803d':'#dc2626'):'#aea9a4'}">${avgYOY!==null?avgYOY+'%':'—'}</td>
+          </tr>`;
+        }
+      });
+    }
+
+    html+='</tbody></table>';
+  }
+  html+='</div>';
+  document.getElementById('history-table-wrap').innerHTML=html;
+}
+
+// ── 2026 即時同步（gviz API，需在 Google 帳號登入狀態下使用）
+const SHEET_ID='1_exo__Dm5w37Ng--KKsl8byDF2z_w09ErvSnWr8bkC0';
+const MONTHS_2026=['預約人數2026/01','預約人數2026/02','預約人數2026/03','預約人數2026/04','預約人數2026/05'];
+async function fetchLatest2026(){
+  const btn=document.getElementById('fetch-btn');
+  const status=document.getElementById('fetch-status');
+  btn.textContent='同步中…';btn.disabled=true;
+  status.textContent='';
+  let updated=0,errors=0;
+  for(let mi=0;mi<MONTHS_2026.length;mi++){
+    const sheetName=encodeURIComponent(MONTHS_2026[mi]);
+    const base=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+    try{
+      // 抓 row37(預約) 和 row38(到店) 的 C:V 欄
+      const [r37,r38]=await Promise.all([
+        fetchGvizRow(base,'C37:V37'),
+        fetchGvizRow(base,'C38:V38'),
+      ]);
+      if(r37&&r38){
+        // 欄位佈局：每人4欄 [渥新,渥舊,綺新,綺舊] × 5人 = 20欄 (index 0-19)
+        // 總預約(新+舊)：渥=[0,1,4,5,8,9,12,13,16,17]  綺=[2,3,6,7,10,11,14,15,18,19]
+        const w_book_idx=[0,1,4,5,8,9,12,13,16,17]; // 渥 總預約(新客+舊客)
+        const q_book_idx=[2,3,6,7,10,11,14,15,18,19]; // 綺 總預約
+        // 新客到店(僅新)：渥=[0,4,8,12,16]  綺=[2,6,10,14,18]
+        const w_new_idx =[0,4,8,12,16]; // 渥 新客到店
+        const q_new_idx =[2,6,10,14,18]; // 綺 新客到店
+        const sum=(arr,idxs)=>idxs.reduce((s,i)=>s+(arr[i]||0),0);
+        history['渥'][2026].p[mi]=sum(r37,w_book_idx);
+        history['綺'][2026].p[mi]=sum(r37,q_book_idx);
+        history['渥'][2026].n[mi]=sum(r38,w_new_idx);
+        history['綺'][2026].n[mi]=sum(r38,q_new_idx);
+        updated++;
+      }
+    }catch(e){errors++;}
+  }
+  btn.textContent='⟳ 即時同步';btn.disabled=false;
+  if(updated>0){
+    status.textContent=`✓ 已同步 ${updated} 個月份資料（${new Date().toLocaleString('zh-TW')}）`;
+    renderTrend();
+  } else {
+    status.textContent=`⚠ 同步失敗（請確認已登入 Google 帳號，或稍後再試）`;
+  }
+}
+async function fetchGvizRow(base,range){
+  const url=`${base}&range=${range}`;
+  const res=await fetch(url,{credentials:'include'});
+  const text=await res.text();
+  const json=JSON.parse(text.replace(/^[^{]+/,'').replace(/[^}]+$/,''));
+  const row=json?.table?.rows?.[0];
+  if(!row)return null;
+  return row.c.map(cell=>cell&&cell.v!==null?Number(cell.v):0);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ── 全資料自動同步（Google Sheets gviz JSONP）─────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+const PERF_SHEET_ID_2 = '1_exo__Dm5w37Ng--KKsl8byDF2z_w09ErvSnWr8bkC0';
+const SOURCE_SHEET_ID = '1sdjXTUo1tW9-fLWlUaWnXqNxxdzK573YuUSJcZdWSns';
+
+// ① 個人績效同步（客服個人績效總表 gid=377263112，結構已確認）
+// 欄位映射：col = 2 + mi*5 + si  (mi=月份0-4, si=人員0-4)
+async function syncPerfData() {
+  const gvizBase = `https://docs.google.com/spreadsheets/d/${PERF_SHEET_ID_2}/gviz/tq?gid=377263112`;
+  const data = await fetchGvizJsonp(gvizBase);
+  const rows = (data?.table?.rows || []).map(r => (r.c || []).map(cell => cell?.v ?? null));
+  if (rows.length < 18) throw new Error(`列數不足 (${rows.length})`);
+  // 原渥 rows（0-indexed）: 詢問=2, 預約=3, 新客到店=5, 舊客到店=6, 目標=8
+  // 原綺 rows:              詢問=11, 預約=12, 新客到店=14, 舊客到店=15, 目標=17
+  const ROW_MAP = {
+    渥: { 詢問數:2, 預約數:3, 新客到店:5, 舊客到店:6, 目標:8 },
+    綺: { 詢問數:11, 預約數:12, 新客到店:14, 舊客到店:15, 目標:17 },
+  };
+  for (const [g, metrics] of Object.entries(ROW_MAP)) {
+    for (const [metric, rowIdx] of Object.entries(metrics)) {
+      const row = rows[rowIdx] || [];
+      for (let mi = 0; mi < 5; mi++) {
+        for (let si = 0; si < 5; si++) {
+          perf[g][metric][mi][si] = Number(row[2 + mi*5 + si]) || 0;
+        }
+      }
+    }
+  }
+  // 重算達成率
+  ['渥','綺'].forEach(g => {
+    const isW = g === '渥';
+    for (let mi = 0; mi < 5; mi++) {
+      for (let si = 0; si < 5; si++) {
+        const arrive = isW ? perf[g].新客到店[mi][si]
+          : perf[g].新客到店[mi][si] + perf[g].舊客到店[mi][si];
+        const tar = perf[g].目標[mi][si];
+        perf[g].達成率[mi][si] = tar > 0 ? Math.round(arrive / tar * 100) : 0;
+      }
+    }
+  });
+  return rows.length;
+}
+
+// ② 來源分析同步（"X月客服" 各分頁，掃描行銷/業務/團購/其他標籤）
+async function syncSourceData() {
+  const MONTH_SHEETS = ['1月客服','2月客服','3月客服','4月客服','5月客服'];
+  let updated = 0;
+  for (let mi = 0; mi < MONTH_SHEETS.length; mi++) {
+    try {
+      const gvizBase = `https://docs.google.com/spreadsheets/d/${SOURCE_SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(MONTH_SHEETS[mi])}`;
+      const data = await fetchGvizJsonp(gvizBase);
+      const rows = (data?.table?.rows || []).map(r => (r.c || []).map(cell => cell?.v ?? null));
+      const parsed = parseSourceRows(rows);
+      // 只有解析到非零數值才覆蓋靜態資料，避免欄位猜錯時把資料清零
+      const hasRealData = parsed && ['渥','綺'].some(g =>
+        ['行銷','業務','團購','其他'].some(s => (parsed[g]?.[s]?.[0]||0) + (parsed[g]?.[s]?.[1]||0) > 0)
+      );
+      if (hasRealData) { sourceData[mi] = parsed; updated++; }
+      else console.log(`[來源同步] ${MONTH_SHEETS[mi]}：未解析到有效數值，保留靜態資料\n前20列col0:`, rows.slice(0,20).map(r=>r?.[0]));
+    } catch(e) {
+      console.warn(`[來源同步] ${MONTH_SHEETS[mi]} 失敗:`, e.message);
+    }
+  }
+  return updated;
+}
+function parseSourceRows(rows) {
+  const SOURCES = ['行銷','業務','團購','其他'];
+  const result = {
+    渥: { 行銷:[0,0], 業務:[0,0], 團購:[0,0], 其他:[0,0] },
+    綺: { 行銷:[0,0], 業務:[0,0], 團購:[0,0], 其他:[0,0] },
+  };
+  let found = 0;
+  // 掃描每列，col[0] 為標籤；結構假設：[標籤, 渥詢問, 渥到店, 綺詢問, 綺到店]
+  for (let ri = 0; ri < rows.length; ri++) {
+    const row = rows[ri];
+    const label = row?.[0] != null ? String(row[0]).trim() : '';
+    if (SOURCES.includes(label)) {
+      result.渥[label] = [Number(row[1])||0, Number(row[2])||0];
+      result.綺[label] = [Number(row[3])||0, Number(row[4])||0];
+      found++;
+    }
+  }
+  // 若未找到：嘗試任意欄含有標籤的列（橫向佈局）
+  if (found === 0) {
+    for (let ri = 0; ri < rows.length && found < 4; ri++) {
+      const row = rows[ri];
+      if (!row) continue;
+      for (let ci = 0; ci < row.length; ci++) {
+        const v = row[ci] != null ? String(row[ci]).trim() : '';
+        if (SOURCES.includes(v)) {
+          result.渥[v] = [Number(row[ci+1])||0, Number(row[ci+2])||0];
+          result.綺[v] = [Number(row[ci+3])||0, Number(row[ci+4])||0];
+          found++;
+        }
+      }
+    }
+  }
+  return found >= 2 ? result : null;
+}
+
+// ③ 歷年趨勢同步（從 "預約人數2026/xx" 各月分頁更新 history 及 sheetTotal）
+// 同時嘗試從 gid=176256949 讀取完整歷年資料
+async function syncTrendData() {
+  // 先同步 2026 各月最新值（原有邏輯）
+  let updated2026 = 0;
+  for (let mi = 0; mi < MONTHS_2026.length; mi++) {
+    try {
+      const sheetName = encodeURIComponent(MONTHS_2026[mi]);
+      const base = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${sheetName}`;
+      const [r37, r38] = await Promise.all([
+        fetchGvizRow(base, 'C37:V37'),
+        fetchGvizRow(base, 'C38:V38'),
+      ]);
+      if (r37 && r38) {
+        const w_book=[0,1,4,5,8,9,12,13,16,17], q_book=[2,3,6,7,10,11,14,15,18,19];
+        const w_new=[0,4,8,12,16], q_new=[2,6,10,14,18];
+        const sum=(arr,idxs)=>idxs.reduce((s,i)=>s+(arr[i]||0),0);
+        history['渥'][2026].p[mi] = sum(r37, w_book);
+        history['綺'][2026].p[mi] = sum(r37, q_book);
+        history['渥'][2026].n[mi]  = sum(r38, w_new);
+        history['綺'][2026].n[mi]  = sum(r38, q_new);
+        updated2026++;
+      }
+    } catch(e) { /* 靜默失敗 */ }
+  }
+  // 嘗試從 gid=176256949 讀取歷年彙整（有的話更新 sheetTotal）
+  try {
+    const gvizBase = `https://docs.google.com/spreadsheets/d/${PERF_SHEET_ID_2}/gviz/tq?gid=176256949`;
+    const data = await fetchGvizJsonp(gvizBase);
+    const rows = (data?.table?.rows || []).map(r => (r.c || []).map(cell => cell?.v ?? null));
+    console.log('[趨勢同步] gid=176256949 列數:', rows.length, '前8列:', rows.slice(0,8).map(r=>r?.slice(0,5)));
+    const parsed = parseTrendSheet(rows);
+    if (parsed) {
+      for (const [yr, brands] of Object.entries(parsed)) {
+        const y = parseInt(yr);
+        for (const [g, d] of Object.entries(brands)) {
+          if (d.p)      history[g][y] = { p:[...d.p], n: history[g][y]?.n || Array(12).fill(null) };
+          if (d.n)      { if(!history[g][y]) history[g][y]={p:Array(12).fill(null),n:d.n}; else history[g][y].n=[...d.n]; }
+          if (d.arrive) { if(!sheetTotal[g])sheetTotal[g]={arrive:{},booknew:{}}; sheetTotal[g].arrive[y]=[...d.arrive]; }
+          if (d.booknew){ if(!sheetTotal[g])sheetTotal[g]={arrive:{},booknew:{}}; sheetTotal[g].booknew[y]=[...d.booknew]; }
+        }
+      }
+    }
+  } catch(e) {
+    console.warn('[趨勢同步] gid=176256949 失敗:', e.message);
+  }
+  return updated2026;
+}
+function parseTrendSheet(rows) {
+  const result = {};
+  let curYear = null, curBrand = null;
+  for (const row of rows) {
+    if (!row) continue;
+    const r0 = row[0] != null ? String(row[0]).trim() : '';
+    const ym = r0.match(/^(20\d{2})/);
+    if (ym) { curYear = parseInt(ym[1]); continue; }
+    if (r0.includes('原渥') || r0 === '渥') { curBrand = '渥'; continue; }
+    if (r0.includes('原綺') || r0 === '綺') { curBrand = '綺'; continue; }
+    if (!curYear || !curBrand) continue;
+    if (!result[curYear]) result[curYear] = {};
+    if (!result[curYear][curBrand]) result[curYear][curBrand] = {};
+    const nums = row.slice(1,13).map(v => v != null && v !== '' ? Number(v) : null);
+    const isAll12 = nums.filter(v=>v!==null).length >= 6;
+    if (!isAll12) continue;
+    if (r0.includes('預約') && !r0.includes('新客')) result[curYear][curBrand].p = nums;
+    else if (r0.includes('新客') && r0.includes('預約')) result[curYear][curBrand].booknew = nums;
+    else if (r0.includes('新客') && (r0.includes('到店')||r0.includes('來客'))) result[curYear][curBrand].n = nums;
+    else if (r0.includes('來客') || r0.includes('到店')) result[curYear][curBrand].arrive = nums;
+  }
+  return Object.keys(result).length >= 1 ? result : null;
+}
+
+// ── 全部同步主函數
+let _syncRunning = false;
+async function syncAll() {
+  if (_syncRunning) return;
+  _syncRunning = true;
+  const btn = document.getElementById('sync-all-btn');
+  const statusEl = document.getElementById('sync-all-status');
+  if (btn) { btn.textContent = '同步中…'; btn.disabled = true; }
+  if (statusEl) statusEl.innerHTML = '<span style="color:#666">⟳ 同步中…</span>';
+
+  const results = {};
+
+  // ① 績效
+  try {
+    const n = await syncPerfData();
+    results.perf = `✓ 績效`;
+  } catch(e) {
+    results.perf = `✗ 績效（${e.message}）`;
+    console.warn('[syncAll] perf 失敗:', e);
+  }
+
+  // ② 來源
+  try {
+    const n = await syncSourceData();
+    results.source = n > 0 ? `✓ 來源(${n}月)` : `⚠ 來源(結構待確認)`;
+  } catch(e) {
+    results.source = `✗ 來源（${e.message}）`;
+    console.warn('[syncAll] source 失敗:', e);
+  }
+
+  // ③ 趨勢
+  try {
+    const n = await syncTrendData();
+    results.trend = `✓ 趨勢`;
+  } catch(e) {
+    results.trend = `✗ 趨勢（${e.message}）`;
+    console.warn('[syncAll] trend 失敗:', e);
+  }
+
+  const hasOk = Object.values(results).some(v => v.startsWith('✓'));
+  const time = new Date().toLocaleString('zh-TW', {hour:'2-digit',minute:'2-digit'});
+  if (statusEl) {
+    const parts = Object.values(results).map(r => {
+      const clr = r.startsWith('✓') ? '#4ade80' : r.startsWith('⚠') ? '#fbbf24' : '#f87171';
+      return `<span style="color:${clr}">${r}</span>`;
+    });
+    statusEl.innerHTML = parts.join(' ｜ ') + ` <span style="color:#555">${time}</span>`;
+  }
+  if (btn) { btn.textContent = '⟳ 全部同步'; btn.disabled = false; }
+  if (hasOk) refresh();
+  _syncRunning = false;
+}
+
+// ── 週報資料同步（每月換分頁 URL，記住後下次自動帶入）────────────────────
+let weeklySheetCache=null;
+(function(){
+  try{
+    const saved=localStorage.getItem('weeklySheetCache');
+    if(saved){weeklySheetCache=JSON.parse(saved);}
+    const savedUrl=localStorage.getItem('weeklySheetUrl')||'';
+    if(savedUrl){
+      const el=document.getElementById('weekly-sheet-url');
+      if(el){el.value=savedUrl;}
+    }
+    if(weeklySheetCache){
+      const st=document.getElementById('weekly-sync-status');
+      if(st)st.textContent=`✓ 上次同步：${weeklySheetCache.syncTime}`;
+    }
+  }catch(e){}
+})();
+
+function onWeeklyUrlInput(val){
+  localStorage.setItem('weeklySheetUrl',val.trim());
+}
+
+function extractSheetInfo(url){
+  const idM=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  const gidM=url.match(/[?&#]gid=(\d+)/);
+  if(!idM)return null;
+  return{id:idM[1],gid:gidM?gidM[1]:null};
+}
+
+// 用 JSONP（script 標籤）抓 gviz，避免 CORS 限制
+function fetchGvizJsonp(gvizBaseUrl){
+  return new Promise((resolve,reject)=>{
+    const cb='_gvizCb_'+Date.now();
+    const timeout=setTimeout(()=>{
+      delete window[cb];
+      if(sc&&sc.parentNode)sc.parentNode.removeChild(sc);
+      reject(new Error('請求逾時，請確認已登入 Google 帳號'));
+    },12000);
+    window[cb]=function(data){
+      clearTimeout(timeout);
+      delete window[cb];
+      if(sc&&sc.parentNode)sc.parentNode.removeChild(sc);
+      resolve(data);
+    };
+    const sc=document.createElement('script');
+    sc.src=gvizBaseUrl+(gvizBaseUrl.includes('?')?'&':'?')+`tqx=responseHandler:${cb}`;
+    sc.onerror=()=>{
+      clearTimeout(timeout);
+      delete window[cb];
+      reject(new Error('無法載入資料，請確認已登入 Google 帳號且試算表有開啟檢視權限'));
+    };
+    document.head.appendChild(sc);
+  });
+}
+
+async function syncWeeklySheet(){
+  const urlInput=document.getElementById('weekly-sheet-url');
+  const btn=document.getElementById('weekly-sync-btn');
+  const status=document.getElementById('weekly-sync-status');
+  const url=(urlInput?.value||'').trim();
+  if(!url){status.textContent='請先貼上 Google Sheets 分頁網址';status.style.color='#dc2626';return;}
+  const info=extractSheetInfo(url);
+  if(!info){status.textContent='無法辨識網址格式，請貼上完整的 Google Sheets 分頁 URL';status.style.color='#dc2626';return;}
+  btn.textContent='同步中…';btn.disabled=true;status.textContent='連線中…';status.style.color='#aea9a4';
+  try{
+    let gvizBase=`https://docs.google.com/spreadsheets/d/${info.id}/gviz/tq`;
+    if(info.gid)gvizBase+=`?gid=${info.gid}`;
+    const data=await fetchGvizJsonp(gvizBase);
+    const table=data?.table;
+    if(!table)throw new Error('無資料表（試算表可能為空或無檢視權限）');
+    const cols=(table.cols||[]).map(c=>c.label||'');
+    const rows=(table.rows||[]).map(r=>r.c?r.c.map(cell=>cell?.v??null):[]);
+    const parsed=parseWeeklyRows(cols,rows);
+    // 取前3列的label用於除錯
+    // 顯示列 35–61（員工資料區），每列只顯示 col 0-25 的非空值
+    const staffRows=rows.slice(35).map((r,i)=>{
+      const ri=35+i;
+      const ne=r.slice(0,26).map((v,ci)=>[ci,v]).filter(([,v])=>v!==null&&v!==undefined&&v!=='');
+      return ne.length?`列${ri}: `+ne.map(([ci,v])=>`[${ci}]${v}`).join(' '):'';
+    }).filter(Boolean).join('<br>');
+    console.log('[週報同步] 全部列：',rows);
+    weeklySheetCache={url,id:info.id,gid:info.gid,
+      syncTime:new Date().toLocaleString('zh-TW'),cols,rows,parsed};
+    localStorage.setItem('weeklySheetCache',JSON.stringify(weeklySheetCache));
+    localStorage.setItem('weeklySheetUrl',url);
+    status.innerHTML=`<span style="color:#15803d">✓ 已同步 ${rows.length} 列（${weeklySheetCache.syncTime}）</span>`
+      +`<br><details style="font-size:10px;color:#6b6460;margin-top:3px"><summary style="cursor:pointer">▸ 員工區塊結構（列35–61，欄0–25）</summary><div style="font-family:monospace;font-size:10px;line-height:1.8;margin-top:4px;max-height:300px;overflow:auto;white-space:pre">${staffRows}</div></details>`;
+    generateReport();
+  }catch(e){
+    status.textContent=`⚠ 同步失敗：${e.message||'請確認已登入 Google 帳號後再試'}`;
+    status.style.color='#dc2626';
+  }
+  btn.textContent='⟳ 同步';btn.disabled=false;
+}
+
+// 使用已確認的 Google Sheets 結構直接解析週別到店人數
+// 結構（經多輪 debug 確認）：
+//   總計 N 行（新客）：列 15, 26, 37, 48, 59（每 11 列一位員工）
+//   總計 O 行（舊客）：列 16, 27, 38, 49, 60
+//   員工順序 = STAFF_INFO 順序 [Tracy, Fiona, Chloe, Sabrina, Jenny]
+//   原綺 週別欄：col 8=wk1, 9=wk2, 10=wk3, 11=wk4
+//   原渥 週別欄：col 15=wk1, 16=wk2, 17=wk3, 18=wk4
+//   原綺達標 = 新客+舊客；原渥達標 = 新客only
+function parseWeeklyRows(cols,rows){
+  const N_ROWS=[15,26,37,48,59];
+  const O_ROWS=[16,27,38,49,60];
+  const Q_COLS=[8,9,10,11];   // 原綺 wk1~wk4
+  const W_COLS=[15,16,17,18]; // 原渥 wk1~wk4
+  function getVals(row,colIdxs){
+    if(!row)return[0,0,0,0];
+    return colIdxs.map(ci=>Number(row[ci])||0);
+  }
+  if(rows.length<60)return null;
+  const staffWeekly=N_ROWS.map((nIdx,si)=>{
+    const nRow=rows[nIdx]||[];
+    const oRow=rows[O_ROWS[si]]||[];
+    return{
+      渥:{N:getVals(nRow,W_COLS),O:getVals(oRow,W_COLS)},
+      綺:{N:getVals(nRow,Q_COLS),O:getVals(oRow,Q_COLS)}
+    };
+  });
+  const hasData=staffWeekly.some(s=>s.渥.N.some(v=>v>0)||s.綺.N.some(v=>v>0));
+  if(!hasData)return null;
+  return{staffWeekly};
+}
+
+// ─── 品牌圖表（成效總覽用，staffIdxs 為要彙整的人員索引陣列）─────────────
+function buildBrandChart(g,canvasId,staffIdxs){
+  const isW=g==='渥';
+  const midxs=getMonthIdxs();
+  const book=midxs.map(mi=>staffIdxs.reduce((s,i)=>s+perf[g].預約數[mi][i],0));
+  const arrive=midxs.map(mi=>{
+    const n=staffIdxs.reduce((s,i)=>s+perf[g].新客到店[mi][i],0);
+    const o=staffIdxs.reduce((s,i)=>s+perf[g].舊客到店[mi][i],0);
+    return isW?n:n+o;
+  });
+  const inq=midxs.map(mi=>staffIdxs.reduce((s,i)=>s+perf[g].詢問數[mi][i],0));
+  const labels=midxs.map(mi=>ML[mi]);
+  const ds=[
+    {type:'bar',label:'預約數',data:book,
+      backgroundColor:isW?'rgba(37,99,235,.12)':'rgba(190,24,93,.1)',
+      borderColor:isW?'rgba(37,99,235,.3)':'rgba(190,24,93,.3)',
+      borderWidth:1,borderRadius:4,borderSkipped:false,
+      barPercentage:1.0,categoryPercentage:0.8,order:2},
+    {type:'bar',label:'詢問數',data:inq,
+      backgroundColor:isW?'rgba(37,99,235,.65)':'rgba(190,24,93,.6)',
+      borderColor:isW?'#1e3a8a':'#881337',
+      borderWidth:0,borderRadius:4,borderSkipped:false,
+      barPercentage:0.5,categoryPercentage:0.8,order:1},
+    {type:'line',label:'到店數',data:arrive,
+      borderColor:isW?'#0ea5e9':'#f43f5e',backgroundColor:'transparent',
+      tension:.35,pointRadius:4,pointBackgroundColor:isW?'#0ea5e9':'#f43f5e',
+      borderWidth:2.5,spanGaps:false,order:0},
+  ];
+  destroyChart(canvasId);
+  const ctx=document.getElementById(canvasId)?.getContext('2d');
+  if(!ctx)return;
+  charts[canvasId]=new Chart(ctx,{type:'bar',
+    data:{labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:12,padding:12}}},
+      scales:{
+        y:{beginAtZero:true,grid:{color:'#f1ede8'},ticks:{font:{size:10}}},
+        x:{grid:{display:false},ticks:{font:{size:10}}},
+      }
+    }
+  });
+  const canvas=document.getElementById(canvasId);
+  canvas.style.height='240px';
+
+  // HTML 資料表（含可折疊個人明細）
+  const tableWrapId='dtable-'+canvasId;
+  const old=document.getElementById(tableWrapId);
+  if(old)old.remove();
+
+  const staffColors=['#185FA5','#D85A30','#1D9E75','#BA7517','#994499'];
+  const inqC=isW?'#2563eb':'#be185d';
+  const bookC=isW?'#6b8fd4':'#d4618a';
+  const arrC=isW?'#0ea5e9':'#f43f5e';
+  const tdC='padding:3px 0;text-align:center;font-size:11px';
+
+  let html=`<div id="${tableWrapId}" style="border-top:1px solid #e8e4de;margin:0 16px;padding-bottom:10px">
+    <table style="width:100%;border-collapse:collapse;font-size:11px">
+      <tr>
+        <td style="padding:4px 0;color:${inqC};font-weight:700;width:64px;white-space:nowrap">詢問數</td>
+        ${inq.map(v=>`<td style="${tdC}">${v.toLocaleString()}</td>`).join('')}
+      </tr>
+      <tr>
+        <td style="padding:4px 0;color:${bookC};font-weight:700">預約數</td>
+        ${book.map(v=>`<td style="${tdC}">${v.toLocaleString()}</td>`).join('')}
+      </tr>
+      <tr>
+        <td style="padding:4px 0;color:${arrC};font-weight:700">到店數</td>
+        ${arrive.map(v=>`<td style="${tdC}">${v.toLocaleString()}</td>`).join('')}
+      </tr>`;
+
+  if(staffIdxs.length>1){
+    staffIdxs.forEach(si=>{
+      const s=STAFF_INFO[si];
+      const sData=midxs.map(mi=>{
+        const n=perf[g].新客到店[mi][si];
+        const o=perf[g].舊客到店[mi][si];
+        return isW?n:n+o;
+      });
+      html+=`<tr class="staff-detail-row" style="display:none;background:#faf9f7">
+        <td style="padding:2px 0 2px 10px;white-space:nowrap">
+          <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${staffColors[si]};margin-right:3px;vertical-align:middle"></span>
+          <span style="font-size:10px;color:#6b6460">${s.zh}</span>
+        </td>
+        ${sData.map(v=>`<td style="text-align:center;padding:2px 0;font-size:10px;color:#6b6460">${v>0?v:'—'}</td>`).join('')}
+      </tr>`;
+    });
+    html+=`<tr>
+      <td colspan="${midxs.length+1}" style="padding:3px 0">
+        <button onclick="(function(btn){var wrap=document.getElementById('${tableWrapId}');var rows=wrap.querySelectorAll('.staff-detail-row');var open=rows[0].style.display!=='none';rows.forEach(function(r){r.style.display=open?'none':'table-row';});btn.textContent=open?'▾ 個人明細':'▴ 收合';}).call(this,this)"
+          style="font-size:10px;color:#aea9a4;background:none;border:none;cursor:pointer;padding:2px 0;display:inline-flex;align-items:center;gap:2px">▾ 個人明細</button>
+      </td>
+    </tr>`;
+  }
+
+  html+=`</table></div>`;
+  canvas.parentElement.insertAdjacentHTML('afterend',html);
+}
+
+function renderMainBrandCharts(){
+  const groups=getGroups();
+  const allStaff=STAFF_INFO.map((_,i)=>i);
+  const wCard=document.getElementById('main-chart-w');
+  const qCard=document.getElementById('main-chart-q');
+  if(wCard)wCard.style.display=groups.includes('渥')?'':'none';
+  if(qCard)qCard.style.display=groups.includes('綺')?'':'none';
+  if(groups.includes('渥'))buildBrandChart('渥','mainChartW',allStaff);
+  if(groups.includes('綺'))buildBrandChart('綺','mainChartQ',allStaff);
+}
+
+function renderRanking(){
+  const wrap=document.getElementById('rank-card');
+  if(!wrap)return;
+  const midxs=getMonthIdxs();
+
+  // 分品牌建立資料
+  function brandData(g){
+    const isW=g==='渥';
+    return STAFF_INFO.map((s,si)=>{
+      let inq=0,book=0,arrive=0,tar=0;
+      midxs.forEach(mi=>{
+        inq+=perf[g].詢問數[mi][si];
+        book+=perf[g].預約數[mi][si];
+        const n=perf[g].新客到店[mi][si];
+        const o=perf[g].舊客到店[mi][si];
+        arrive+=isW?n:n+o;
+        tar+=perf[g].目標[mi][si];
+      });
+      return{zh:s.zh,en:s.en,
+        bookRate:inq>0?Math.round(book/inq*100):0,
+        achRate:tar>0?Math.round(arrive/tar*100):0,
+        book,inq,arrive,tar};
+    });
+  }
+  const dataW=brandData('渥');
+  const dataQ=brandData('綺');
+
+  // 名次牌
+  function medal(i){
+    const bg=i===0?'#f59e0b':i===1?'#9ca3af':i===2?'#b45309':null;
+    return bg
+      ?`<span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:${bg};color:#fff;font-size:10px;font-weight:800;flex-shrink:0">${i+1}</span>`
+      :`<span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;font-size:11px;color:#aea9a4;font-weight:700;flex-shrink:0">${i+1}</span>`;
+  }
+
+  // 單欄排行 row（通用）
+  function rankRow(d,i,val,clr,barW,sub){
+    return `<div style="display:grid;grid-template-columns:20px 1fr auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid #f5f3f0">
+      ${medal(i)}
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#1a1a1a">${d.zh} <span style="font-size:10px;color:#aea9a4;font-weight:400">${d.en}</span></div>
+        <div style="background:#f1ede8;border-radius:99px;height:4px;overflow:hidden;margin-top:3px">
+          <div style="width:${barW}%;height:4px;border-radius:99px;background:${clr}"></div>
+        </div>
+        <div style="font-size:10px;color:#aea9a4;margin-top:1px">${sub}</div>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:${clr};white-space:nowrap">${val}</div>
+    </div>`;
+  }
+
+  // 左渥右綺並排區塊
+  function pairBlock(titleW,titleQ,sortedW,sortedQ,valFnW,valFnQ,clrFnW,clrFnQ,barFnW,barFnQ,subFnW,subFnQ){
+    const rowsW=sortedW.map((d,i)=>rankRow(d,i,valFnW(d)+'%',clrFnW(d),barFnW(d),subFnW(d))).join('');
+    const rowsQ=sortedQ.map((d,i)=>rankRow(d,i,valFnQ(d)+'%',clrFnQ(d),barFnQ(d),subFnQ(d))).join('');
+    return colPair(titleW,titleQ,'#1e40af','#9d174d',rowsW,rowsQ);
+  }
+  function arriveBlock(titleW,titleQ,sortedW,sortedQ){
+    const maxW=Math.max(...sortedW.map(d=>d.arrive),1);
+    const maxQ=Math.max(...sortedQ.map(d=>d.arrive),1);
+    const achClr=d=>d.tar>0?(d.achRate>=100?'#15803d':'#dc2626'):'#6b6460';
+    const rowsW=sortedW.map((d,i)=>rankRow(d,i,String(d.arrive),achClr(d),Math.round(d.arrive/maxW*100),d.tar>0?`達標 ${d.achRate}%`:'—')).join('');
+    const rowsQ=sortedQ.map((d,i)=>rankRow(d,i,String(d.arrive),achClr(d),Math.round(d.arrive/maxQ*100),d.tar>0?`達標 ${d.achRate}%`:'—')).join('');
+    return colPair(titleW,titleQ,'#1e40af','#9d174d',rowsW,rowsQ);
+  }
+
+  function colPair(tW,tQ,cW,cQ,rowsW,rowsQ){
+    const pill=(lbl,c)=>`<span style="padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700;background:${c==='#1e40af'?'#dbeafe':'#fce7f3'};color:${c}">${lbl}</span>`;
+    return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <div style="border:0.5px solid #e8e4de;border-top:2px solid ${cW};border-radius:8px;overflow:hidden">
+        <div style="padding:8px 10px 6px;background:#f8faff;border-bottom:0.5px solid #e8e4de;display:flex;align-items:center;gap:6px">
+          ${pill('原渥',cW)}<span style="font-size:11px;color:#6b6460">${tW}</span>
+        </div>
+        <div style="padding:2px 10px 4px">${rowsW}</div>
+      </div>
+      <div style="border:0.5px solid #e8e4de;border-top:2px solid ${cQ};border-radius:8px;overflow:hidden">
+        <div style="padding:8px 10px 6px;background:#fdf8fc;border-bottom:0.5px solid #e8e4de;display:flex;align-items:center;gap:6px">
+          ${pill('原綺',cQ)}<span style="font-size:11px;color:#6b6460">${tQ}</span>
+        </div>
+        <div style="padding:2px 10px 4px">${rowsQ}</div>
+      </div>
+    </div>`;
+  }
+
+  const bookClr=v=>v>=30?'#15803d':'#dc2626';
+  const achClr=v=>v>=100?'#15803d':'#dc2626';
+
+  const byBookW=[...dataW].sort((a,b)=>b.bookRate-a.bookRate);
+  const byBookQ=[...dataQ].sort((a,b)=>b.bookRate-a.bookRate);
+  const byAchW=[...dataW].sort((a,b)=>b.achRate-a.achRate);
+  const byAchQ=[...dataQ].sort((a,b)=>b.achRate-a.achRate);
+  const byArrW=[...dataW].sort((a,b)=>b.arrive-a.arrive);
+  const byArrQ=[...dataQ].sort((a,b)=>b.arrive-a.arrive);
+
+  wrap.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:2px solid #e8e4de;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:#1a1a1a">🏆 客服人員排行</div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:#2563eb;margin-bottom:6px">📌 預約率（預約數 ÷ 詢問數）　<span style="font-weight:400;color:#aea9a4">目標 ≥ 30%</span></div>
+    ${pairBlock('預約率','預約率',byBookW,byBookQ,
+        d=>d.bookRate,d=>d.bookRate,
+        d=>bookClr(d.bookRate),d=>bookClr(d.bookRate),
+        d=>Math.min(d.bookRate,100),d=>Math.min(d.bookRate,100),
+        d=>`預約 ${d.book} / 詢問 ${d.inq}`,d=>`預約 ${d.book} / 詢問 ${d.inq}`)}
+    <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:6px">📌 達標率（到店數 ÷ 目標）　<span style="font-weight:400;color:#aea9a4">目標 ≥ 100%</span></div>
+    ${pairBlock('達標率','達標率',byAchW,byAchQ,
+        d=>d.achRate,d=>d.achRate,
+        d=>achClr(d.achRate),d=>achClr(d.achRate),
+        d=>Math.min(d.achRate,100),d=>Math.min(d.achRate,100),
+        d=>d.tar>0?`到店 ${d.arrive} / 目標 ${d.tar}`:'尚無目標',
+        d=>d.tar>0?`到店 ${d.arrive} / 目標 ${d.tar}`:'尚無目標')}
+    <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:6px">📌 到店數　<span style="font-weight:400;color:#aea9a4">渥＝新客；綺＝新客＋舊客</span></div>
+    ${arriveBlock('到店數','到店數',byArrW,byArrQ)}`;
+}
+
+// ─── STAFF PERF TAB ───────────────────────────────────
+function renderStaffSel(){
+  const btns=[`<button class="ssel-btn ${curStaff===-1?'active':''}" onclick="setSt(-1,this)">全體</button>`,
+    ...STAFF_INFO.map((s,i)=>`<button class="ssel-btn ${curStaff===i?'active':''}" onclick="setSt(${i},this)">${s.zh} <small style="opacity:.6">${s.en}</small></button>`)];
+  document.getElementById('staff-sel').innerHTML=btns.join('');
+}
+function setSt(idx,btn){curStaff=idx;document.querySelectorAll('.ssel-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderStaff();renderStaffPerfContent();}
+
+function renderStaffPerf(){renderStaffSel();renderStaffPerfContent();}
+
+function renderStaffCrossTable(){
+  const groups=getGroups(),midxs=getMonthIdxs();
+  const wrap=document.getElementById('staff-cross-table');
+  if(!wrap)return;
+  const n=STAFF_INFO.length;
+  function pct(a,b){return b>0?Math.round(a/b*100):0;}
+  function achCell(v){ return pillAch(v); }
+
+  // 樣式
+  const stickyBase='position:sticky;left:0;z-index:2;white-space:nowrap';
+  const thSticky=`${stickyBase};background:#1a1a1a;color:#fff;padding:6px 12px;font-size:11px;font-weight:700;border:1px solid #333`;
+  const lblSticky=`${stickyBase};background:#faf9f7;color:#6b6460;padding:5px 10px;font-size:11px;font-weight:700;border-right:2px solid #d4cfc8;border-bottom:1px solid #e8e4de;border-top:1px solid #e8e4de`;
+
+  // 每個月份第一欄加粗左邊框（月份分界）
+  function monthBorder(mi_idx){ return mi_idx===0?'':'border-left:2px solid #a0a0a0'; }
+  function cellBg(mi_idx){ return mi_idx%2===0?'#ffffff':'#f9f8f7'; }
+
+  const thMonth=(mi_idx,mi)=>`padding:6px 10px;text-align:center;font-size:11px;font-weight:800;white-space:nowrap;background:#1a1a1a;color:#fff;border:1px solid #333;${monthBorder(mi_idx)}`;
+  const tdData=(mi_idx,extra='')=>`padding:4px 8px;text-align:center;font-size:11px;border-bottom:1px solid #eee;white-space:nowrap;background:${cellBg(mi_idx)};${mi_idx>0?'border-left:1px solid #d0d0d0':''};${extra}`;
+  const tdFirst=(mi_idx,extra='')=>`${tdData(mi_idx,extra)};${mi_idx>0?'border-left:2px solid #a0a0a0':''}`;
+
+  let t=`<table style="border-collapse:collapse;min-width:max-content;font-size:11px">
+  <thead>
+    <tr>
+      <th style="${thSticky};min-width:90px">指標</th>
+      ${midxs.map((mi,idx)=>`<th colspan="${n}" style="${thMonth(idx,mi)}">${ML[mi]}</th>`).join('')}
+    </tr>
+  </thead><tbody>`;
+
+  groups.forEach(g=>{
+    const isW=g==='渥';
+    const hdrBg=isW?'#1e3a8a':'#831843';
+    const hdrLight=isW?'#2563eb40':'#be185d40';
+
+    // 品牌列 = 品牌標題 + 人名（凍結列）
+    t+=`<tr>
+      <td style="${stickyBase};background:${hdrBg};color:#fff;font-size:12px;font-weight:800;padding:6px 12px;border:1px solid ${hdrBg}">${isW?'原渥':'原綺'}</td>
+      ${midxs.map((mi,idx)=>STAFF_INFO.map((s,si)=>{
+        const isFst=si===0;
+        return `<td style="padding:5px 8px;text-align:center;font-size:11px;font-weight:700;background:${hdrBg};color:#fff;border:1px solid ${hdrBg}${isFst&&idx>0?';border-left:2px solid #fff':''}">${s.en}</td>`;
+      }).join('')).join('')}
+    </tr>`;
+
+    const rows=[
+      ['詢問數',  false,(mi,si)=>perf[g].詢問數[mi][si]],
+      ['預約數',  false,(mi,si)=>perf[g].預約數[mi][si]],
+      ['預約率',  true, (mi,si)=>pct(perf[g].預約數[mi][si],perf[g].詢問數[mi][si])+'%'],
+      ['新客到店',false,(mi,si)=>perf[g].新客到店[mi][si]],
+      ...(isW?[]:[ ['舊客到店',false,(mi,si)=>perf[g].舊客到店[mi][si]] ]),
+      [`轉換率(${isW?20:15}%)`,true,(mi,si)=>{
+        const arr=isW?perf[g].新客到店[mi][si]:perf[g].新客到店[mi][si]+perf[g].舊客到店[mi][si];
+        return pct(arr,perf[g].詢問數[mi][si])+'%';
+      }],
+      ['目標',    false,(mi,si)=>perf[g].目標[mi][si]||'—'],
+      ['達成率',  'ach',(mi,si)=>{
+        const tar=perf[g].目標[mi][si];
+        const arr=isW?perf[g].新客到店[mi][si]:perf[g].新客到店[mi][si]+perf[g].舊客到店[mi][si];
+        return tar>0?pct(arr,tar):0;
+      }],
+    ];
+
+    rows.forEach(([name,dim,fn])=>{
+      const txtClr=dim===true?'#9a9490':'#1a1a1a';
+      t+=`<tr><td style="${lblSticky}">${name}</td>`;
+      midxs.forEach((mi,mi_idx)=>{
+        STAFF_INFO.forEach((_,si)=>{
+          const v=fn(mi,si);
+          const isFst=si===0;
+          const base=isFst?tdFirst(mi_idx):tdData(mi_idx);
+          t+=`<td style="${base};color:${txtClr}">${dim==='ach'?achCell(v):v}</td>`;
+        });
+      });
+      t+=`</tr>`;
+    });
+  });
+
+  t+=`</tbody></table>`;
+  wrap.innerHTML=t;
+}
+
+function renderStaffPerfContent(){
+  const groups=getGroups(),midxs=getMonthIdxs(),si=curStaff,isAll=si===-1;
+  const kd={};
+  groups.forEach(g=>{
+    let inq=0,book=0,newC=0,oldC=0,tar=0;
+    midxs.forEach(mi=>{
+      if(isAll){perf[g].詢問數[mi].forEach(v=>inq+=v);perf[g].預約數[mi].forEach(v=>book+=v);perf[g].新客到店[mi].forEach(v=>newC+=v);perf[g].舊客到店[mi].forEach(v=>oldC+=v);perf[g].目標[mi].forEach(v=>tar+=v);}
+      else{inq+=perf[g].詢問數[mi][si];book+=perf[g].預約數[mi][si];newC+=perf[g].新客到店[mi][si];oldC+=perf[g].舊客到店[mi][si];tar+=perf[g].目標[mi][si];}
+    });
+    const arrive=g==='渥'?newC:newC+oldC;
+    kd[g]={inq,book,newC,oldC,tar,arrive,
+      ach:tar>0?Math.round(arrive/tar*100):0,
+      bookRate:inq>0?Math.round(book/inq*100):0,
+      arrRate:book>0?Math.round(arrive/book*100):0,
+      convRate:inq>0?Math.round(arrive/inq*100):0};
+  });
+
+  const kItems=[
+    {lbl:'詢問數',fn:g=>kd[g].inq.toLocaleString(),c:'#6b6460'},
+    {lbl:'預約數<span style="color:#aea9a4;font-weight:600">/預約率</span>',fn:g=>`${kd[g].book.toLocaleString()} <small style="color:#aea9a4">${kd[g].bookRate}%</small>`,c:'#2563eb'},
+    {lbl:'到店數<span style="color:#aea9a4;font-weight:600">/到店率</span>',fn:g=>`${kd[g].arrive.toLocaleString()} <small style="color:#aea9a4">${kd[g].arrRate}%</small>`,c:'#b45309'},
+    {lbl:'實際轉換率',fn:g=>kd[g].convRate+'%',c:'#7c3aed'},
+  ];
+  document.getElementById('staff-kpi').innerHTML=kItems.map(item=>`
+    <div class="perf-kpi" style="border-left-color:${item.c}">
+      <div class="perf-kpi-label">${item.lbl}</div>
+      ${groups.map(g=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">${pill(g)}<span class="perf-num">${item.fn(g)}</span></div>`).join('')}
+    </div>`).join('');
+
+
+  // ── 全體 vs 個人 顯示切換
+  const isIndividual=!isAll;
+  document.getElementById('rank-card').style.display=isIndividual?'none':'';
+  document.getElementById('cross-table-card').style.display=isIndividual?'none':'';
+  document.getElementById('staff-monthly-card').style.display=isIndividual?'':'none';
+  if(!isIndividual) renderRanking();
+
+  // ── KPI 版面：全體=橫排滿版4欄；個人=貼右2×2
+  const wrap=document.getElementById('staff-card-kpi-wrap');
+  const kpiEl=document.getElementById('staff-kpi');
+  const gridEl=document.getElementById('staff-grid');
+  if(isAll){
+    // 全體：KPI 橫排4欄滿版，staff grid 在下方
+    wrap.style.cssText='display:flex;flex-direction:column;gap:12px';
+    kpiEl.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;margin-bottom:0;order:0';
+    gridEl.style.cssText='width:100%;order:1';
+  } else {
+    // 個人：staff card 左，KPI 2×2 右
+    wrap.style.cssText='display:flex;flex-direction:row;gap:16px;align-items:flex-start;flex-wrap:wrap';
+    kpiEl.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1 1 300px;max-width:480px;min-width:280px;order:1';
+    gridEl.style.cssText='flex:1 1 auto;min-width:280px;max-width:100%;order:0';
+  }
+
+  // ── 每月達標（個人模式）
+  if(isIndividual){
+    const wrap=document.getElementById('staff-monthly-ach');
+    const thB='padding:5px 10px;text-align:center;font-size:11px;font-weight:700;border:1px solid #e8e4de;white-space:nowrap';
+    const tdB='padding:5px 10px;text-align:center;font-size:12px;border:1px solid #eee;white-space:nowrap';
+    function pct2(a,b){return b>0?Math.round(a/b*100):0;}
+    let t=`<table style="border-collapse:collapse;width:100%;font-size:12px">
+      <thead><tr>
+        <th style="${thB};background:#1a1a1a;color:#fff;text-align:left">月份</th>
+        ${groups.map(g=>`<th colspan="3" style="${thB};background:${g==='渥'?'#1e3a8a':'#831843'};color:#fff">${g==='渥'?'原渥':'原綺'}</th>`).join('')}
+      </tr><tr>
+        <th style="${thB};background:#f5f3f0"></th>
+        ${groups.map(()=>`<th style="${thB};background:#f5f3f0">目標</th><th style="${thB};background:#f5f3f0">到店數</th><th style="${thB};background:#f5f3f0">達成率</th>`).join('')}
+      </tr></thead><tbody>`;
+    ML.forEach((m,mi)=>{
+      t+=`<tr><td style="${tdB};font-weight:700;background:#faf9f7;text-align:left;padding-left:14px">${m}</td>`;
+      groups.forEach(g=>{
+        const arr=g==='渥'?perf[g].新客到店[mi][si]:perf[g].新客到店[mi][si]+perf[g].舊客到店[mi][si];
+        const tar=perf[g].目標[mi][si];
+        t+=`<td style="${tdB};color:#9a9490">${tar||'—'}</td><td style="${tdB}">${arr}</td><td style="${tdB}">${pillAch(tar>0?pct2(arr,tar):0)}</td>`;
+      });
+      t+=`</tr>`;
+    });
+    t+=`</tbody></table>`;
+    wrap.innerHTML=t;
+  }
+}
+
+// ── 來源分析資料（依月份索引 0=1月，4=5月）
+// 格式：sourceData[monthIndex][brand][來源] = [詢問數, 到店數]
+// 請每月更新，沒有資料的月份可省略
+const sourceData={
+  0:{ // 1月
+    渥:{行銷:[183,78],業務:[42,12],團購:[0,0],其他:[14,4]},
+    綺:{行銷:[567,73],業務:[78,9],團購:[0,0],其他:[0,0]},
+  },
+  1:{ // 2月
+    渥:{行銷:[145,98],業務:[38,8],團購:[0,0],其他:[6,3]},
+    綺:{行銷:[584,81],業務:[94,14],團購:[0,0],其他:[0,0]},
+  },
+  2:{ // 3月
+    渥:{行銷:[594,138],業務:[69,19],團購:[0,0],其他:[123,35]},
+    綺:{行銷:[672,74],業務:[88,9],團購:[0,0],其他:[0,0]},
+  },
+  3:{ // 4月
+    渥:{行銷:[621,182],業務:[42,13],團購:[0,0],其他:[0,0]},
+    綺:{行銷:[524,78],業務:[73,8],團購:[0,0],其他:[0,0]},
+  },
+  4:{ // 5月
+    渥:{行銷:[606,135],業務:[36,4],團購:[7,66],其他:[0,0]},
+    綺:{行銷:[676,87],業務:[66,5],團購:[0,0],其他:[0,0]},
+  },
+};
+
+// ── 來源分析表
+function renderSource(){
+  const wrap=document.getElementById('source-table-wrap');
+  if(!wrap)return;
+  const midxs=getMonthIdxs();
+  const sources=['行銷','業務','團購','其他'];
+  const brands=['渥','綺']; // 渥在左，綺在右
+
+  // 彙整多月
+  const totals={};
+  brands.forEach(g=>{
+    totals[g]={};
+    sources.forEach(src=>{
+      let inqSum=0,arrSum=0;
+      midxs.forEach(mi=>{
+        const d=sourceData[mi]?.[g]?.[src];
+        if(d){inqSum+=d[0];arrSum+=d[1];}
+      });
+      totals[g][src]=[inqSum,arrSum];
+    });
+  });
+
+  // 是否有任何資料
+  const hasData=brands.some(g=>sources.some(src=>totals[g][src][0]>0||totals[g][src][1]>0));
+  if(!hasData){
+    wrap.innerHTML='<div style="padding:14px;color:#aea9a4;font-size:12px;text-align:center">目前選擇的月份尚無來源分析資料，請更新 sourceData 物件</div>';
+    return;
+  }
+
+  const periodLabel=curMonth===0?'2026年 1–5月':ML[curMonth-1];
+  const brandDark={渥:{hdr:'#1e3a8a',sub:'#1e40af'},綺:{hdr:'#831843',sub:'#9d174d'}};
+  const brandNames={渥:'原渥',綺:'原綺'};
+
+  let h=`<div style="font-size:11px;color:#aea9a4;margin-bottom:8px">期間：${periodLabel}</div>`;
+  h+=`<table class="source-table"><thead>
+    <tr>
+      <th style="text-align:left;background:#1a1a1a;color:#fff;position:sticky;left:0;z-index:3;white-space:nowrap" rowspan="2">來源</th>
+      ${brands.map(g=>`<th colspan="3" style="background:${brandDark[g].hdr};color:#fff">${brandNames[g]}</th>`).join('')}
+    </tr>
+    <tr>
+      ${brands.map(g=>`
+        <th style="background:${brandDark[g].sub};color:#fff;opacity:.9;font-weight:600">詢問數</th>
+        <th style="background:${brandDark[g].sub};color:#fff;opacity:.9;font-weight:600">到店數</th>
+        <th style="background:${brandDark[g].sub};color:#fff;opacity:.9;font-weight:600">詢問轉換</th>
+      `).join('')}
+    </tr>
+  </thead><tbody>`;
+
+  // 各品牌詢問轉換目標：原渥≥25%、原綺≥15%
+  const convThreshold={渥:25,綺:15};
+  const convClr=(g,rate)=>rate===null?'#aea9a4':rate>=convThreshold[g]?'#15803d':'#dc2626';
+
+  sources.forEach(src=>{
+    h+=`<tr><td class="row-lbl">${src}</td>`;
+    brands.forEach(g=>{
+      const [inq,arr]=totals[g][src];
+      const rate=inq>0?Math.round(arr/inq*100):null;
+      const rateStr=rate===null?'—':rate+'%';
+      h+=`<td>${inq>0?inq.toLocaleString():'—'}</td>
+          <td>${arr>0?arr.toLocaleString():'—'}</td>
+          <td style="color:${convClr(g,rate)};font-weight:700">${rateStr}</td>`;
+    });
+    h+=`</tr>`;
+  });
+
+  // 合計列
+  h+=`<tr style="background:#f5f3f0;font-weight:700"><td class="row-lbl" style="background:#ece8e1!important">合計</td>`;
+  brands.forEach(g=>{
+    let tInq=0,tArr=0;
+    sources.forEach(src=>{tInq+=totals[g][src][0];tArr+=totals[g][src][1];});
+    const rate=tInq>0?Math.round(tArr/tInq*100):null;
+    const rateStr=rate===null?'—':rate+'%';
+    h+=`<td style="background:#ece8e1">${tInq>0?tInq.toLocaleString():'—'}</td>
+        <td style="background:#ece8e1">${tArr>0?tArr.toLocaleString():'—'}</td>
+        <td style="background:#ece8e1;color:${convClr(g,rate)};font-weight:700">${rateStr}</td>`;
+  });
+  h+=`</tr></tbody></table>`;
+  h+=`<div style="margin-top:8px;font-size:10px;color:#aea9a4">🎯 目標：原渥詢問轉換 ≥ 25%、原綺詢問轉換 ≥ 15%　低於目標標示紅色</div>`;
+  wrap.innerHTML=h;
+}
+
+// ── 週報產生器
+function generateReport(){
+  const today=new Date().toLocaleDateString('zh-TW');
+  const groups=['渥','綺'];
+  const midxs=getMonthIdxs();
+
+  // ── 計算數據（共用）
+  const teamData={};
+  groups.forEach(g=>{
+    const target=midxs.reduce((s,mi)=>s+sumArr(perf[g].目標[mi]),0);
+    const newC=midxs.reduce((s,mi)=>s+sumArr(perf[g].新客到店[mi]),0);
+    const oldC=midxs.reduce((s,mi)=>s+sumArr(perf[g].舊客到店[mi]),0);
+    const inqT=midxs.reduce((s,mi)=>s+sumArr(perf[g].詢問數[mi]),0);
+    const bookT=midxs.reduce((s,mi)=>s+sumArr(perf[g].預約數[mi]),0);
+    const arrive=g==='渥'?newC:newC+oldC;
+    const ach=target>0?Math.round(arrive/target*100):0;
+    const bookRate=inqT>0?Math.round(bookT/inqT*100):0;
+    const convRate=inqT>0?Math.round(arrive/inqT*100):0;
+    teamData[g]={target,arrive,ach,diff:arrive-target,inq:inqT,book:bookT,bookRate,convRate};
+  });
+  const staffData=STAFF_INFO.map((s,si)=>{
+    const gd={};
+    groups.forEach(g=>{
+      const newC=midxs.reduce((sum,mi)=>sum+perf[g].新客到店[mi][si],0);
+      const oldC=midxs.reduce((sum,mi)=>sum+perf[g].舊客到店[mi][si],0);
+      const tar=midxs.reduce((sum,mi)=>sum+perf[g].目標[mi][si],0);
+      const inq=midxs.reduce((sum,mi)=>sum+perf[g].詢問數[mi][si],0);
+      const book=midxs.reduce((sum,mi)=>sum+perf[g].預約數[mi][si],0);
+      const arrive=g==='渥'?newC:newC+oldC;
+      const ach=tar>0?Math.round(arrive/tar*100):0;
+      gd[g]={newC,oldC,tar,arrive,ach,inq,book,diff:arrive-tar,
+        convRate:inq>0?Math.round(arrive/inq*100):0};
+    });
+    return{...s,gd};
+  });
+
+  // ── helpers
+  const achClr=v=>v>=100?'#15803d':v>0?'#dc2626':'#aea9a4';
+
+  // ── 週報暫時使用靜態資料（同步欄位待確認後重新啟用）
+  const weekDataLabel='';
+
+  // ══════════════════════════════════════════════════════
+  // 【週報】精簡訊息版
+  // ══════════════════════════════════════════════════════
+  {
+    // 團隊摘要行
+    const teamSummary=groups.map(g=>{
+      const d=teamData[g];
+      const clr=achClr(d.ach);
+      const bg=g==='渥'?'#dbeafe':'#fce7f3';
+      const fc=g==='渥'?'#1e40af':'#9d174d';
+      const gn=g==='渥'?'原渥':'原綺';
+      const pillAchStr=d.ach>=100
+        ?`<span style="background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">✓ ${d.ach}%</span>`
+        :`<span style="background:#dc2626;color:#fff;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">✗ ${d.ach}%</span>`;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1ede8">
+        <span style="background:${bg};color:${fc};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap">${gn}</span>
+        <span style="font-size:20px;font-weight:800;color:${clr}">${d.arrive}</span>
+        <span style="font-size:12px;color:#aea9a4">/ ${d.target>0?d.target:'—'}</span>
+        ${pillAchStr}
+        <span style="margin-left:auto;font-size:12px;color:#6b6460">詢問→到店 ${d.convRate}%</span>
+      </div>`;
+    }).join('');
+
+    // 個人卡片 grid
+    const maxArrTot=Math.max(...staffData.map(s=>{let a=0;groups.forEach(g=>{a+=s.gd[g].arrive;});return a;}),1);
+    const staffCards=staffData.map(s=>{
+      let totArr=0,totTar=0;
+      groups.forEach(g=>{totArr+=s.gd[g].arrive;totTar+=s.gd[g].tar;});
+      const ach=totTar>0?Math.round(totArr/totTar*100):0;
+      const clr=achClr(ach);
+      const bw=Math.round(totArr/maxArrTot*100);
+      // 每個品牌區塊：第一行達標狀況、第二行訊息轉換
+      const brandRows=groups.map((g,gi)=>{
+        const d=s.gd[g];
+        const pb=g==='渥'?'#dbeafe':'#fce7f3';
+        const pc=g==='渥'?'#1e40af':'#9d174d';
+        const gAch=d.tar>0?Math.round(d.arrive/d.tar*100):0;
+        const gConv=d.inq>0?Math.round(d.arrive/d.inq*100):0;
+        const gClr=gAch>=100?'#15803d':'#dc2626';
+        const gPill=d.tar>0
+          ?(gAch>=100
+            ?`<span style="background:#dcfce7;color:#15803d;padding:3px 10px;border-radius:20px;font-size:13px;font-weight:700">✓ ${gAch}%</span>`
+            :`<span style="background:#dc2626;color:#fff;padding:3px 10px;border-radius:20px;font-size:13px;font-weight:700">✗ ${gAch}%</span>`)
+          :'<span style="color:#aea9a4;font-size:12px">—</span>';
+        const convClr=gConv>=20?'#15803d':gConv>=10?'#b45309':'#dc2626';
+        const isLast=gi===groups.length-1;
+        return `<div style="padding:10px 0;${isLast?'':'border-bottom:1px solid #f1ede8'}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+            <span style="background:${pb};color:${pc};padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">${g==='渥'?'原渥':'原綺'}</span>
+            <span style="font-size:15px;font-weight:700;color:#1a1a1a">${d.arrive} <span style="font-size:11px;color:#aea9a4;font-weight:400">/ ${d.tar>0?d.tar:'—'}</span></span>
+            ${gPill}
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:4px">
+            <span style="font-size:11px;color:#6b6460">${d.inq} 筆詢問 → ${d.arrive} 人到店　<strong style="color:${convClr}">${gConv}%</strong></span>
+          </div>
+          <div style="background:#f1ede8;border-radius:99px;height:4px;overflow:hidden">
+            <div style="width:${gConv*3}%;max-width:100%;height:4px;background:${convClr};border-radius:99px"></div>
+          </div>
+        </div>`;
+      }).join('');
+      return `<div style="border:1px solid #e8e4de;border-radius:10px;padding:4px 14px 4px">
+        <div style="font-size:13px;font-weight:800;padding:10px 0 6px;border-bottom:1px solid #e8e4de">${s.zh} <span style="font-size:10px;color:#aea9a4;font-weight:400">${s.en}</span></div>
+        ${brandRows}
+      </div>`;
+    }).join('');
+
+    // 報告標題資料說明
+    const curMonLabel=curMonth>0?ML[curMonth-1]:'當月';
+    const dataSourceLabel=weekDataLabel||(curMonLabel+'累計');
+    document.getElementById('report-output').innerHTML=`
+    <div class="card" style="background:#fff;border:1.5px solid #e8e4de;padding:0;overflow:hidden;max-width:700px">
+      <div style="background:#1a1a1a;color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:14px;font-weight:800;letter-spacing:.5px">📊 客服成效週報</div>
+          <div style="font-size:11px;color:#aaa;margin-top:2px">2026年 ${curMonLabel}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:#666">${today}</div>
+          <div style="font-size:10px;margin-top:2px;color:${weekDataLabel?'#4ade80':'#888'}">資料：${dataSourceLabel}</div>
+        </div>
+      </div>
+      <div style="padding:14px 18px">
+        <div style="margin-bottom:14px">${teamSummary}</div>
+        <div style="font-size:11px;font-weight:700;color:#6b6460;margin-bottom:8px;border-left:3px solid #d4cfc8;padding-left:8px">個人到店</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
+          ${staffCards}
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+
+function refresh(){
+  if(curTab==='main'){renderTeam();renderKPI();renderTrend();renderSource();renderMainBrandCharts();}
+  else if(curTab==='staff'){renderStaffPerf();renderStaff();renderStaffCrossTable();}
+}
+refresh();
+// 頁面載入後自動同步全部資料
+syncAll();
+</script>
+<footer style="text-align:center;padding:18px;font-size:11px;color:#c4b8a8;letter-spacing:1px">Created by MAO</footer>
+</body>
+</html>
