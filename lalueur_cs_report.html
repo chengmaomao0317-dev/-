@@ -1153,9 +1153,8 @@ async function syncAll() {
 
   const results = {};
 
-  // ① 績效
-  try { await syncPerfData(); results.perf='✓ 績效'; }
-  catch(e) { results.perf=`✗ 績效(${e.message})`; console.warn('[sync] perf:',e); }
+  // ① 績效（靜態數據已為正確值，不自動覆蓋）
+  results.perf='— 績效(靜態)';
 
   // ② 來源
   try {
