@@ -1156,14 +1156,8 @@ async function syncAll() {
   // ① 績效（靜態數據已為正確值，不自動覆蓋）
   results.perf='— 績效(靜態)';
 
-  // ② 來源
-  try {
-    const n = await syncSourceData();
-    results.source = n > 0 ? `✓ 來源(${n}月)` : `⚠ 來源(結構待確認)`;
-  } catch(e) {
-    results.source = `✗ 來源（${e.message}）`;
-    console.warn('[syncAll] source 失敗:', e);
-  }
+  // ② 來源（靜態數據已為正確值，不自動覆蓋）
+  results.source = '— 來源(靜態)';
 
   // ③ 趨勢
   try {
