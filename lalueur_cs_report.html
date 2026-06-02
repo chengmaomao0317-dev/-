@@ -1156,8 +1156,14 @@ async function syncAll() {
   // ① 績效（靜態數據已為正確值，不自動覆蓋）
   results.perf='— 績效(靜態)';
 
-  // ② 來源（靜態數據已為正確值，不自動覆蓋）
-  results.source = '— 來源(靜態)';
+  // ② 來源
+  try {
+    const n = await syncSourceData();
+    results.source = `✓ 來源`;
+  } catch(e) {
+    results.source = `✗ 來源（${e.message}）`;
+    console.warn('[syncAll] source 失敗:', e);
+  }
 
   // ③ 趨勢
   try {
@@ -1888,14 +1894,17 @@ function generateReport(){
         const pb=g==='渥'?'#dbeafe':'#fce7f3';
         const pc=g==='渥'?'#1e40af':'#9d174d';
         const gAch=d.tar>0?Math.round(d.arrive/d.tar*100):0;
-        const gConv=d.inq>0?Math.round(d.arrive/d.inq*100):0;
         const gClr=gAch>=100?'#15803d':'#dc2626';
         const gPill=d.tar>0
           ?(gAch>=100
             ?`<span style="background:#dcfce7;color:#15803d;padding:3px 10px;border-radius:20px;font-size:13px;font-weight:700">✓ ${gAch}%</span>`
             :`<span style="background:#dc2626;color:#fff;padding:3px 10px;border-radius:20px;font-size:13px;font-weight:700">✗ ${gAch}%</span>`)
           :'<span style="color:#aea9a4;font-size:12px">—</span>';
+        // 原渥：轉換率用新+舊到店÷詢問；原綺只用新+舊到店（arrive已含舊）
+        const totalArrive=g==='渥'?(d.newC+d.oldC):d.arrive;
+        const gConv=d.inq>0?Math.round(totalArrive/d.inq*100):0;
         const convClr=gConv>=20?'#15803d':gConv>=10?'#b45309':'#dc2626';
+        const convLabel=`${d.inq} 筆總詢問 → ${totalArrive} 人(新+舊)到店 →`;
         const isLast=gi===groups.length-1;
         return `<div style="padding:10px 0;${isLast?'':'border-bottom:1px solid #f1ede8'}">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
@@ -1904,7 +1913,7 @@ function generateReport(){
             ${gPill}
           </div>
           <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:4px">
-            <span style="font-size:11px;color:#6b6460">${d.inq} 筆詢問 → ${d.arrive} 人到店　<strong style="color:${convClr}">${gConv}%</strong></span>
+            <span style="font-size:11px;color:#6b6460">${convLabel}　<strong style="color:${convClr}">${gConv}%</strong></span>
           </div>
           <div style="background:#f1ede8;border-radius:99px;height:4px;overflow:hidden">
             <div style="width:${gConv*3}%;max-width:100%;height:4px;background:${convClr};border-radius:99px"></div>
