@@ -261,7 +261,7 @@ const STAFF_INFO=[
   {en:"Sabrina",zh:"陳暄穎"},
   {en:"Jenny",  zh:"童怡君"},
 ];
-const ML=["1月","2月","3月","4月","5月"];
+const ML=["1月","2月","3月","4月","5月","6月"];
 
 // ── perf 資料來源：Google Sheets「預約人數2026/01」~「預約人數2026/05」
 // 　　透過 gviz/tq API 驗證 (Row4=詢問數, Row37=預約, Row38=到店)
@@ -274,19 +274,19 @@ const ML=["1月","2月","3月","4月","5月"];
 const perf={
   渥:{
     詢問數:  [[41,238,385,0,0],[40,144,410,406,389],[8,1,787,488,491],[4,19,768,630,646],[56,1,417,381,507],[0,0,0,0,0]],
-    預約數:  [[67,35,77,0,0],[9,25,60,87,47],[6,3,177,133,99],[2,4,180,187,82],[8,1,87,90,86],[0,0,0,0,0]],
-    新客到店:[[10,28,38,0,0],[21,25,55,39,18],[2,4,100,86,62],[3,1,111,125,80],[1,1,80,85,58],[0,0,0,0,0]],
-    舊客到店:[[5,2,5,0,0],[5,2,8,2,4],[2,0,12,8,13],[3,0,14,3,4],[2,0,11,0,13],[0,0,0,0,0]],
-    目標:    [[50,65,30,0,0],[20,50,50,30,30],[0,0,90,65,65],[0,0,70,75,75],[0,0,70,75,75],[0,0,70,75,75]],
-    達成率:  [[20,43,127,0,0],[105,50,110,130,60],[0,0,111,132,95],[0,0,159,167,107],[0,0,114,113,77],[0,0,0,0,0]],
+    預約數:  [[67,35,77,0,0],[9,25,60,87,47],[6,3,177,133,99],[2,4,180,187,82],[8,1,87,90,86],[0,0,12,10,0]],
+    新客到店:[[10,28,38,0,0],[21,25,55,39,18],[2,4,100,86,62],[3,1,111,125,80],[1,1,80,85,58],[0,0,4,5,4]],
+    舊客到店:[[5,2,5,0,0],[5,2,8,2,4],[2,0,12,8,13],[3,0,14,3,4],[2,0,11,0,13],[2,0,1,1,1]],
+    目標:    [[50,65,30,0,0],[20,50,50,30,30],[0,0,90,65,65],[0,0,70,75,75],[0,0,70,75,75],[0,10,90,90,50]],
+    達成率:  [[20,43,127,0,0],[105,50,110,130,60],[0,0,111,132,95],[0,0,159,167,107],[0,0,114,113,77],[0,0,4,6,8]],
   },
   綺:{
     詢問數:  [[621,657,28,0,0],[404,678,319,2,0],[411,636,326,24,20],[181,432,289,56,155],[214,389,315,93,92],[0,0,0,0,0]],
-    預約數:  [[140,102,2,0,0],[67,64,22,0,0],[94,93,24,5,2],[59,83,21,8,6],[47,87,19,6,8],[0,0,0,0,0]],
-    新客到店:[[69,81,0,0,0],[41,52,11,0,0],[55,56,15,0,1],[23,57,12,3,6],[20,48,19,4,7],[0,0,0,0,0]],
-    舊客到店:[[8,1,0,0,0],[6,10,1,0,0],[9,6,1,0,1],[11,12,2,2,2],[8,17,4,0,1],[0,0,0,0,0]],
+    預約數:  [[140,102,2,0,0],[67,64,22,0,0],[94,93,24,5,2],[59,83,21,8,6],[47,87,19,6,8],[0,0,1,1,0]],
+    新客到店:[[69,81,0,0,0],[41,52,11,0,0],[55,56,15,0,1],[23,57,12,3,6],[20,48,19,4,7],[0,1,1,0,3]],
+    舊客到店:[[8,1,0,0,0],[6,10,1,0,0],[9,6,1,0,1],[11,12,2,2,2],[8,17,4,0,1],[0,1,0,0,0]],
     目標:    [[70,50,0,0,0],[60,55,15,0,0],[50,60,0,0,0],[20,60,20,10,10],[20,60,20,10,10],[20,60,20,10,10]],
-    達成率:  [[110,164,0,0,0],[78,113,80,0,0],[128,103,0,0,0],[170,115,70,50,80],[140,108,115,40,80],[0,0,0,0,0]],
+    達成率:  [[110,164,0,0,0],[78,113,80,0,0],[128,103,0,0,0],[170,115,70,50,80],[140,108,115,40,80],[0,3,5,0,30]],
   },
 };
 const history={
@@ -432,7 +432,7 @@ function renderTeam(){
 function renderKPI(){
   const midxs=getMonthIdxs(),showAll=curGroup==='all';
   const shownGs=showAll?['渥','綺']:[curGroup];
-  const periodLabel=curMonth===0?'2026年 1–5月':ML[curMonth-1];
+  const periodLabel=curMonth===0?'2026年 1–6月':ML[curMonth-1];
   const bd={};
   ['渥','綺'].forEach(g=>{
     let inq=0,book=0,newC=0,oldC=0;
@@ -965,10 +965,14 @@ const SOURCE_SHEET_ID = '1sdjXTUo1tW9-fLWlUaWnXqNxxdzK573YuUSJcZdWSns';
 async function fetchSheetCSV(sheetId, gidOrName) {
   const param = (typeof gidOrName==='string' && isNaN(gidOrName))
     ? `sheet=${encodeURIComponent(gidOrName)}` : `gid=${gidOrName}`;
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&${param}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}（請確認試算表已開放「知道連結的人可檢視」）`);
-  return parseCSV(await res.text());
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&${param}`;
+  const res = await fetch(url, {credentials:'include'});
+  if (!res.ok) throw new Error(`HTTP ${res.status}（請確認已登入 Google 帳號）`);
+  const txt = await res.text();
+  const json = JSON.parse(txt.replace(/^[^(]+\(|\);?\s*$/g, ''));
+  return (json.table.rows || []).map(row =>
+    (row.c || []).map(cell => (cell && cell.v !== null && cell.v !== undefined) ? cell.v : null)
+  );
 }
 function parseCSV(text) {
   const rows = [];
@@ -992,40 +996,55 @@ function csvVal(s) {
   return isNaN(n)?s:n;
 }
 
-// ① 個人績效同步（客服個人績效總表 gid=377263112，CSV 方式）
-// 欄位映射：col = 2 + mi*5 + si  (mi=月份0-4, si=人員0-4)
+// ① 個人績效同步（Google Apps Script 直接回傳 JSON，無 CORS 問題）
+const PERF_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGnRxVOzZ6YJgtNf5NKfM7uEmySCm35205JdEcQ_2AhcOOMlYLEUkss4f2Oz5z8SJK/exec';
 async function syncPerfData() {
-  const rows = await fetchSheetCSV(PERF_SHEET_ID_2, 377263112);
-  if (rows.length < 18) throw new Error(`列數不足 (${rows.length})`);
-  // 原渥 rows（0-indexed）: 詢問=2, 預約=3, 新客到店=5, 舊客到店=6, 目標=8
-  // 原綺 rows:              詢問=11, 預約=12, 新客到店=14, 舊客到店=15, 目標=17
-  const ROW_MAP = {
-    渥: { 詢問數:2, 預約數:3, 新客到店:5, 舊客到店:6, 目標:8 },
-    綺: { 詢問數:11, 預約數:12, 新客到店:14, 舊客到店:15, 目標:17 },
-  };
-  for (const [g, metrics] of Object.entries(ROW_MAP)) {
-    for (const [metric, rowIdx] of Object.entries(metrics)) {
-      const row = rows[rowIdx] || [];
-      for (let mi = 0; mi < 6; mi++) {
-        for (let si = 0; si < 5; si++) {
-          perf[g][metric][mi][si] = Number(row[2 + mi*5 + si]) || 0;
-        }
-      }
+  const res = await fetch(PERF_APPS_SCRIPT_URL);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const { w詢問, w預約, w新客, w舊客, w目標,
+          q詢問, q預約, q新客, q舊客, q目標 } = data;
+
+  // 將30個數字拆成 [6個月][5人] 的二維陣列
+  function toGrid(data) {
+    const grid = [];
+    for (let mi = 0; mi < 6; mi++) {
+      const month = [];
+      for (let si = 0; si < 5; si++) month.push(data[mi*5 + si] || 0);
+      grid.push(month);
     }
+    return grid;
   }
+
+  perf['渥'].詢問數  = toGrid(w詢問);
+  perf['渥'].預約數  = toGrid(w預約);
+  perf['渥'].新客到店 = toGrid(w新客);
+  perf['渥'].舊客到店 = toGrid(w舊客);
+  perf['渥'].目標    = toGrid(w目標);
+  perf['綺'].詢問數  = toGrid(q詢問);
+  perf['綺'].預約數  = toGrid(q預約);
+  perf['綺'].新客到店 = toGrid(q新客);
+  perf['綺'].舊客到店 = toGrid(q舊客);
+  perf['綺'].目標    = toGrid(q目標);
+
   // 重算達成率
   ['渥','綺'].forEach(g => {
     const isW = g === '渥';
+    perf[g].達成率 = [];
     for (let mi = 0; mi < 6; mi++) {
+      const month = [];
       for (let si = 0; si < 5; si++) {
-        const arrive = isW ? perf[g].新客到店[mi][si]
+        const arrive = isW
+          ? perf[g].新客到店[mi][si]
           : perf[g].新客到店[mi][si] + perf[g].舊客到店[mi][si];
         const tar = perf[g].目標[mi][si];
-        perf[g].達成率[mi][si] = tar > 0 ? Math.round(arrive / tar * 100) : 0;
+        month.push(tar > 0 ? Math.round(arrive / tar * 100) : 0);
       }
+      perf[g].達成率.push(month);
     }
   });
-  return rows.length;
+
+  return 10;
 }
 
 // ② 來源分析同步（"X月客服" 各分頁，CSV 方式）
@@ -1154,8 +1173,14 @@ async function syncAll() {
 
   const results = {};
 
-  // ① 績效（靜態數據已為正確值，不自動覆蓋）
-  results.perf='— 績效(靜態)';
+  // ① 績效
+  try {
+    const n = await syncPerfData();
+    results.perf = `✓ 績效(${n}列)`;
+  } catch(e) {
+    results.perf = `✗ 績效（${e.message}）`;
+    console.warn('[syncAll] perf 失敗:', e);
+  }
 
   // ② 來源
   try {
@@ -1764,7 +1789,7 @@ function renderSource(){
     return;
   }
 
-  const periodLabel=curMonth===0?'2026年 1–5月':ML[curMonth-1];
+  const periodLabel=curMonth===0?'2026年 1–6月':ML[curMonth-1];
   const brandDark={渥:{hdr:'#1e3a8a',sub:'#1e40af'},綺:{hdr:'#831843',sub:'#9d174d'}};
   const brandNames={渥:'原渥',綺:'原綺'};
 
