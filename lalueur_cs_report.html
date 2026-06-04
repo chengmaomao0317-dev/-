@@ -158,6 +158,7 @@ canvas{max-height:240px}
     <button class="tab-btn active" onclick="setTab('main',this)">成效總覽</button>
     <button class="tab-btn" onclick="setTab('staff',this)">客服個人成效</button>
     <button class="tab-btn" onclick="setTab('weekly',this)">月報</button>
+    <button class="tab-btn" onclick="setTab('schedule',this)">班表</button>
   </div>
 </div>
 
@@ -234,6 +235,17 @@ canvas{max-height:240px}
 </div>
 
 <!-- TAB 3: 週報 -->
+<!-- TAB 4: 班表 -->
+<div id="view-schedule" style="display:none;padding:14px 16px;max-width:100%;overflow-x:auto">
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+    <div class="section-title" style="border:none;margin:0;padding:0">📅 客服班表</div>
+    <select id="schedule-month-sel" onchange="renderSchedule()" style="padding:4px 10px;border:1px solid #d4cfc8;border-radius:5px;font-size:12px;background:#f5f3f0;font-family:inherit;color:#1a1a1a">
+      <option value="6" selected>2026年 6月</option>
+    </select>
+  </div>
+  <div id="schedule-wrap"></div>
+</div>
+
 <div id="view-weekly" class="main" style="display:none">
   <div class="card" style="padding:14px 16px">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
@@ -313,8 +325,10 @@ function setTab(tab,btn){
   document.getElementById('view-main').style.display=tab==='main'?'flex':'none';
   document.getElementById('view-staff').style.display=tab==='staff'?'flex':'none';
   document.getElementById('view-weekly').style.display=tab==='weekly'?'flex':'none';
+  document.getElementById('view-schedule').style.display=tab==='schedule'?'block':'none';
   if(tab==='staff'){renderStaffPerf();renderStaff();renderStaffCrossTable();}
   if(tab==='weekly'){generateReport();}
+  if(tab==='schedule'){renderSchedule();}
 }
 function getGroups(){return curGroup==='all'?['渥','綺']:[curGroup]}
 function getMonthIdxs(){return curMonth===0?[0,1,2,3,4,5]:[curMonth-1]}
@@ -1027,6 +1041,24 @@ async function syncPerfData() {
   perf['綺'].舊客到店 = toGrid(q舊客);
   perf['綺'].目標    = toGrid(q目標);
 
+  // 用績效資料補充 2026 歷年趨勢（無需等待趨勢 sheet 填妥）
+  const sumM = (arr, mi) => (arr||[]).slice(mi*5, mi*5+5).reduce((s,v)=>s+(v||0),0);
+  if (!history['渥'][2026]) history['渥'][2026]={p:Array(12).fill(null),n:Array(12).fill(null)};
+  if (!history['綺'][2026]) history['綺'][2026]={p:Array(12).fill(null),n:Array(12).fill(null)};
+  if (!sheetTotal['渥']) sheetTotal['渥']={arrive:{},booknew:{}};
+  if (!sheetTotal['綺']) sheetTotal['綺']={arrive:{},booknew:{}};
+  if (!sheetTotal['渥'].arrive[2026]) sheetTotal['渥'].arrive[2026]=Array(12).fill(null);
+  if (!sheetTotal['綺'].arrive[2026]) sheetTotal['綺'].arrive[2026]=Array(12).fill(null);
+  for (let mi=0; mi<6; mi++) {
+    const wBk=sumM(w預約,mi), qBk=sumM(q預約,mi);
+    const wNw=sumM(w新客,mi), qNw=sumM(q新客,mi);
+    const wOd=sumM(w舊客,mi), qOd=sumM(q舊客,mi);
+    if (wBk||qBk) { history['渥'][2026].p[mi]=wBk; history['綺'][2026].p[mi]=qBk; }
+    if (wNw||qNw) { history['渥'][2026].n[mi]=wNw; history['綺'][2026].n[mi]=qNw; }
+    const wArr=wNw+wOd, qArr=qNw+qOd;
+    if (wArr||qArr) { sheetTotal['渥'].arrive[2026][mi]=wArr; sheetTotal['綺'].arrive[2026][mi]=qArr; }
+  }
+
   // 重算達成率
   ['渥','綺'].forEach(g => {
     const isW = g === '渥';
@@ -1067,37 +1099,97 @@ async function syncSourceData() {
 }
 function parseSourceRows(rows) {
   const SOURCES = ['行銷','業務','團購','其他'];
-  const result = {
+  // 模糊匹配：完全相符或開頭相符（如"行銷廣告"→"行銷"）
+  const matchSrc = v => { const s=String(v||'').trim(); return SOURCES.find(k=>s===k||s.startsWith(k)); };
+  const mkResult = () => ({
     渥: { 行銷:[0,0], 業務:[0,0], 團購:[0,0], 其他:[0,0] },
     綺: { 行銷:[0,0], 業務:[0,0], 團購:[0,0], 其他:[0,0] },
-  };
-  let found = 0;
-  // 掃描每列，col[0] 為標籤；結構假設：[標籤, 渥詢問, 渥到店, 綺詢問, 綺到店]
-  for (let ri = 0; ri < rows.length; ri++) {
-    const row = rows[ri];
-    const label = row?.[0] != null ? String(row[0]).trim() : '';
-    if (SOURCES.includes(label)) {
-      result.渥[label] = [Number(row[1])||0, Number(row[2])||0];
-      result.綺[label] = [Number(row[3])||0, Number(row[4])||0];
-      found++;
+  });
+
+  // ── 方法 A：標籤在 col[0]，後接 [渥詢問, 渥到店, 綺詢問, 綺到店]
+  {
+    const r = mkResult(); let n = 0;
+    for (const row of rows) {
+      const src = matchSrc((row||[])[0]);
+      if (src) {
+        r.渥[src] = [Number(row[1])||0, Number(row[2])||0];
+        r.綺[src] = [Number(row[3])||0, Number(row[4])||0];
+        n++;
+      }
     }
+    if (n >= 2) return r;
   }
-  // 若未找到：嘗試任意欄含有標籤的列（橫向佈局）
-  if (found === 0) {
-    for (let ri = 0; ri < rows.length && found < 4; ri++) {
-      const row = rows[ri];
-      if (!row) continue;
-      for (let ci = 0; ci < row.length; ci++) {
-        const v = row[ci] != null ? String(row[ci]).trim() : '';
-        if (SOURCES.includes(v)) {
-          result.渥[v] = [Number(row[ci+1])||0, Number(row[ci+2])||0];
-          result.綺[v] = [Number(row[ci+3])||0, Number(row[ci+4])||0];
-          found++;
+
+  // ── 方法 B：先掃標頭行找渥/綺 × 詢問/到店 欄位，再掃資料列
+  {
+    const r = mkResult(); let n = 0;
+    let wI=-1, wA=-1, qI=-1, qA=-1, lc=-1;
+    for (const row of rows) {
+      (row||[]).forEach((c,i) => {
+        const s = String(c||'').trim();
+        if (s.includes('渥') && s.includes('詢問')) wI=i;
+        if (s.includes('渥') && (s.includes('到店')||s.includes('預約'))) wA=i;
+        if (s.includes('綺') && s.includes('詢問')) qI=i;
+        if (s.includes('綺') && (s.includes('到店')||s.includes('預約'))) qA=i;
+      });
+    }
+    // 找來源標籤欄位
+    outer: for (const row of rows) {
+      for (let ci=0; ci<(row||[]).length; ci++) {
+        if (matchSrc(row[ci])) { lc=ci; break outer; }
+      }
+    }
+    if (lc >= 0 && (wA >= 0 || qA >= 0)) {
+      for (const row of rows) {
+        const src = matchSrc((row||[])[lc]);
+        if (src) {
+          r.渥[src] = [wI>=0?Number(row[wI])||0:0, wA>=0?Number(row[wA])||0:0];
+          r.綺[src] = [qI>=0?Number(row[qI])||0:0, qA>=0?Number(row[qA])||0:0];
+          n++;
         }
       }
     }
+    if (n >= 2) return r;
   }
-  return found >= 2 ? result : null;
+
+  // ── 方法 C：標籤在任意欄，後接 [詢問, 到店]；同列渥在前綺在後
+  {
+    const r = mkResult(); let n = 0;
+    for (const row of rows) {
+      if (!row) continue;
+      for (let ci=0; ci<row.length; ci++) {
+        const src = matchSrc(row[ci]);
+        if (src) {
+          r.渥[src] = [Number(row[ci+1])||0, Number(row[ci+2])||0];
+          r.綺[src] = [Number(row[ci+3])||0, Number(row[ci+4])||0];
+          n++;
+          break; // 每列只取一個標籤
+        }
+      }
+    }
+    if (n >= 2) return r;
+  }
+
+  // ── 方法 D：品牌分區佈局（渥在上、綺在下，各自為獨立列）
+  {
+    const r = mkResult(); let n = 0, brand = null;
+    for (const row of rows) {
+      const joined = (row||[]).map(c=>String(c||'')).join('');
+      if (joined.includes('原渥') || joined === '渥') brand = '渥';
+      else if (joined.includes('原綺') || joined === '綺') brand = '綺';
+      if (!brand) continue;
+      for (let ci=0; ci<(row||[]).length; ci++) {
+        const src = matchSrc(row[ci]);
+        if (src) {
+          r[brand][src] = [Number(row[ci+1])||0, Number(row[ci+2])||0];
+          n++; break;
+        }
+      }
+    }
+    if (n >= 2) return r;
+  }
+
+  return null;
 }
 
 // ③ 歷年趨勢同步（CSV 方式）
@@ -1758,6 +1850,10 @@ const sourceData={
     渥:{行銷:[828,151],業務:[93,7],團購:[7,67],其他:[0,0]},
     綺:{行銷:[876,93],業務:[34,5],團購:[0,0],其他:[0,0]},
   },
+  5:{ // 6月
+    渥:{行銷:[0,19],業務:[0,1],團購:[0,0],其他:[0,0]},
+    綺:{行銷:[0,7],業務:[0,1],團購:[0,0],其他:[0,0]},
+  },
 };
 
 // ── 來源分析表
@@ -1978,6 +2074,100 @@ function generateReport(){
   }
 }
 
+
+// ── 班表資料
+const scheduleData = {
+  6: {
+    year: 2026, month: 6, days: 30,
+    // 6/1/2026 = 一 (Mon) → startDow=1
+    startDow: 1,
+    staff: [
+      { name: '陳薇如 Tracy', shifts: ['12-18','12-18','12-18','12-18','12-18','12-18','12-18','休','休','12-18','12-18','12-18','休','休','12-18','12-18','12-18','12-18','休','休','休','休','12-18','12-18','12-18','12-18','12-18','休','12-18','12-18'] },
+      { name: '吳維君 Fiona', shifts: ['休','12-18','12-18','12-18','12-18','12-18','休','休','12-18','12-18','12-18','12-18','12-18','休','休','12-18','12-18','12-18','12-18','12-18','休','休','12-18','12-18','12-18','12-18','12-18','休','休','12-18'] },
+      { name: '曾宥蓁 Chloe', shifts: ['10-19','10-19','14-23','休','休','10-19','10-19','10-19','10-19','14-23','休','休','10-19','10-19','10-19','10-19','14-23','休','休','休','10-19','10-19','10-19','14-23','休','休','10-19','10-19','10-19','10-19'] },
+      { name: '陳暄頴 Sabrina', shifts: ['10-19','10-19','休','10-18','10-19','10-19','休','10-19','10-19','10-18','10-18','休','休','10-19','10-19','10-19','休','10-18','休','10-19','10-19','休','10-19','10-18','10-18','10-19','休','休','10-19','10-19'] },
+      { name: '童怡君 Jenny', shifts: ['10-19','10-19','10-19','休','休','10-19','10-19','10-19','10-19','休','休','10-19','10-19','10-19','休','10-19','10-19','10-19','10-19','休','10-19','10-19','10-19','休','10-19','10-19','休','休','10-19','10-19'] },
+    ],
+    notes: ['Fiona 6/19 特休']
+  }
+};
+
+function renderSchedule(){
+  const wrap = document.getElementById('schedule-wrap');
+  if (!wrap) return;
+  const mi = parseInt(document.getElementById('schedule-month-sel').value);
+  const d = scheduleData[mi];
+  if (!d) { wrap.innerHTML='<div style="padding:20px;color:#aea9a4;font-size:13px">尚無班表資料</div>'; return; }
+
+  const DOW = ['日','一','二','三','四','五','六'];
+  const shiftColor = s => {
+    if (s === '休') return { bg:'#f1ede8', color:'#aea9a4', fw:'400' };
+    if (s.startsWith('12')) return { bg:'#dbeafe', color:'#1d4ed8', fw:'700' };
+    if (s.startsWith('14')) return { bg:'#fed7aa', color:'#c2410c', fw:'700' };
+    if (s === '10-19') return { bg:'#dcfce7', color:'#15803d', fw:'700' };
+    if (s === '10-18') return { bg:'#d1fae5', color:'#047857', fw:'700' };
+    return { bg:'#f5f3f0', color:'#1a1a1a', fw:'400' };
+  };
+
+  const thBase = 'padding:5px 3px;text-align:center;font-size:11px;white-space:nowrap;border:1px solid #e8e4de';
+  const tdBase = 'padding:4px 2px;text-align:center;font-size:10.5px;border:1px solid #f1ede8';
+
+  // 假日欄（六=6, 日=0）醒目色
+  // startDow=1 → 第1天是Monday(1)；0=Sun,6=Sat
+  const getDow = di => ((d.startDow + di - 1) % 7 + 7) % 7;
+  const isWeekend = di => { const w = getDow(di); return w===0||w===6; };
+
+  const stickyCol = 'position:sticky;left:0;z-index:3';
+  let html = `<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;min-width:900px;width:100%">`;
+  // 標題列
+  html += `<thead><tr>
+    <th style="${thBase};${stickyCol};background:#1a1a1a;color:#fff;min-width:100px;text-align:center;padding:6px 8px;font-size:12px">日期</th>`;
+  for (let i=1; i<=d.days; i++) {
+    const we = isWeekend(i);
+    html += `<th style="${thBase};background:${we?'#4a3520':'#2a2a2a'};color:${we?'#fbbf24':'#e2e8f0'};min-width:36px">${i}</th>`;
+  }
+  html += `</tr><tr>
+    <th style="${thBase};${stickyCol};background:#2a2a2a;color:#94a3b8;font-size:10px;font-weight:400">星期</th>`;
+  for (let i=1; i<=d.days; i++) {
+    const dow = getDow(i);
+    const we = dow===0||dow===6;
+    html += `<th style="${thBase};background:#2a2a2a;color:${we?'#fbbf24':'#94a3b8'};font-size:10px;font-weight:400">${DOW[dow]}</th>`;
+  }
+  html += `</tr></thead><tbody>`;
+
+  // 各人班表
+  d.staff.forEach((s, si) => {
+    const rowBg = si%2===0 ? '#fafaf9' : '#fff';
+    html += `<tr><td style="${tdBase};${stickyCol};background:${rowBg};text-align:center;padding:5px 8px;font-weight:700;color:#1a1a1a;white-space:nowrap">${s.name}</td>`;
+    for (let i=0; i<d.days; i++) {
+      const shift = s.shifts[i] || '—';
+      const { bg, color, fw } = shiftColor(shift);
+      const we = isWeekend(i+1);
+      const cellBg = shift==='休' && we ? '#ede9e0' : (shift==='休' ? '#f5f3f0' : bg);
+      html += `<td style="${tdBase};background:${cellBg};color:${color};font-weight:${fw}">${shift}</td>`;
+    }
+    html += `</tr>`;
+  });
+  html += `</tbody></table></div>`;
+
+  // 圖例 + 備註
+  html += `<div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;align-items:flex-start">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span style="font-size:11px;color:#6b6460;font-weight:700">班別：</span>
+      ${[['12-18','#dbeafe','#1d4ed8'],['10-19','#dcfce7','#15803d'],['10-18','#d1fae5','#047857'],['14-23','#fed7aa','#c2410c'],['休','#f1ede8','#aea9a4']].map(([s,bg,c])=>
+        `<span style="padding:2px 8px;border-radius:4px;background:${bg};color:${c};font-size:11px;font-weight:700">${s}</span>`
+      ).join('')}
+    </div>`;
+  if (d.notes && d.notes.length) {
+    html += `<div style="margin-top:2px">
+      <span style="font-size:11px;font-weight:700;color:#6b6460">備註：</span>
+      ${d.notes.map(n=>`<span style="font-size:11px;color:#92400e;background:#fef3c7;padding:2px 8px;border-radius:4px">${n}</span>`).join(' ')}
+    </div>`;
+  }
+  html += `</div>`;
+
+  wrap.innerHTML = html;
+}
 
 function refresh(){
   if(curTab==='main'){renderTeam();renderKPI();renderTrend();renderSource();renderMainBrandCharts();}
