@@ -115,7 +115,34 @@ canvas{max-height:240px}
 .source-table td{padding:5px 10px;text-align:center;border-bottom:1px solid #f1ede8}
 .source-table tr:nth-child(even) td{background:#faf9f7}
 .source-table .row-lbl{text-align:left;font-weight:700;color:#6b6460;background:#faf9f7!important;position:sticky;left:0;z-index:2;white-space:nowrap}
-@media(max-width:860px){.team-block,.charts-row,.staff-charts-row{grid-template-columns:1fr}.staff-grid{grid-template-columns:1fr}.kpi-grid,.perf-grid{grid-template-columns:1fr 1fr}.tab-nav{margin-left:0}}
+@media(max-width:860px){
+  .team-block,.charts-row,.staff-charts-row{grid-template-columns:1fr}
+  .staff-grid{grid-template-columns:1fr}
+  .kpi-grid,.perf-grid{grid-template-columns:1fr 1fr}
+  .tab-nav{margin-left:0}
+}
+@media(max-width:600px){
+  body{overflow-x:hidden}
+  header{padding:10px 14px;gap:10px;flex-wrap:wrap}
+  .logo-wrap{border-right:none;padding-right:0;margin-right:0;flex-direction:row;align-items:center;gap:8px}
+  .logo-en{font-size:15px;letter-spacing:3px}
+  .logo-zh{margin-top:0;font-size:8px;letter-spacing:4px}
+  .hdr-title{font-size:13px}
+  .hdr-sub{flex-wrap:wrap;gap:6px}
+  .filter-bar{padding:8px 12px;gap:6px}
+  .main{padding:10px 12px;gap:12px}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .perf-grid{grid-template-columns:1fr 1fr}
+  .kpi-card{padding:10px 12px}
+  .kpi-num{font-size:17px}
+  .kpi-title{font-size:12px}
+  .tab-btn{padding:5px 10px;font-size:11px}
+  .btn{padding:4px 9px;font-size:11px}
+  .staff-body{grid-template-columns:1fr!important;flex-direction:column}
+  .staff-left{border-right:none;border-bottom:1px solid #f1ede8}
+  .perf-num{font-size:18px}
+  .section-title{font-size:12px}
+}
 
 </style>
 </head>
@@ -1866,7 +1893,7 @@ function renderStaffPerfContent(){
   if(isAll){
     // 全體：KPI 橫排4欄滿版，staff grid 在下方
     wrap.style.cssText='display:flex;flex-direction:column;gap:12px';
-    kpiEl.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;margin-bottom:0;order:0';
+    kpiEl.style.cssText='display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;width:100%;margin-bottom:0;order:0';
     gridEl.style.cssText='width:100%;order:1';
   } else {
     // 個人：staff card 左，KPI 2×2 右
