@@ -574,7 +574,7 @@ const YQ_AGG={
   '母親節加碼台中':      {'台北原綺':{g:0, n:0, o:0, d:0,      e:0     },'台中原綺':{g:4, n:2, o:2, d:75552,   e:33799 }},
   '母親節加碼':          {'台北原綺':{g:0, n:0, o:0, d:0,      e:0     },'台中原綺':{g:0, n:0, o:0, d:0,       e:0     }},
   // ── 孫淑媚套餐（2026/05－2026/06）──────────────────────────────────────────
-  '孫淑媚套餐':          {'台北原綺':{g:0, n:0, o:0, d:0,      e:0     },'台中原綺':{g:2, n:0, o:2, d:45980,  e:8998  }},
+  '孫淑媚套餐':          {'台北原綺':{g:0, n:0, o:0, d:0,      e:0     },'台中原綺':{g:0, n:0, o:0, d:0,      e:0     }}, // 已移至 YQ_RAW（逐筆帶日期）
 };
 // Date ranges for each 原綺 activity (for date-filter suppression)
 const YQ_DR={
@@ -596,6 +596,12 @@ const YQ_DR={
   '母親節加碼':          {s:'2026-04-23',e:'2026-05-20'},
   '孫淑媚套餐':          {s:'2026-05-28',e:'2026-06-30'},
 };
+
+// ─── YQ_RAW: 原綺個別筆記錄（支援日期過濾，每天截圖更新用）────────────────
+const YQ_RAW=[
+  {"date":"2026-06-02","month":"2026-06","activity":"孫淑媚套餐","act_price":22990,"client_type":"舊客","client_name":"蘇倍玉","ext_revenue":8998,"store":"台中原綺","period":"20260528-20260630"},
+  {"date":"2026-06-03","month":"2026-06","activity":"孫淑媚套餐","act_price":22990,"client_type":"舊客","client_name":"吳宇涵","ext_revenue":0,"store":"台中原綺","period":"20260528-20260630"},
+];
 
 // ─── 原綺 activity groups ────────────────────────────────────────────────
 const GS_YQ=[
@@ -685,15 +691,30 @@ function ca(data,key){
   return{bs,t};
 }
 
-// ─── Aggregate 原綺 (from pre-aggregated YQ_AGG) ─────────────────────────
+// ─── Aggregate 原綺 (YQ_RAW優先日期過濾，其餘用YQ_AGG) ──────────────────
 function ca2(key){
-  // Use per-activity date range for suppression; fallback to 母親節 window
+  const yqRows=YQ_RAW.filter(r=>r.activity===key);
+  if(yqRows.length>0){
+    // 每筆帶 date，支援日期過濾
+    const filtered=yqRows.filter(r=>
+      (SS==='全集團'||SS==='原綺全門市'||r.store===SS)&&
+      (SM==='全部'||r.month===SM)&&
+      (!SD||r.date>=SD)&&
+      (!ED||r.date<=ED)
+    );
+    const bs={};YQS.forEach(s=>bs[s]={g:0,n:0,o:0,d:0,e:0});
+    filtered.forEach(r=>{if(bs[r.store]){const b=bs[r.store];b.g++;r.client_type==='新客'?b.n++:b.o++;b.d+=r.act_price;b.e+=Math.max(0,r.ext_revenue);}});
+    const stores=(SS==='全集團'||SS==='原綺全門市')?YQS:(YQS.includes(SS)?[SS]:[]);
+    const t={g:0,n:0,o:0,d:0,e:0};
+    stores.forEach(s=>Object.keys(t).forEach(k=>t[k]+=bs[s][k]));
+    return{bs,t,stores};
+  }
+  // 無個別筆記錄：沿用 YQ_AGG（整體累計，日期只做顯示/隱藏）
   const dr=YQ_DR[key]||{s:'2026-04-15',e:'2026-05-20'};
   const outOfRange=SD&&ED&&(ED<dr.s||SD>dr.e);
   const base=outOfRange?{}:(YQ_AGG[key]||{});
   const bs={};
   YQS.forEach(s=>bs[s]=Object.assign({g:0,n:0,o:0,d:0,e:0},base[s]||{}));
-  // Apply store filter for 原綺
   const stores=(SS==='全集團'||SS==='原綺全門市')?YQS:(YQS.includes(SS)?[SS]:[]);
   const t={g:0,n:0,o:0,d:0,e:0};
   stores.forEach(s=>Object.keys(t).forEach(k=>t[k]+=bs[s][k]));
