@@ -176,6 +176,7 @@ canvas{max-height:240px}
   <div class="card" id="source-card">
     <div class="section-title">🔍 各來源客服預約分析</div>
     <div id="source-table-wrap" style="overflow-x:auto"></div>
+    <div id="src-diag" style="display:none;margin-top:10px;padding:10px;background:#1a1a1a;color:#e2e8f0;font-size:10px;border-radius:6px;font-family:monospace;line-height:1.7;overflow-x:auto;white-space:pre-wrap;word-break:break-all"></div>
   </div>
   <!-- 客服到店圖表（依品牌篩選顯示）-->
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
@@ -764,24 +765,24 @@ const sheetTotal={
     arrive:{ // 總來客數（新客+舊客到店）
       2024:[153,124,129,154,153,129,124,186,190,133,140,153],
       2025:[183,150,184,296,241,185,232,196,263,180,148,171],
-      2026:[142,180,289,344,251,null,null,null,null,null,null,null],
+      2026:[142,180,289,344,251,37,null,null,null,null,null,null],
     },
     booknew:{ // 客服預約新客數
       2024:[152,124,138,172,171,133,95,169,188,176,164,236],
       2025:[225,262,324,318,290,218,228,253,302,142,147,206],
-      2026:[183,201,370,436,239,null,null,null,null,null,null,null],
+      2026:[183,201,370,436,239,28,null,null,null,null,null,null],
     },
   },
   綺:{
     arrive:{
       2024:[75,81,101,67,91,67,55,79,75,60,84,59],
       2025:[88,80,85,122,175,138,86,97,80,111,155,139],
-      2026:[165,122,144,130,128,null,null,null,null,null,null,null],
+      2026:[165,122,144,130,128,12,null,null,null,null,null,null],
     },
     booknew:{
       2024:[80,101,87,79,80,50,49,64,75,58,89,59],
       2025:[90,86,113,131,154,128,119,119,70,144,165,160],
-      2026:[216,122,182,137,130,null,null,null,null,null,null,null],
+      2026:[216,122,182,137,130,6,null,null,null,null,null,null],
     },
   },
 };
@@ -1012,12 +1013,14 @@ function csvVal(s) {
 
 // ① 個人績效同步（Google Apps Script 直接回傳 JSON，無 CORS 問題）
 const PERF_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGnRxVOzZ6YJgtNf5NKfM7uEmySCm35205JdEcQ_2AhcOOMlYLEUkss4f2Oz5z8SJK/exec';
+// 記錄哪幾個月已由 Apps Script 解析來源資料（syncSourceData 不再覆寫這些月份）
+const _apsSrcMonths = new Set();
 async function syncPerfData() {
   const res = await fetch(PERF_APPS_SCRIPT_URL);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
-  const { w詢問, w預約, w新客, w舊客, w目標,
-          q詢問, q預約, q新客, q舊客, q目標 } = data;
+  const { w詢問, w預約, w新客預約, w新客, w舊客, w目標,
+          q詢問, q預約, q新客預約, q新客, q舊客, q目標 } = data;
 
   // 將30個數字拆成 [6個月][5人] 的二維陣列
   function toGrid(data) {
@@ -1049,6 +1052,8 @@ async function syncPerfData() {
   if (!sheetTotal['綺']) sheetTotal['綺']={arrive:{},booknew:{}};
   if (!sheetTotal['渥'].arrive[2026]) sheetTotal['渥'].arrive[2026]=Array(12).fill(null);
   if (!sheetTotal['綺'].arrive[2026]) sheetTotal['綺'].arrive[2026]=Array(12).fill(null);
+  if (!sheetTotal['渥'].booknew[2026]) sheetTotal['渥'].booknew[2026]=Array(12).fill(null);
+  if (!sheetTotal['綺'].booknew[2026]) sheetTotal['綺'].booknew[2026]=Array(12).fill(null);
   for (let mi=0; mi<6; mi++) {
     const wBk=sumM(w預約,mi), qBk=sumM(q預約,mi);
     const wNw=sumM(w新客,mi), qNw=sumM(q新客,mi);
@@ -1057,6 +1062,11 @@ async function syncPerfData() {
     if (wNw||qNw) { history['渥'][2026].n[mi]=wNw; history['綺'][2026].n[mi]=qNw; }
     const wArr=wNw+wOd, qArr=qNw+qOd;
     if (wArr||qArr) { sheetTotal['渥'].arrive[2026][mi]=wArr; sheetTotal['綺'].arrive[2026][mi]=qArr; }
+    // 客服預約新客數（需 Apps Script 回傳 w新客預約 / q新客預約）
+    if (w新客預約 && q新客預約) {
+      const wBn=sumM(w新客預約,mi), qBn=sumM(q新客預約,mi);
+      if (wBn||qBn) { sheetTotal['渥'].booknew[2026][mi]=wBn; sheetTotal['綺'].booknew[2026][mi]=qBn; }
+    }
   }
 
   // 重算達成率
@@ -1076,14 +1086,29 @@ async function syncPerfData() {
     }
   });
 
+  // 來源分析：Apps Script 若有回傳 src，直接解析（繞過 CORS，結果優先於 gviz CSV）
+  _apsSrcMonths.clear();
+  if (Array.isArray(data.src)) {
+    data.src.forEach((rawRows, mi) => {
+      if (!rawRows) return;
+      // Apps Script getValues() 保留空格欄位，直接用方法 E 解析
+      const parsed = parseSourceRowsApps(rawRows);
+      const hasReal = parsed && ['渥','綺'].some(g =>
+        ['行銷','業務','團購','其他'].some(s => (parsed[g]?.[s]?.[0]||0)+(parsed[g]?.[s]?.[1]||0)>0));
+      if (hasReal) { sourceData[mi] = parsed; _apsSrcMonths.add(mi); }
+    });
+  }
+
   return 10;
 }
 
-// ② 來源分析同步（"X月客服" 各分頁，CSV 方式）
+// ② 來源分析同步（"X月客服" 各分頁，CSV 方式，僅補充 Apps Script 未處理的月份）
 async function syncSourceData() {
   const MONTH_SHEETS = ['1月客服','2月客服','3月客服','4月客服','5月客服','6月客服'];
-  let updated = 0;
+  let updated = _apsSrcMonths.size; // 已由 Apps Script 處理的月份計入成功數
   for (let mi = 0; mi < MONTH_SHEETS.length; mi++) {
+    // 若 Apps Script 已成功解析此月份，跳過（避免 gviz 欄位壓縮造成的錯誤覆寫）
+    if (_apsSrcMonths.has(mi)) continue;
     try {
       const rows = await fetchSheetCSV(SOURCE_SHEET_ID, MONTH_SHEETS[mi]);
       const parsed = parseSourceRows(rows);
@@ -1097,6 +1122,40 @@ async function syncSourceData() {
   }
   return updated;
 }
+// 專用於 Apps Script getValues() 回傳的原始二維陣列（空格欄位保留，不壓縮）
+// 實際格式：左欄 原綺，右欄 原渥，並排佈局
+// row 結構（0-indexed col）：
+//   col3 = 來源標籤, col5 = 綺詢問, col7 = 綺到店
+//   col14 = 渥詢問, col17 = 渥到店
+function parseSourceRowsApps(rows) {
+  const SOURCES = ['行銷','業務','團購','其他'];
+  const matchSrc = v => { const s=String(v||'').trim(); return SOURCES.find(k=>s===k||s.startsWith(k)); };
+  const r = {
+    渥: { 行銷:[0,0], 業務:[0,0], 團購:[0,0], 其他:[0,0] },
+    綺: { 行銷:[0,0], 業務:[0,0], 團購:[0,0], 其他:[0,0] },
+  };
+  let found = 0;
+  // 掃描 col 2~5 找來源標籤（允許不同月份標籤欄位有微小偏移）
+  for (const row of rows) {
+    if (!row) continue;
+    for (let ci = 2; ci <= 5; ci++) {
+      const src = matchSrc(row[ci]);
+      if (src) {
+        // 固定偏移：綺詢問=ci+2, 綺到店=ci+4; 渥詢問=ci+11, 渥到店=ci+14
+        const qI = Number(row[ci+2]) || 0;
+        const qA = Number(row[ci+4]) || 0;
+        const wI = Number(row[ci+11]) || 0;
+        const wA = Number(row[ci+14]) || 0;
+        r.綺[src] = [qI, qA];
+        r.渥[src] = [wI, wA];
+        found++;
+        break;
+      }
+    }
+  }
+  return found >= 2 ? r : null;
+}
+
 function parseSourceRows(rows) {
   const SOURCES = ['行銷','業務','團購','其他'];
   // 模糊匹配：完全相符或開頭相符（如"行銷廣告"→"行銷"）
@@ -1105,6 +1164,24 @@ function parseSourceRows(rows) {
     渥: { 行銷:[0,0], 業務:[0,0], 團購:[0,0], 其他:[0,0] },
     綺: { 行銷:[0,0], 業務:[0,0], 團購:[0,0], 其他:[0,0] },
   });
+
+  // ── 方法 E：左綺右渥並排格式（本系統實際格式，優先嘗試）
+  // 掃 col 2-6 找第一個來源標籤（綺 label）；偏移：綺詢問=ci+2, 綺到店=ci+4, 渥詢問=ci+11, 渥到店=ci+14
+  {
+    const r = mkResult(); let n = 0;
+    for (const row of rows) {
+      if (!row) continue;
+      for (let ci = 2; ci <= 6; ci++) {
+        const src = matchSrc(row[ci]);
+        if (src) {
+          r.綺[src] = [Number(row[ci+2])||0, Number(row[ci+4])||0];
+          r.渥[src] = [Number(row[ci+11])||0, Number(row[ci+14])||0];
+          n++; break;
+        }
+      }
+    }
+    if (n >= 2) return r;
+  }
 
   // ── 方法 A：標籤在 col[0]，後接 [渥詢問, 渥到店, 綺詢問, 綺到店]
   {
