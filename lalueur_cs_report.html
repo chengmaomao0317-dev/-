@@ -201,7 +201,7 @@ canvas{max-height:240px}
   <div class="kpi-grid" id="kpi-row"></div>
   <!-- 各來源預約分析 -->
   <div class="card" id="source-card">
-    <div class="section-title">🔍 各來源客服預約分析</div>
+    <div class="section-title">🔍 各來源新客｜客服預約分析</div>
     <div id="source-table-wrap" style="overflow-x:auto"></div>
     <div id="src-diag" style="display:none;margin-top:10px;padding:10px;background:#1a1a1a;color:#e2e8f0;font-size:10px;border-radius:6px;font-family:monospace;line-height:1.7;overflow-x:auto;white-space:pre-wrap;word-break:break-all"></div>
   </div>
@@ -1118,7 +1118,6 @@ async function syncPerfData() {
   if (Array.isArray(data.src)) {
     data.src.forEach((rawRows, mi) => {
       if (!rawRows) return;
-      // Apps Script getValues() 保留空格欄位，直接用方法 E 解析
       const parsed = parseSourceRowsApps(rawRows);
       const hasReal = parsed && ['渥','綺'].some(g =>
         ['行銷','業務','團購','其他'].some(s => (parsed[g]?.[s]?.[0]||0)+(parsed[g]?.[s]?.[1]||0)>0));
@@ -1162,17 +1161,18 @@ function parseSourceRowsApps(rows) {
     綺: { 行銷:[0,0], 業務:[0,0], 團購:[0,0], 其他:[0,0] },
   };
   let found = 0;
-  // 掃描 col 2~5 找來源標籤（允許不同月份標籤欄位有微小偏移）
+  // 確認欄位（診斷驗證）：label@col4(ci=4)
+  //   綺詢問@col6(ci+2), 綺到店@col8(ci+4)
+  //   渥詢問@col15(ci+11), 渥到店@col18(ci+14)
   for (const row of rows) {
     if (!row) continue;
     for (let ci = 2; ci <= 5; ci++) {
       const src = matchSrc(row[ci]);
       if (src) {
-        // 固定偏移：綺詢問=ci+2, 綺到店=ci+4; 渥詢問=ci+11, 渥到店=ci+14
-        const qI = Number(row[ci+2]) || 0;
-        const qA = Number(row[ci+4]) || 0;
-        const wI = Number(row[ci+11]) || 0;
-        const wA = Number(row[ci+14]) || 0;
+        const qI = Number(row[ci+2])  || 0;  // 綺詢問
+        const qA = Number(row[ci+4])  || 0;  // 綺到店
+        const wI = Number(row[ci+11]) || 0;  // 渥詢問
+        const wA = Number(row[ci+14]) || 0;  // 渥到店
         r.綺[src] = [qI, qA];
         r.渥[src] = [wI, wA];
         found++;
@@ -1954,9 +1954,9 @@ const sourceData={
     渥:{行銷:[828,151],業務:[93,7],團購:[7,67],其他:[0,0]},
     綺:{行銷:[876,93],業務:[34,5],團購:[0,0],其他:[0,0]},
   },
-  5:{ // 6月
-    渥:{行銷:[0,19],業務:[0,1],團購:[0,0],其他:[0,0]},
-    綺:{行銷:[0,7],業務:[0,1],團購:[0,0],其他:[0,0]},
+  5:{ // 6月（Apps Script 診斷確認值）
+    渥:{行銷:[247,45],業務:[20,2],團購:[0,4],其他:[0,0]},
+    綺:{行銷:[147,12],業務:[10,1],團購:[0,0],其他:[0,0]},
   },
 };
 
