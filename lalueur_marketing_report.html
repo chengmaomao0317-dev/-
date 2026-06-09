@@ -1844,13 +1844,20 @@ function renderPerfSummary(brand) {
 
   function colCard(locKey, colLabel, borderColor) {
     const sec = data[locKey] || {};
+    const xinRev = sec['新客業績']?.acc ?? 0;
+    const jiuRev = sec['舊客業績']?.acc ?? 0;
+    const colTotal = (xinRev && jiuRev) ? xinRev + jiuRev : null;
     return `<div style="background:#fff;border:0.5px solid ${border};border-radius:12px;border-left:4px solid ${borderColor};padding:14px 16px;">
       <div style="font-size:12px;font-weight:500;color:${muted};margin-bottom:12px;">${colLabel}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">新客</div><div style="font-size:18px;font-weight:500;color:${text};">${fn(sec['新客數']?.acc)}</div></div>
         <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">舊客</div><div style="font-size:18px;font-weight:500;color:${text};">${fn(sec['舊客數']?.acc)}</div></div>
-        <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">新客業績</div><div style="font-size:14px;font-weight:500;color:${text};">${fm(sec['新客業績']?.acc)}</div></div>
-        <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">舊客業績</div><div style="font-size:14px;font-weight:500;color:${text};">${fm(sec['舊客業績']?.acc)}</div></div>
+        <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">新客業績</div><div style="font-size:14px;font-weight:500;color:${text};">${fm(xinRev||null)}</div></div>
+        <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">舊客業績</div><div style="font-size:14px;font-weight:500;color:${text};">${fm(jiuRev||null)}</div></div>
+        ${colTotal != null ? `<div style="grid-column:1/-1;border-top:0.5px solid ${border};padding-top:10px;">
+          <div style="font-size:11px;color:${muted};margin-bottom:3px;">總計業績</div>
+          <div style="font-size:16px;font-weight:500;color:${text};">${fm(colTotal)}</div>
+        </div>` : ''}
       </div>
     </div>`;
   }
