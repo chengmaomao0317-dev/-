@@ -91,12 +91,15 @@ tr:last-child td { border-bottom: none; }
 .kpi2-pane.active { display: block; }
 .kpi2-tbl { width:100%; border-collapse:collapse; font-size:11.5px; }
 .kpi2-tbl th { background:#111; color:#bbb; font-weight:500; font-size:10px; padding:7px 10px; text-align:right; white-space:nowrap; position:sticky; top:0; z-index:2; }
-.kpi2-tbl th:first-child { text-align:left; position:sticky; left:0; z-index:3; }
+.kpi2-tbl th:first-child { text-align:left; position:sticky; left:0; z-index:4; }
+.kpi2-tbl th:last-child { position:sticky; right:0; z-index:4; background:#111; }
 .kpi2-tbl th.th-sub { background:#1e1e1e; color:#888; font-size:9.5px; }
 .kpi2-tbl td { padding:6px 10px; border-bottom:0.5px solid rgba(0,0,0,0.06); white-space:nowrap; text-align:right; color:#1a1a18; }
-.kpi2-tbl td:first-child { text-align:left; font-weight:500; position:sticky; left:0; background:#fff; z-index:1; }
+.kpi2-tbl td:first-child { text-align:left; font-weight:500; position:sticky; left:0; background:#fff; z-index:2; }
+.kpi2-tbl td.perf-acc { position:sticky; right:0; z-index:2; background:#fff; }
 .kpi2-tbl tfoot tr td { font-weight:700; background:#f5f4f0; position:sticky; bottom:0; z-index:1; }
-.kpi2-tbl tfoot tr td:first-child { background:#f5f4f0; z-index:2; }
+.kpi2-tbl tfoot tr td:first-child { background:#f5f4f0; z-index:3; }
+.kpi2-tbl tfoot tr td.perf-acc { background:#f5f4f0; z-index:3; }
 .kpi2-tbl tr.prod-row:hover td { background:#f9f9f7; }
 .kpi2-tbl tr.prod-row:hover td:first-child { background:#f9f9f7; }
 .prod-tbl tr.prod-row { cursor:pointer; }
@@ -192,7 +195,7 @@ tr:last-child td { border-bottom: none; }
 .kpi2-tbl tr.perf-total-metric td { background:#f5f4f0; }
 .kpi2-tbl tr.perf-total-metric td:first-child { background:#f5f4f0; }
 .kpi2-tbl tr.perf-total-metric td.perf-lbl { color:#5f5e5a; }
-.kpi2-tbl tr.perf-total-metric td.perf-acc { background:#eeedea; font-weight:700; }
+.kpi2-tbl tr.perf-total-metric td.perf-acc { background:#eeedea; font-weight:700; position:sticky; right:0; z-index:2; }
 .kpi2-tbl tr.perf-total-metric:hover td { background:#eeedea; }
 .kpi2-tbl tr.perf-total-metric:hover td:first-child { background:#eeedea; }
 .kpi2-tbl tr.perf-total-metric.perf-section-first td { border-top:1px solid rgba(0,0,0,.12); }
@@ -201,7 +204,7 @@ tr:last-child td { border-bottom: none; }
 .kpi2-tbl tr.perf-subgroup-jiu.perf-section-first td { border-top:1px solid rgba(0,0,0,.1); }
 .kpi2-tbl tr.perf-grand-total td { background:#2c2c2a; color:#e5e7eb; font-weight:600; border-top:2px solid rgba(0,0,0,.2); }
 .kpi2-tbl tr.perf-grand-total td.perf-lbl { color:#e5e7eb; }
-.kpi2-tbl tr.perf-grand-total td.perf-acc { background:#1a1a18; color:#fff; font-weight:700; }
+.kpi2-tbl tr.perf-grand-total td.perf-acc { background:#1a1a18; color:#fff; font-weight:700; position:sticky; right:0; z-index:2; }
 
 /* ── RWD ── */
 @media (max-width: 768px) {
@@ -249,9 +252,6 @@ tr:last-child td { border-bottom: none; }
   .spend-brands-grid { flex-direction: column !important; }
   /* 績效總覽卡片：手機單欄 */
   .perf-summary-grid { grid-template-columns: 1fr !important; }
-  /* Modal 表格：手機取消 sticky 避免位移 */
-  .kpi2-tbl td:first-child { position: static !important; }
-  .kpi2-tbl th:first-child { position: sticky; left: 0; z-index: 3; }
 }
 </style>
 </head>
@@ -2350,7 +2350,7 @@ function openProdModal(b, name) {
     const total = (m.tpe||0)+(m.tca||0);
     const td = s => `<td style="padding:5px 8px;border-bottom:0.5px solid rgba(0,0,0,0.06);text-align:right;">${s}</td>`;
     return `<tr style="font-size:11px;">
-      <td style="padding:5px 8px;border-bottom:0.5px solid rgba(0,0,0,0.06);text-align:left;">${lbl}</td>
+      <td style="padding:5px 8px;border-bottom:0.5px solid rgba(0,0,0,0.06);text-align:left;position:sticky;left:0;background:#fff;z-index:1;font-weight:500;">${lbl}</td>
       ${td($(m.tpe))}${td($(m.tca))}
       ${td(`<strong>$${fmt(total)}</strong>`)}
       ${td(m.inq!=null?m.inq:'—')}
@@ -2377,7 +2377,7 @@ function openProdModal(b, name) {
         <div style="font-size:9.5px;color:#888780;margin-bottom:8px;">台北 <span style="display:inline-block;width:10px;height:7px;background:${tpColor};border-radius:2px;vertical-align:middle;"></span>　台中 <span style="display:inline-block;width:10px;height:7px;background:${tcColor};border-radius:2px;vertical-align:middle;"></span></div>
         <table style="width:100%;border-collapse:collapse;">
           <thead><tr>
-            ${['月份','台北花費','台中花費','小計','詢問數','CPA','台北新客','台中新客','總新客','ROAS','轉換率'].map((h,i)=>`<th style="background:#111;color:#bbb;font-size:10px;font-weight:500;padding:6px 8px;text-align:${i===0?'left':'right'};">${h}</th>`).join('')}
+            ${['月份','台北花費','台中花費','小計','詢問數','CPA','台北新客','台中新客','總新客','ROAS','轉換率'].map((h,i)=>`<th style="background:#111;color:#bbb;font-size:10px;font-weight:500;padding:6px 8px;text-align:${i===0?'left':'right'};${i===0?'position:sticky;left:0;z-index:3;':''}">${h}</th>`).join('')}
           </tr></thead>
           <tbody>${tableRows||'<tr><td colspan="4" style="padding:12px 8px;text-align:center;color:#aaa;font-size:11px;">尚無歷史資料</td></tr>'}</tbody>
         </table>
