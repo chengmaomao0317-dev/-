@@ -34,7 +34,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC'
 
 .section { margin-bottom: 18px; }
 .sec-title { font-size: 13px; font-weight: 600; color: #111; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 9px; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
 .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 
 .card { background: #fff; border: 0.5px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 14px 16px; }
@@ -352,6 +352,7 @@ tr:last-child td { border-bottom: none; }
         <div style="position:relative;height:85px;">
           <canvas id="chartWoSub" role="img" aria-label="原渥台北台中新客人數"></canvas>
         </div>
+        <div id="achieve-row-wo"></div>
       </div>
       <div class="card" id="chart-card-qi">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
@@ -374,6 +375,7 @@ tr:last-child td { border-bottom: none; }
         <div style="position:relative;height:85px;">
           <canvas id="chartQiSub" role="img" aria-label="原綺台北台中新客人數"></canvas>
         </div>
+        <div id="achieve-row-qi"></div>
       </div>
     </div>
 
@@ -1705,6 +1707,44 @@ function renderTrendCharts() {
   if (!wrap) return;
   wrap.innerHTML = ['wo','qi'].map(drawTrendChart).join('');
   setupTrendHover();
+  renderAchieveRows();
+}
+
+function renderAchieveRows() {
+  const MONTHS = ['1月','2月','3月','4月','5月','6月'];
+  ['wo','qi'].forEach(b => {
+    const el = document.getElementById(`achieve-row-${b}`);
+    if (!el) return;
+    const actual = kpiTrend[b].data;
+    const target = kpiTrend[b].target;
+    const cells = MONTHS.map((m, i) => {
+      const a = actual[i] ?? 0;
+      const t = target[i] ?? 0;
+      if (!t) return `<div style="background:rgba(0,0,0,0.04);border-radius:6px;padding:6px 2px;text-align:center;min-width:0;">
+        <div style="font-size:12px;font-weight:500;color:#888780;">—</div>
+        <div style="font-size:9px;color:#888780;margin-top:2px;">${m}</div>
+      </div>`;
+      const pct = Math.round(a / t * 100);
+      const [col, bg] = pct >= 100
+        ? ['#3B6D11','#EAF3DE']
+        : pct >= 80
+        ? ['#854F0B','#FAEEDA']
+        : ['#A32D2D','#FCEBEB'];
+      return `<div style="background:${bg};border-radius:6px;padding:6px 2px;text-align:center;min-width:0;overflow:hidden;">
+        <div style="font-size:12px;font-weight:500;color:${col};">${pct}%</div>
+        <div style="font-size:9px;color:${col};opacity:.75;margin-top:1px;white-space:nowrap;">${a}<span style="opacity:.6">/${t}</span></div>
+        <div style="font-size:9px;color:${col};opacity:.6;">${m}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div style="border-top:1px solid rgba(0,0,0,0.07);margin:10px 0 8px;"></div>
+      <div style="font-size:10px;color:#888780;margin-bottom:6px;">月達標率</div>
+      <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;">${cells}</div>
+      <div style="display:flex;gap:8px;margin-top:8px;font-size:10px;">
+        <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:2px;background:#EAF3DE;border:0.5px solid #3B6D11;display:inline-block;"></span><span style="color:#3B6D11;">達標</span></span>
+        <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:2px;background:#FAEEDA;border:0.5px solid #854F0B;display:inline-block;"></span><span style="color:#854F0B;">≥80%</span></span>
+        <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:2px;background:#FCEBEB;border:0.5px solid #A32D2D;display:inline-block;"></span><span style="color:#A32D2D;">未達標</span></span>
+      </div>`;
+  });
 }
 
 function setTrendLoc(brand, loc) {
