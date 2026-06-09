@@ -245,6 +245,13 @@ tr:last-child td { border-bottom: none; }
   .pmg { font-size: 10px; padding: 4px 6px; }
   .ads-modal-box { border-radius: 10px; }
   .src-blk2 { padding: 10px 12px; }
+  /* 每月花費圖表：手機堆疊 */
+  .spend-brands-grid { flex-direction: column !important; }
+  /* 績效總覽卡片：手機單欄 */
+  .perf-summary-grid { grid-template-columns: 1fr !important; }
+  /* Modal 表格：手機取消 sticky 避免位移 */
+  .kpi2-tbl td:first-child { position: static !important; }
+  .kpi2-tbl th:first-child { position: sticky; left: 0; z-index: 3; }
 }
 </style>
 </head>
@@ -1867,7 +1874,7 @@ function renderPerfSummary(brand) {
     </div>
   </div>`;
 
-  el.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+  el.innerHTML = `<div class="perf-summary-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
     ${colCard('tpe','台北', C.light)}
     ${colCard('tca','台中', C.mid)}
     ${totalCard}
@@ -3047,7 +3054,7 @@ function renderSpendChartCard() {
   const qiColors = { meta:'#993556', google:'#D4537E', lineat:'#ED93B1', koubei:'#F4C0D1', seo:'#D3D1C7', other:'#F1EFE8' };
 
   el.innerHTML = `
-    <div style="display:flex;gap:12px;">
+    <div class="spend-brands-grid" style="display:flex;gap:12px;">
       ${buildBrandChart('wo','原渥','tag-wo', woColors)}
       ${buildBrandChart('qi','原綺','tag-qi', qiColors)}
     </div>
