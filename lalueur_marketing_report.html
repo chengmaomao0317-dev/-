@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>行銷部儀表板 2026/05</title>
+<title>行銷部績效統計</title>
 <style>
 :root { color-scheme: light; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,7 +34,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC'
 
 .section { margin-bottom: 18px; }
 .sec-title { font-size: 13px; font-weight: 600; color: #111; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 9px; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
 .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 
 .card { background: #fff; border: 0.5px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 14px 16px; }
@@ -91,12 +91,15 @@ tr:last-child td { border-bottom: none; }
 .kpi2-pane.active { display: block; }
 .kpi2-tbl { width:100%; border-collapse:collapse; font-size:11.5px; }
 .kpi2-tbl th { background:#111; color:#bbb; font-weight:500; font-size:10px; padding:7px 10px; text-align:right; white-space:nowrap; position:sticky; top:0; z-index:2; }
-.kpi2-tbl th:first-child { text-align:left; position:sticky; left:0; z-index:3; }
+.kpi2-tbl th:first-child { text-align:left; position:sticky; left:0; z-index:4; }
+.kpi2-tbl th:last-child { position:sticky; right:0; z-index:4; background:#111; }
 .kpi2-tbl th.th-sub { background:#1e1e1e; color:#888; font-size:9.5px; }
 .kpi2-tbl td { padding:6px 10px; border-bottom:0.5px solid rgba(0,0,0,0.06); white-space:nowrap; text-align:right; color:#1a1a18; }
-.kpi2-tbl td:first-child { text-align:left; font-weight:500; position:sticky; left:0; background:#fff; z-index:1; }
+.kpi2-tbl td:first-child { text-align:left; font-weight:500; position:sticky; left:0; background:#fff; z-index:2; }
+.kpi2-tbl td.perf-acc { position:sticky; right:0; z-index:2; background:#fff; }
 .kpi2-tbl tfoot tr td { font-weight:700; background:#f5f4f0; position:sticky; bottom:0; z-index:1; }
-.kpi2-tbl tfoot tr td:first-child { background:#f5f4f0; z-index:2; }
+.kpi2-tbl tfoot tr td:first-child { background:#f5f4f0; z-index:3; }
+.kpi2-tbl tfoot tr td.perf-acc { background:#f5f4f0; z-index:3; }
 .kpi2-tbl tr.prod-row:hover td { background:#f9f9f7; }
 .kpi2-tbl tr.prod-row:hover td:first-child { background:#f9f9f7; }
 .prod-tbl tr.prod-row { cursor:pointer; }
@@ -192,7 +195,7 @@ tr:last-child td { border-bottom: none; }
 .kpi2-tbl tr.perf-total-metric td { background:#f5f4f0; }
 .kpi2-tbl tr.perf-total-metric td:first-child { background:#f5f4f0; }
 .kpi2-tbl tr.perf-total-metric td.perf-lbl { color:#5f5e5a; }
-.kpi2-tbl tr.perf-total-metric td.perf-acc { background:#eeedea; font-weight:700; }
+.kpi2-tbl tr.perf-total-metric td.perf-acc { background:#eeedea; font-weight:700; position:sticky; right:0; z-index:2; }
 .kpi2-tbl tr.perf-total-metric:hover td { background:#eeedea; }
 .kpi2-tbl tr.perf-total-metric:hover td:first-child { background:#eeedea; }
 .kpi2-tbl tr.perf-total-metric.perf-section-first td { border-top:1px solid rgba(0,0,0,.12); }
@@ -201,7 +204,7 @@ tr:last-child td { border-bottom: none; }
 .kpi2-tbl tr.perf-subgroup-jiu.perf-section-first td { border-top:1px solid rgba(0,0,0,.1); }
 .kpi2-tbl tr.perf-grand-total td { background:#2c2c2a; color:#e5e7eb; font-weight:600; border-top:2px solid rgba(0,0,0,.2); }
 .kpi2-tbl tr.perf-grand-total td.perf-lbl { color:#e5e7eb; }
-.kpi2-tbl tr.perf-grand-total td.perf-acc { background:#1a1a18; color:#fff; font-weight:700; }
+.kpi2-tbl tr.perf-grand-total td.perf-acc { background:#1a1a18; color:#fff; font-weight:700; position:sticky; right:0; z-index:2; }
 
 /* ── RWD ── */
 @media (max-width: 768px) {
@@ -245,6 +248,10 @@ tr:last-child td { border-bottom: none; }
   .pmg { font-size: 10px; padding: 4px 6px; }
   .ads-modal-box { border-radius: 10px; }
   .src-blk2 { padding: 10px 12px; }
+  /* 每月花費圖表：手機堆疊 */
+  .spend-brands-grid { flex-direction: column !important; }
+  /* 績效總覽卡片：手機單欄 */
+  .perf-summary-grid { grid-template-columns: 1fr !important; }
 }
 </style>
 </head>
@@ -256,7 +263,7 @@ tr:last-child td { border-bottom: none; }
   </svg>
   <div style="color:#6b7280;font-size:11px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;margin-top:-4px;">Marketing Analytics Report</div>
   <input id="pw-input" type="password" placeholder="請輸入密碼" autofocus
-    style="padding:10px 16px;border-radius:8px;border:1px solid #444;background:#1a1a1a;color:#fff;font-size:14px;width:220px;outline:none;"
+    style="padding:10px 16px;border-radius:8px;border:1px solid #444;background:#1a1a1a;color:#fff;font-size:16px;width:220px;outline:none;"
     onkeydown="if(event.key==='Enter')checkPw()">
   <button onclick="checkPw()"
     style="padding:8px 28px;border-radius:8px;background:#fff;color:#111;font-size:13px;font-weight:600;border:none;cursor:pointer;">進入</button>
@@ -289,6 +296,7 @@ tr:last-child td { border-bottom: none; }
   <div class="header-bar-wrap"><div class="header-bar">
     <button class="filter-btn active" id="tab-overview-btn" onclick="switchTab('overview')">新客總覽</button>
     <button class="filter-btn" id="tab-ads-btn" onclick="switchTab('ads')">各媒體廣告成效</button>
+    <button class="filter-btn" id="tab-budget-btn" onclick="switchTab('budget')">預算使用概況</button>
     <button class="filter-btn" id="tab-perf-btn" onclick="switchTab('perf')">新舊客績效總覽</button>
     <div style="flex:1;"></div>
     <span id="sync-badge" style="font-size:11px;color:#888780;margin-right:4px;"></span>
@@ -344,6 +352,7 @@ tr:last-child td { border-bottom: none; }
         <div style="position:relative;height:85px;">
           <canvas id="chartWoSub" role="img" aria-label="原渥台北台中新客人數"></canvas>
         </div>
+        <div id="achieve-row-wo"></div>
       </div>
       <div class="card" id="chart-card-qi">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
@@ -366,6 +375,7 @@ tr:last-child td { border-bottom: none; }
         <div style="position:relative;height:85px;">
           <canvas id="chartQiSub" role="img" aria-label="原綺台北台中新客人數"></canvas>
         </div>
+        <div id="achieve-row-qi"></div>
       </div>
     </div>
 
@@ -383,6 +393,21 @@ tr:last-child td { border-bottom: none; }
     </div>
   </div>
 </div><!-- /tab-overview -->
+
+<div id="tab-budget" style="display:none;">
+  <div class="section">
+    <div class="sec-title" style="margin-bottom:8px;">💰 年度廣告預算使用狀況</div>
+    <div class="card" id="budget-card"></div>
+  </div>
+  <div class="section">
+    <div class="sec-title" style="margin-bottom:8px;">📡 各媒體廣告花費佔比</div>
+    <div class="card" id="media-card"></div>
+  </div>
+  <div class="section">
+    <div class="sec-title" style="margin-bottom:8px;">📅 每月廣告花費狀況</div>
+    <div id="spend-chart-card"></div>
+  </div>
+</div><!-- /tab-budget -->
 
 <div id="tab-ads" style="display:none;">
   <!-- 廣告指標表格 -->
@@ -408,9 +433,10 @@ tr:last-child td { border-bottom: none; }
       <button class="kpi2-tab wo-active" id="perf-wo-btn" onclick="perfSetBrand('wo',this)">原渥</button>
       <button class="kpi2-tab" id="perf-qi-btn" onclick="perfSetBrand('qi',this)">原綺</button>
     </div>
+    <div id="perf-summary" style="margin-bottom:12px;"></div>
     <div class="card">
       <div class="sec-title" style="margin-bottom:12px;">行銷 ‧ 新舊客績效</div>
-      <div class="tbl-wrap" style="max-height:540px;overflow-y:auto;overflow-x:auto;">
+      <div class="tbl-wrap" style="overflow-x:auto;max-height:none;overflow-y:visible;">
         <table class="kpi2-tbl" id="perf-tbl"></table>
       </div>
       <div class="prod-note" style="margin-top:8px;">* 舊客業績欄位依資料補入。</div>
@@ -1154,6 +1180,15 @@ async function initAutoFetch() {
       anyUpdated = true;
     }
   } catch(e) { errors.push(`原渥6月花費：${e.message}`); }
+  // 原綺 6月廣告花費：從「年度新客目標」I26 抓
+  try {
+    const spendResp = await gvizJSONP('年度新客目標', 'I26:I26');
+    const v = spendResp?.table?.rows?.[0]?.c?.[0]?.v;
+    if (v != null && !isNaN(+v)) {
+      kpiTrend.qi.spend26[5] = +v;
+      anyUpdated = true;
+    }
+  } catch(e) { errors.push(`原綺6月花費：${e.message}`); }
 
   // 6月新客＋業績（年度新客目標 Sheet）
   const fetchCell = async (range) => {
@@ -1221,9 +1256,12 @@ async function initAutoFetch() {
   renderPerfGrid(curMi);
   renderTrendCharts();
 
+  renderBudgetCard();
+  renderMediaCard();
+  renderSpendChartCard();
+
   // 將 adsMonthlyData 同步進 adsExt，更新所有廣告指標並重新渲染
-  const adsMi = isNaN(curMi) ? 0 : curMi;
-  syncAdsToMonth(adsMi);
+  syncAdsToMonth(curMi);
 
   ['wo','qi'].forEach(b => {
     // 將各月 adsMonthlyData 同步進 monthlyProdSpend（供 modal 各月趨勢用）
@@ -1669,6 +1707,44 @@ function renderTrendCharts() {
   if (!wrap) return;
   wrap.innerHTML = ['wo','qi'].map(drawTrendChart).join('');
   setupTrendHover();
+  renderAchieveRows();
+}
+
+function renderAchieveRows() {
+  const MONTHS = ['1月','2月','3月','4月','5月','6月'];
+  ['wo','qi'].forEach(b => {
+    const el = document.getElementById(`achieve-row-${b}`);
+    if (!el) return;
+    const actual = kpiTrend[b].data;
+    const target = kpiTrend[b].target;
+    const cells = MONTHS.map((m, i) => {
+      const a = actual[i] ?? 0;
+      const t = target[i] ?? 0;
+      if (!t) return `<div style="background:rgba(0,0,0,0.04);border-radius:6px;padding:6px 2px;text-align:center;min-width:0;">
+        <div style="font-size:12px;font-weight:500;color:#888780;">—</div>
+        <div style="font-size:9px;color:#888780;margin-top:2px;">${m}</div>
+      </div>`;
+      const pct = Math.round(a / t * 100);
+      const [col, bg] = pct >= 100
+        ? ['#3B6D11','#EAF3DE']
+        : pct >= 80
+        ? ['#854F0B','#FAEEDA']
+        : ['#A32D2D','#FCEBEB'];
+      return `<div style="background:${bg};border-radius:6px;padding:6px 2px;text-align:center;min-width:0;overflow:hidden;">
+        <div style="font-size:12px;font-weight:500;color:${col};">${pct}%</div>
+        <div style="font-size:9px;color:${col};opacity:.75;margin-top:1px;white-space:nowrap;">${a}<span style="opacity:.6">/${t}</span></div>
+        <div style="font-size:9px;color:${col};opacity:.6;">${m}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div style="border-top:1px solid rgba(0,0,0,0.07);margin:10px 0 8px;"></div>
+      <div style="font-size:10px;color:#888780;margin-bottom:6px;">月達標率</div>
+      <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;">${cells}</div>
+      <div style="display:flex;gap:8px;margin-top:8px;font-size:10px;">
+        <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:2px;background:#EAF3DE;border:0.5px solid #3B6D11;display:inline-block;"></span><span style="color:#3B6D11;">達標</span></span>
+        <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:2px;background:#FAEEDA;border:0.5px solid #854F0B;display:inline-block;"></span><span style="color:#854F0B;">≥80%</span></span>
+        <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:2px;background:#FCEBEB;border:0.5px solid #A32D2D;display:inline-block;"></span><span style="color:#A32D2D;">未達標</span></span>
+      </div>`;
+  });
 }
 
 function setTrendLoc(brand, loc) {
@@ -1716,8 +1792,7 @@ function onMonthChange(val) {
   const mi = val === 'all' ? NaN : +val;
   renderPerfGrid(mi);
   renderProductTable(mi);
-  // 同步廣告成效表至選中月份（僅在資料已載入時有效）
-  if (!isNaN(mi)) syncAdsToMonth(mi);
+  syncAdsToMonth(mi);
 }
 
 // ── 新舊客績效總覽 ─────────────────────────────────────────
@@ -1786,8 +1861,76 @@ async function fetchPerfData(brand) {
   return data;
 }
 
+function renderPerfSummary(brand) {
+  const el = document.getElementById('perf-summary');
+  if (!el) return;
+  const data = perfData[brand];
+  const brandLabel = brand === 'wo' ? '原渥' : '原綺';
+  const tagCls     = brand === 'wo' ? 'tag-wo' : 'tag-qi';
+
+  // X3 色系：wo=藍系，qi=粉系
+  const C = brand === 'wo'
+    ? { light:'#85B7EB', mid:'#378ADD', dark:'#185FA5', bg:'#E6F1FB', border:'#B5D4F4' }
+    : { light:'#ED93B1', mid:'#D4537E', dark:'#993556', bg:'#FBEAF0', border:'#F4C0D1' };
+
+  const fm = v => v == null ? '—' : '$' + Math.round(v).toLocaleString('zh-TW');
+  const fn = v => v == null ? '—' : Math.round(+v).toLocaleString('zh-TW');
+
+  if (!data) { el.innerHTML = ''; return; }
+
+  const muted = '#5F5E5A';
+  const text  = '#1a1a18';
+  const border = 'rgba(0,0,0,0.1)';
+
+  function colCard(locKey, colLabel, borderColor) {
+    const sec = data[locKey] || {};
+    const xinRev = sec['新客業績']?.acc ?? 0;
+    const jiuRev = sec['舊客業績']?.acc ?? 0;
+    const colTotal = (xinRev && jiuRev) ? xinRev + jiuRev : null;
+    return `<div style="background:#fff;border:0.5px solid ${border};border-radius:12px;border-left:4px solid ${borderColor};padding:14px 16px;">
+      <div style="font-size:12px;font-weight:500;color:${muted};margin-bottom:12px;">${colLabel}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">新客</div><div style="font-size:18px;font-weight:500;color:${text};">${fn(sec['新客數']?.acc)}</div></div>
+        <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">舊客</div><div style="font-size:18px;font-weight:500;color:${text};">${fn(sec['舊客數']?.acc)}</div></div>
+        <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">新客業績</div><div style="font-size:14px;font-weight:500;color:${text};">${fm(xinRev||null)}</div></div>
+        <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">舊客業績</div><div style="font-size:14px;font-weight:500;color:${text};">${fm(jiuRev||null)}</div></div>
+        ${colTotal != null ? `<div style="grid-column:1/-1;border-top:0.5px solid ${border};padding-top:10px;">
+          <div style="font-size:11px;color:${muted};margin-bottom:3px;">總計業績</div>
+          <div style="font-size:16px;font-weight:500;color:${text};">${fm(colTotal)}</div>
+        </div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  const tot = data.total || {};
+  const totXinRev = tot['新客業績']?.acc ?? 0;
+  const totJiuRev = tot['舊客業績']?.acc ?? 0;
+  const totAll    = (totXinRev && totJiuRev) ? totXinRev + totJiuRev : null;
+
+  const totalCard = `<div style="background:${C.bg};border:0.5px solid ${C.border};border-radius:12px;border-left:4px solid ${C.dark};padding:14px 16px;">
+    <div style="font-size:12px;font-weight:500;color:${C.dark};margin-bottom:12px;">${brandLabel} 合計</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">新客</div><div style="font-size:18px;font-weight:500;color:${text};">${fn(tot['新客數']?.acc)}</div></div>
+      <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">舊客</div><div style="font-size:18px;font-weight:500;color:${text};">${fn(tot['舊客數']?.acc)}</div></div>
+      <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">新客業績</div><div style="font-size:14px;font-weight:500;color:${text};">${fm(tot['新客業績']?.acc)}</div></div>
+      <div><div style="font-size:11px;color:${muted};margin-bottom:3px;">舊客業績</div><div style="font-size:14px;font-weight:500;color:${text};">${fm(tot['舊客業績']?.acc)}</div></div>
+      ${totAll != null ? `<div style="grid-column:1/-1;border-top:0.5px solid ${C.border};padding-top:10px;">
+        <div style="font-size:11px;color:${muted};margin-bottom:3px;">總計業績</div>
+        <div style="font-size:18px;font-weight:500;color:${C.dark};">${fm(totAll)}</div>
+      </div>` : ''}
+    </div>
+  </div>`;
+
+  el.innerHTML = `<div class="perf-summary-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+    ${colCard('tpe','台北', C.light)}
+    ${colCard('tca','台中', C.mid)}
+    ${totalCard}
+  </div>`;
+}
+
 function renderPerfTable(brand) {
   const tbl = document.getElementById('perf-tbl');
+  renderPerfSummary(brand);
   const data = perfData[brand];
   if (!data) { tbl.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:#888780;font-size:12px;">載入中…</td></tr>'; return; }
 
@@ -1819,11 +1962,11 @@ function renderPerfTable(brand) {
       }).join('');
     }
 
-    // 總計：BC-1 sub-group（chip 在業績行，跳過新客數/舊客數）
+    // 總計：BC-1 sub-group
     let rows = '';
     const groups = [
-      { chip: 'perf-chip-xin', chipLabel: '新客', cls: 'perf-subgroup-xin', keys: ['新客業績','新客客單'] },
-      { chip: 'perf-chip-jiu', chipLabel: '舊客', cls: 'perf-subgroup-jiu', keys: ['舊客業績','舊客客單'] },
+      { chip: 'perf-chip-xin', chipLabel: '總新客', cls: 'perf-subgroup-xin', keys: ['新客數','新客業績','新客客單'] },
+      { chip: 'perf-chip-jiu', chipLabel: '總舊客', cls: 'perf-subgroup-jiu', keys: ['舊客數','舊客業績','舊客客單'] },
     ];
 
     groups.forEach(g => {
@@ -1832,10 +1975,11 @@ function renderPerfTable(brand) {
         if (!d) return;
         const fmt = isMoney(name) ? fm : fn;
         const labelText = i === 0
-          ? `<span class="perf-chip ${g.chip}">${g.chipLabel}</span>${name}`
+          ? `<span class="perf-chip ${g.chip}">${g.chipLabel}</span>`
           : `<span style="padding-left:14px;">${name}</span>`;
+        const tdExtra = i === 0 ? ' style="padding-left:24px;"' : '';
         rows += `<tr class="perf-total-metric ${g.cls}${i === 0 ? ' perf-section-first' : ''}">
-          <td class="perf-lbl">${labelText}</td>
+          <td class="perf-lbl"${tdExtra}>${labelText}</td>
           ${d.months.map(v => `<td>${fmt(v)}</td>`).join('')}
           <td class="perf-acc">${fmt(d.acc)}</td>
         </tr>`;
@@ -1880,12 +2024,13 @@ function perfSetBrand(brand, el) {
 async function initPerfTab() {
   if (perfInited) return;
   perfInited = true;
-  renderPerfTable('qi'); // show loading
+  renderPerfTable(perfBrand); // show loading state for current brand
   try {
-    perfData.wo = await fetchPerfData('wo');
-    if (perfBrand === 'wo') renderPerfTable('wo');
+    if (!perfData.wo) perfData.wo = await fetchPerfData('wo');
+    if (!perfData.qi) perfData.qi = await fetchPerfData('qi');
+    renderPerfTable(perfBrand);
   } catch(e) {
-    if (perfBrand === 'wo') document.getElementById('perf-tbl').innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:#A32D2D;font-size:12px;">載入失敗：${e.message}</td></tr>`;
+    document.getElementById('perf-tbl').innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:#A32D2D;font-size:12px;">載入失敗：${e.message}</td></tr>`;
   }
 }
 
@@ -1893,10 +2038,15 @@ function switchTab(tab) {
   document.getElementById('tab-overview').style.display = tab === 'overview' ? '' : 'none';
   document.getElementById('tab-ads').style.display      = tab === 'ads'      ? '' : 'none';
   document.getElementById('tab-perf').style.display     = tab === 'perf'     ? '' : 'none';
+  document.getElementById('tab-budget').style.display   = tab === 'budget'   ? '' : 'none';
   document.getElementById('tab-overview-btn').classList.toggle('active', tab === 'overview');
   document.getElementById('tab-ads-btn').classList.toggle('active', tab === 'ads');
   document.getElementById('tab-perf-btn').classList.toggle('active', tab === 'perf');
-  if (tab === 'perf' && !perfData.qi && !perfData.wo) initPerfTab();
+  document.getElementById('tab-budget-btn').classList.toggle('active', tab === 'budget');
+  if (tab === 'perf') {
+    if (!perfData.wo && !perfData.qi) initPerfTab();
+    else renderPerfTable(perfBrand);
+  }
 }
 const _defaultMi = Math.min(new Date().getMonth(), 5); // 0=Jan…5=Jun，最多6月
 document.getElementById('monthSel').value = String(_defaultMi);
@@ -1931,6 +2081,7 @@ const adsExt = {
       { name:'LINE@',  total:5000 },
       { name:'口碑',   total:4000 },
       { name:'SEO',    total:3115 },
+      { name:'其他',   total:0 },
     ],
     vendors: {}
   },
@@ -1959,6 +2110,7 @@ const adsExt = {
       { name:'LINE@',  total:3500 },
       { name:'口碑',   total:3000 },
       { name:'SEO',    total:2162 },
+      { name:'其他',   total:0 },
     ],
     vendors: {} // 廠商子列資料，由 initAutoFetch 更新
   }
@@ -1971,11 +2123,13 @@ const adsExtInitRows = {
 };
 
 // 將指定月份的 adsMonthlyData 同步進 adsExt 並重新渲染廣告表
+// mi = NaN → 全部月份加總
 function syncAdsToMonth(mi) {
   _currentAdsMi = mi;
   const MONTH_LABELS = ['1月','2月','3月','4月','5月','6月'];
+  const isAll = isNaN(mi);
   const title = document.querySelector('#tab-ads .sec-title');
-  if (title) title.textContent = `📊 各品項廣告指標（${MONTH_LABELS[mi] || ''}）`;
+  if (title) title.textContent = `📊 各品項廣告指標（${isAll ? '2026 全部' : MONTH_LABELS[mi] || ''}）`;
 
   ['wo','qi'].forEach(b => {
     // 重置 rows：保留品項結構，但數值全部歸零（避免靜態估算值污染月份加總）
@@ -1986,9 +2140,55 @@ function syncAdsToMonth(mi) {
       clients:0, cpl:0, roas:0, rate:0
     }));
 
-    const monthData = adsMonthlyData[b][mi] || { products:{}, factoryVendors:{}, mediaChannels:{} };
+    // 全部模式：加總所有月份的 adsMonthlyData
+    let monthData;
+    if (isAll) {
+      const mergedProds = {};
+      const mergedVendors = {};
+      const mergedMedia = { metaTpe:0, metaTca:0, googleTpe:0, googleTca:0, lineat:0, koubei:0, seo:0 };
+      for (let m = 0; m < 6; m++) {
+        const md = adsMonthlyData[b][m];
+        if (!md) continue;
+        // 累加 products
+        Object.entries(md.products || {}).forEach(([name, p]) => {
+          if (!mergedProds[name]) mergedProds[name] = { name, tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 };
+          const mp = mergedProds[name];
+          mp.tpe  += p.tpe||0;  mp.tca  += p.tca||0;
+          mp.tpe2 += p.tpe2||0; mp.tca2 += p.tca2||0;
+          mp.inq  += p.inq||0;  mp.inq2 += p.inq2||0;
+          mp.tp   += p.tp||0;   mp.tc   += p.tc||0;
+          mp.spend += p.spend||0; mp.clients += p.clients||0;
+        });
+        // 累加 vendors
+        Object.entries(md.factoryVendors || {}).forEach(([name, fv]) => {
+          if (!mergedVendors[name]) mergedVendors[name] = { spend:0, inq:0, tp:0, tc:0, tpe:0, tca:0 };
+          const mv = mergedVendors[name];
+          mv.spend += fv.spend||0; mv.inq += fv.inq||0;
+          mv.tp += fv.tp||0; mv.tc += fv.tc||0;
+          mv.tpe += fv.tpe||0; mv.tca += fv.tca||0;
+        });
+        // 累加 media
+        const mc = md.mediaChannels || {};
+        mergedMedia.metaTpe   += mc.metaTpe||0;  mergedMedia.metaTca   += mc.metaTca||0;
+        mergedMedia.googleTpe += mc.googleTpe||0; mergedMedia.googleTca += mc.googleTca||0;
+        mergedMedia.lineat    += mc.lineat||0;    mergedMedia.koubei    += mc.koubei||0;
+        mergedMedia.seo       += mc.seo||0;
+      }
+      // 重算衍生指標
+      Object.values(mergedProds).forEach(mp => {
+        const totalSpend = mp.tpe + mp.tca + mp.tpe2 + mp.tca2;
+        const totalInq = mp.inq + mp.inq2;
+        mp.cpl  = mp.clients > 0 && totalSpend > 0 ? Math.round(totalSpend / mp.clients) : 0;
+        mp.rate = totalInq > 0 && mp.clients > 0 ? +((mp.clients / totalInq) * 100).toFixed(1) : 0;
+        // roas 無法加總（需業績資料），留 0
+      });
+      monthData = { products: mergedProds, factoryVendors: mergedVendors, mediaChannels: mergedMedia };
+    } else {
+      monthData = adsMonthlyData[b][mi] || { products:{}, factoryVendors:{}, mediaChannels:{} };
+    }
+
     const liveProds = monthData.products;
-    const prodsData = prodData[b][mi] || [];
+    const prodsData = isAll ? [] : (prodData[b][mi] || []);
 
     adsExt[b].rows.forEach(r => {
       const live = liveProds[r.name];
@@ -2024,6 +2224,11 @@ function syncAdsToMonth(mi) {
 
     // 更新媒體渠道花費
     const mc = monthData.mediaChannels || {};
+    // 1月兩個品牌各有一筆其他費用 11,760（未記錄在各媒體欄位）
+    const OTHER_SPEND = { wo: [11760,0,0,0,0,0], qi: [11760,0,0,0,0,0] };
+    const otherAmt = isAll
+      ? OTHER_SPEND[b].reduce((s,v)=>s+v, 0)
+      : (!isNaN(mi) ? (OTHER_SPEND[b][mi] || 0) : 0);
     adsExt[b].media.forEach(m => {
       if (m.name === 'Meta') {
         m.tpe = mc.metaTpe||0; m.tca = mc.metaTca||0;
@@ -2034,6 +2239,7 @@ function syncAdsToMonth(mi) {
       } else if (m.name === 'LINE@') { m.total = mc.lineat||0; }
       else if (m.name === '口碑')    { m.total = mc.koubei||0; }
       else if (m.name === 'SEO')     { m.total = mc.seo||0;    }
+      else if (m.name === '其他')    { m.total = otherAmt;      }
     });
 
     // 重新渲染
@@ -2081,7 +2287,11 @@ function buildAdsSummary(b) {
   const vendors = adsExt[b].vendors || {};
   const medColors = ['#2563eb','#60a5fa','#93c5fd','#ddd','#aecbfa','#e8c9d8'];
 
-  const totalSpend = med.reduce((s,m)=>s+(m.total||0),0) || D.ads[b].total.spend;
+  // 全部模式：以 kpiTrend spend26 為權威花費總額（與預算卡一致）
+  const isAllMode = isNaN(_currentAdsMi);
+  const medSum = med.reduce((s,m)=>s+(m.total||0),0);
+  const spend26Total = (kpiTrend[b].spend26||[]).reduce((s,v)=>s+(v||0),0);
+  const totalSpend = isAllMode ? spend26Total : (medSum || D.ads[b].total.spend);
 
   // 與 buildKpiTable 同邏輯的統計
   const inqTotal  = rows.reduce((s,r)=>s+(r.inq||0)+(r.inq2||0),0)
@@ -2095,9 +2305,15 @@ function buildAdsSummary(b) {
   const cpl       = clients  && totalSpend ? Math.round(totalSpend / clients)  : 0;
 
   // 新客業績卡片 + 業績 ROAS
-  const rev = adsRevenue[b][_currentAdsMi];
-  const revTpe = rev?.tpe || 0;
-  const revTca = rev?.tca || 0;
+  let revTpe, revTca;
+  if (isAllMode) {
+    revTpe = (kpiTrend[b].revTp || []).reduce((s,v)=>s+(v||0),0);
+    revTca = (kpiTrend[b].revTc || []).reduce((s,v)=>s+(v||0),0);
+  } else {
+    const rev = adsRevenue[b][_currentAdsMi];
+    revTpe = rev?.tpe || 0;
+    revTca = rev?.tca || 0;
+  }
   const revTotal = revTpe + revTca;
   const roasRev = revTotal && totalSpend ? +(revTotal / totalSpend).toFixed(1) : 0;
 
@@ -2181,7 +2397,7 @@ function openProdModal(b, name) {
     const total = (m.tpe||0)+(m.tca||0);
     const td = s => `<td style="padding:5px 8px;border-bottom:0.5px solid rgba(0,0,0,0.06);text-align:right;">${s}</td>`;
     return `<tr style="font-size:11px;">
-      <td style="padding:5px 8px;border-bottom:0.5px solid rgba(0,0,0,0.06);text-align:left;">${lbl}</td>
+      <td style="padding:5px 8px;border-bottom:0.5px solid rgba(0,0,0,0.06);text-align:left;position:sticky;left:0;background:#fff;z-index:1;font-weight:500;">${lbl}</td>
       ${td($(m.tpe))}${td($(m.tca))}
       ${td(`<strong>$${fmt(total)}</strong>`)}
       ${td(m.inq!=null?m.inq:'—')}
@@ -2208,7 +2424,7 @@ function openProdModal(b, name) {
         <div style="font-size:9.5px;color:#888780;margin-bottom:8px;">台北 <span style="display:inline-block;width:10px;height:7px;background:${tpColor};border-radius:2px;vertical-align:middle;"></span>　台中 <span style="display:inline-block;width:10px;height:7px;background:${tcColor};border-radius:2px;vertical-align:middle;"></span></div>
         <table style="width:100%;border-collapse:collapse;">
           <thead><tr>
-            ${['月份','台北花費','台中花費','小計','詢問數','CPA','台北新客','台中新客','總新客','ROAS','轉換率'].map((h,i)=>`<th style="background:#111;color:#bbb;font-size:10px;font-weight:500;padding:6px 8px;text-align:${i===0?'left':'right'};">${h}</th>`).join('')}
+            ${['月份','台北花費','台中花費','小計','詢問數','CPA','台北新客','台中新客','總新客','ROAS','轉換率'].map((h,i)=>`<th style="background:#111;color:#bbb;font-size:10px;font-weight:500;padding:6px 8px;text-align:${i===0?'left':'right'};${i===0?'position:sticky;left:0;z-index:3;':''}">${h}</th>`).join('')}
           </tr></thead>
           <tbody>${tableRows||'<tr><td colspan="4" style="padding:12px 8px;text-align:center;color:#aaa;font-size:11px;">尚無歷史資料</td></tr>'}</tbody>
         </table>
@@ -2614,6 +2830,284 @@ function initKpiCharts() {
   });
 }
 initKpiCharts();
+
+// ── 年度預算使用狀況 ──────────────────────────────────────────
+const BUDGET = { wo: 2500000, qi: 3500000 };
+function renderBudgetCard() {
+  const el = document.getElementById('budget-card');
+  if (!el) return;
+  const fmt = v => '$' + Math.round(v).toLocaleString('zh-TW');
+  const pct = (v, total) => Math.min(100, Math.round(v / total * 1000) / 10);
+  const sumSpend = b => (kpiTrend[b].spend26 || []).reduce((s, v) => s + (v || 0), 0);
+  const woUsed = sumSpend('wo'), qiUsed = sumSpend('qi');
+  const totalBudget = BUDGET.wo + BUDGET.qi;
+  const totalUsed = woUsed + qiUsed;
+  const totalPct = pct(totalUsed, totalBudget);
+  const woRemain = BUDGET.wo - woUsed, qiRemain = BUDGET.qi - qiUsed;
+  const woPct = pct(woUsed, BUDGET.wo), qiPct = pct(qiUsed, BUDGET.qi);
+  const remainColor = r => r < 0 ? '#A32D2D' : '#3B6D11';
+  const remainNote = (r, b) => r < 0
+    ? `<span style="color:#A32D2D;">超支 ${fmt(Math.abs(r))}</span>`
+    : `<span style="color:#3B6D11;">剩餘 ${fmt(r)}</span>`;
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div>
+        <div style="font-size:9px;color:#888;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:3px;">年度總花費 / 總預算</div>
+        <div style="display:flex;align-items:baseline;gap:8px;">
+          <span style="font-size:22px;font-weight:600;color:#1a1a18;">${fmt(totalUsed)}</span>
+          <span style="font-size:13px;color:#888;">/ ${fmt(totalBudget)}</span>
+          <span style="font-size:13px;font-weight:600;color:#444;">${totalPct}%</span>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:9px;color:#888;letter-spacing:0.06em;text-transform:uppercase;">剩餘預算</div>
+        <div style="font-size:16px;font-weight:600;color:${remainColor(totalBudget-totalUsed)};margin-top:2px;">${fmt(totalBudget - totalUsed)}</div>
+        <div style="font-size:11px;color:#888;">年度已過 ${Math.round(new Date().getMonth()/12*100)}%</div>
+      </div>
+    </div>
+    <div style="height:10px;border-radius:99px;background:#ebebeb;overflow:hidden;margin-bottom:16px;">
+      <div style="height:100%;border-radius:99px;width:${totalPct}%;background:#444441;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 0.5px 1fr;gap:0 20px;">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span class="brand-tag tag-wo">原渥</span>
+          <span style="font-size:10px;color:#888;">預算 ${fmt(BUDGET.wo)}</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:6px;">
+          <span style="font-size:16px;font-weight:600;color:#185FA5;">${fmt(woUsed)}</span>
+          <span style="font-size:11px;color:#888;">${woPct}%</span>
+        </div>
+        <div style="height:8px;border-radius:99px;background:#ebebeb;overflow:hidden;margin:6px 0 4px;">
+          <div style="height:100%;border-radius:99px;width:${woPct}%;background:#378ADD;"></div>
+        </div>
+        ${remainNote(woRemain)}
+      </div>
+      <div style="background:rgba(0,0,0,0.08);"></div>
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span class="brand-tag tag-qi">原綺</span>
+          <span style="font-size:10px;color:#888;">預算 ${fmt(BUDGET.qi)}</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:6px;">
+          <span style="font-size:16px;font-weight:600;color:#993556;">${fmt(qiUsed)}</span>
+          <span style="font-size:11px;color:#888;">${qiPct}%</span>
+        </div>
+        <div style="height:8px;border-radius:99px;background:#ebebeb;overflow:hidden;margin:6px 0 4px;">
+          <div style="height:100%;border-radius:99px;width:${qiPct}%;background:#D4537E;"></div>
+        </div>
+        ${remainNote(qiRemain)}
+      </div>
+    </div>`;
+}
+renderBudgetCard();
+
+// ── 各媒體花費佔比（A4 樣式）──────────────────────────────────
+function renderMediaCard() {
+  const el = document.getElementById('media-card');
+  if (!el) return;
+  const fmt = v => '$' + Math.round(v).toLocaleString('zh-TW');
+
+  const sumMedia = b => {
+    const acc = { meta:0, google:0, lineat:0, koubei:0, seo:0, other:0 };
+    for (let m = 0; m < 6; m++) {
+      const mc = adsMonthlyData[b][m]?.mediaChannels;
+      if (!mc) continue;
+      acc.meta   += (mc.metaTpe||0)+(mc.metaTca||0);
+      acc.google += (mc.googleTpe||0)+(mc.googleTca||0);
+      acc.lineat += mc.lineat||0;
+      acc.koubei += mc.koubei||0;
+      acc.seo    += mc.seo||0;
+    }
+    acc.other = 11760;
+    return acc;
+  };
+
+  const buildBrand = (b, label, tagCls, gradStart, gradEnd) => {
+    const mc = sumMedia(b);
+    const total = (kpiTrend[b].spend26||[]).reduce((s,v)=>s+(v||0),0);
+    const channels = [
+      { name:'Meta',   val: mc.meta   },
+      { name:'Google', val: mc.google },
+      { name:'LINE@',  val: mc.lineat },
+      { name:'口碑',   val: mc.koubei },
+      { name:'SEO',    val: mc.seo    },
+      { name:'其他',   val: mc.other  },
+    ].filter(c => c.val > 0).sort((a,b) => b.val - a.val);
+    const maxVal = channels[0]?.val || 1;
+
+    const rows = channels.map(c => {
+      const p = total ? Math.round(c.val / total * 100) : 0;
+      const barW = Math.min(100, Math.round(c.val / maxVal * 100));
+      return `<div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px;">
+          <span style="font-size:12px;color:var(--color-text-secondary);">${c.name}</span>
+          <span style="font-size:13px;font-weight:500;color:var(--color-text-primary);">${fmt(c.val)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;height:8px;background:var(--color-background-secondary);border-radius:99px;overflow:hidden;">
+            <div style="height:100%;width:${barW}%;background:linear-gradient(90deg,${gradStart},${gradEnd});border-radius:99px;"></div>
+          </div>
+          <span style="font-size:11px;color:var(--color-text-secondary);width:28px;text-align:right;flex-shrink:0;">${p}%</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+        <span class="brand-tag ${tagCls}">${label}</span>
+        <span style="font-size:12px;color:var(--color-text-secondary);">年度合計 ${fmt(total)}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:9px;">${rows}</div>
+    </div>`;
+  };
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 0.5px 1fr;gap:0 24px;">
+      ${buildBrand('wo','原渥','tag-wo','#185FA5','#85B7EB')}
+      <div style="background:rgba(0,0,0,0.08);"></div>
+      ${buildBrand('qi','原綺','tag-qi','#993556','#ed93b1')}
+    </div>`;
+}
+renderMediaCard();
+
+// ── 每月花費圖表（雙品牌個別 + 合計）────────────────────────────
+function renderSpendChartCard() {
+  const el = document.getElementById('spend-chart-card');
+  if (!el) return;
+
+  const MONTHS = ['1月','2月','3月','4月','5月','6月'];
+  const OTHER_SPEND = { wo:[11760,0,0,0,0,0], qi:[11760,0,0,0,0,0] };
+
+  // 取得各品牌各月媒體明細（以 spend26 為總量基準，其他 = 差額）
+  function getMonthBreakdown(b, mi) {
+    const total = (kpiTrend[b].spend26[mi]) || 0;
+    if (!total) return null;
+    const mc = adsMonthlyData[b][mi]?.mediaChannels || {};
+    const meta   = (mc.metaTpe||0) + (mc.metaTca||0);
+    const google = (mc.googleTpe||0) + (mc.googleTca||0);
+    const lineat = mc.lineat || 0;
+    const koubei = mc.koubei || 0;
+    const seo    = mc.seo   || 0;
+    const other  = Math.max(0, total - meta - google - lineat - koubei - seo);
+    return { total, meta, google, lineat, koubei, seo, other };
+  }
+
+  // 格式化實際數字（千分位）
+  const fmt = v => v > 0 ? '$' + Math.round(v).toLocaleString('zh-TW') : '-';
+
+  // 渲染單一品牌柱狀圖
+  function buildBrandChart(b, label, tagCls, colors) {
+    const data = MONTHS.map((_,i) => getMonthBreakdown(b, i));
+    const max  = Math.max(...data.map(d => d?.total || 0)) || 1;
+    const BAR_H = 120;
+
+    const cols = MONTHS.map((m, i) => {
+      const d = data[i];
+      if (!d || !d.total) {
+        return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:2px;">
+          <span style="font-size:9px;color:var(--color-text-tertiary);line-height:1.3;text-align:center;">-</span>
+          <div style="flex:1;width:100%;"></div>
+          <div style="width:100%;height:1px;background:var(--color-border-tertiary);"></div>
+          <span style="font-size:10px;color:var(--color-text-secondary);margin-top:3px;">${m}</span>
+        </div>`;
+      }
+      const h = Math.round(d.total / max * BAR_H);
+      const segs = [
+        { key:'meta',   val:d.meta   },
+        { key:'google', val:d.google },
+        { key:'lineat', val:d.lineat },
+        { key:'koubei', val:d.koubei },
+        { key:'seo',    val:d.seo    },
+        { key:'other',  val:d.other  },
+      ].filter(s => s.val > 0).map(s =>
+        `<div style="flex:${s.val};background:${colors[s.key]};"></div>`
+      ).join('');
+      return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:2px;">
+        <span style="font-size:9px;color:var(--color-text-tertiary);line-height:1.3;text-align:center;">${fmt(d.total)}</span>
+        <div style="flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="width:100%;height:${h}px;display:flex;flex-direction:column;border-radius:3px 3px 0 0;overflow:hidden;">${segs}</div>
+        </div>
+        <div style="width:100%;height:1px;background:var(--color-border-tertiary);"></div>
+        <span style="font-size:10px;color:var(--color-text-secondary);margin-top:3px;">${m}</span>
+      </div>`;
+    }).join('');
+
+    const legKeys = [
+      ['meta','Meta'], ['google','Google'], ['lineat','LINE@'],
+      ['koubei','口碑'], ['seo','SEO'], ['other','其他']
+    ];
+    const legends = legKeys.map(([k,n]) =>
+      `<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);">
+        <span style="width:9px;height:9px;border-radius:2px;background:${colors[k]};flex-shrink:0;${k==='other'?'border:0.5px solid var(--color-border-tertiary);':''}"></span>${n}</span>`
+    ).join('');
+
+    return `<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;flex:1;min-width:0;">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+        <span class="${tagCls}" style="font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;">${label}</span>每月廣告花費
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:5px;height:${BAR_H+28}px;padding-bottom:4px;">${cols}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">${legends}</div>
+    </div>`;
+  }
+
+  // 渲染合計柱狀圖（wo + qi 堆疊）
+  function buildTotalChart() {
+    const woData = MONTHS.map((_,i) => (kpiTrend.wo.spend26[i]) || 0);
+    const qiData = MONTHS.map((_,i) => (kpiTrend.qi.spend26[i]) || 0);
+    const totals = MONTHS.map((_,i) => woData[i] + qiData[i]);
+    const max = Math.max(...totals) || 1;
+    const BAR_H = 90;
+
+    const cols = MONTHS.map((m, i) => {
+      const total = totals[i];
+      if (!total) {
+        return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:2px;">
+          <span style="font-size:9px;color:var(--color-text-tertiary);">-</span>
+          <div style="flex:1;width:100%;"></div>
+          <div style="width:100%;height:1px;background:var(--color-border-tertiary);"></div>
+          <span style="font-size:10px;color:var(--color-text-secondary);margin-top:3px;">${m}</span>
+        </div>`;
+      }
+      const h = Math.round(total / max * BAR_H);
+      const woPct = woData[i] / total;
+      const qiPct = qiData[i] / total;
+      return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:2px;">
+        <span style="font-size:9px;color:var(--color-text-tertiary);line-height:1.3;text-align:center;">${fmt(total)}</span>
+        <div style="flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="width:100%;height:${h}px;display:flex;flex-direction:column;border-radius:3px 3px 0 0;overflow:hidden;">
+            <div style="flex:${woPct};background:#185FA5;"></div>
+            <div style="flex:${qiPct};background:#993556;"></div>
+          </div>
+        </div>
+        <div style="width:100%;height:1px;background:var(--color-border-tertiary);"></div>
+        <span style="font-size:10px;color:var(--color-text-secondary);margin-top:3px;">${m}</span>
+      </div>`;
+    }).join('');
+
+    return `<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;margin-top:12px;">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+        <span style="font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;background:var(--color-background-secondary);color:var(--color-text-secondary);">雙品牌合計</span>每月廣告花費
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:5px;height:${BAR_H+28}px;padding-bottom:4px;">${cols}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#185FA5;flex-shrink:0;"></span>原渥</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#993556;flex-shrink:0;"></span>原綺</span>
+      </div>
+    </div>`;
+  }
+
+  const woColors = { meta:'#185FA5', google:'#378ADD', lineat:'#85B7EB', koubei:'#B5D4F4', seo:'#D3D1C7', other:'#F1EFE8' };
+  const qiColors = { meta:'#993556', google:'#D4537E', lineat:'#ED93B1', koubei:'#F4C0D1', seo:'#D3D1C7', other:'#F1EFE8' };
+
+  el.innerHTML = `
+    <div class="spend-brands-grid" style="display:flex;gap:12px;">
+      ${buildBrandChart('wo','原渥','tag-wo', woColors)}
+      ${buildBrandChart('qi','原綺','tag-qi', qiColors)}
+    </div>
+    ${buildTotalChart()}`;
+}
+renderSpendChartCard();
 
 function refreshKpiCharts() {
   ['wo','qi'].forEach(b => {
