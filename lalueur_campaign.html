@@ -625,7 +625,8 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 const SC={
   '東門店':'#1e40af','板橋店':'#2563eb','台中店':'#3b82f6',
   '忠孝店':'#0369a1','站前店':'#0ea5e9','大安店':'#6366f1',
-  '台北原綺':'#db2777','台中原綺':'#ec4899'
+  '台北原綺':'#db2777','台中原綺':'#ec4899',
+  '線上通路':'#059669'
 };
 const ST=['站前店','大安店','忠孝店','東門店','板橋店','台中店'];  // 原渥 stores
 const YQS=['台北原綺','台中原綺'];                                   // 原綺 stores
@@ -752,6 +753,23 @@ const GS_YQ=[
     {k:'孫淑媚套餐',lb:'孫淑媚套餐',pl:'多方案',p:0,pr:'2026/05/28－2026/06/30',nc:'不限',
      ds:'肉毒小臉40U ／ 海芙音波200發 ／ 超玩美電波100發（限購一組，不參與任何折扣）'},
   ]},
+];
+
+// ─── 線上通路活動資料 (行銷活動組數統計, gid=391290906) ─────────────────────
+// 資料來源：https://docs.google.com/spreadsheets/d/1_Yo9nLhdpCbQlmcEN-uorLJnLL9vV_foOIQaI9lROkg/edit?gid=391290906
+const OL_DATA=[
+  {k:'ol618',ic:'🛒',lb:'618活動',pr:'2026/06/12 – 06/20',
+   items:[
+     {lb:'HAN 防曬霜／玫瑰面膜／胜肽面膜 任選2件 $1,680',units:0},
+   ]
+  },
+  {k:'olsummer',ic:'☀️',lb:'七月夏日優惠',pr:'2026/07/01 – 07/31',
+   items:[
+     {lb:'極萃＋HAN 全館滿3000免運',units:0},
+     {lb:'防曬霜30ml 2條折100',units:0},
+     {lb:'亮白波波專區（P4／珍波野60粒款）任兩件折100',units:0},
+   ]
+  },
 ];
 
 // ─── State ───────────────────────────────────────────────────────────────
@@ -1396,8 +1414,9 @@ function _buildActFilter(){
 function build(){
   const data=fl(RAW);
   const isYQStore=YQS.includes(SS)||SS==='原綺全門市';
-  const showRW=!isYQStore;
-  const showYQ=SS==='全集團'||isYQStore;
+  const isOLStore=SS==='線上通路';
+  const showRW=!isYQStore&&!isOLStore;
+  const showYQ=(SS==='全集團'||isYQStore)&&!isOLStore;
 
   // Build month & activity dropdowns
   _buildMonthSel();
@@ -1432,11 +1451,18 @@ function build(){
 
   const YQ_MONTHS=['2025-12','2026-01','2026-02','2026-03','2026-04','2026-05'];
   const allMos=[...new Set([...RAW.map(r=>r.month),...YQ_MONTHS])].sort();
-  document.getElementById('hsub').textContent='資料範圍：'+allMos[0]+' 至 '+allMos[allMos.length-1]+'　共 '+RAW.length+' 筆記錄（原渥）';
+  if(isOLStore){
+    document.getElementById('hsub').textContent='線上通路｜SL官網活動組數統計　資料來源：行銷活動組數統計表';
+  } else {
+    document.getElementById('hsub').textContent='資料範圍：'+allMos[0]+' 至 '+allMos[allMos.length-1]+'　共 '+RAW.length+' 筆記錄（原渥）';
+  }
 
   // ── Brand bar above summary (single-brand view, non-collapsible) ────
   const BB=document.getElementById('brand-bar');
-  if(!showYQ){
+  if(isOLStore){
+    BB.className='show';
+    BB.innerHTML='<div class="brand-header" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-left:4px solid #059669"><div class="bh-left"><span class="bh-title" style="color:#065f46">🛒 線上通路｜SL官網活動組數</span><span class="bh-date" style="color:#059669">資料來源：行銷活動組數統計表</span></div></div>';
+  } else if(!showYQ){
     BB.className='';BB.innerHTML='';
   } else if(!showRW){
     BB.className='show';
@@ -1543,8 +1569,45 @@ function build(){
     }
   }
 
+  // ── 線上通路 section ────────────────────────────────────────────────────
+  if(isOLStore){
+    OL_DATA.forEach(grp=>{
+      const totalUnits=grp.items.reduce((s,i)=>s+i.units,0);
+      const div=document.createElement('div');
+      div.className='activity-group';
+      // Build item rows
+      const itemRows=grp.items.map((item,idx)=>{
+        const rowId='ol_item_'+grp.k+'_'+idx;
+        return'<div class="act-section">'
+          +'<div class="act-header" style="cursor:default">'
+          +'<div class="act-header-left">'
+          +'<div style="min-width:28px;height:28px;border-radius:8px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🏷️</div>'
+          +'<div style="margin-left:10px"><div class="aname" style="font-size:13px">'+item.lb+'</div>'
+          +'<div style="font-size:11px;color:#94a3b8;margin-top:2px">SL／官網 累積組數</div></div></div>'
+          +'<div style="display:flex;align-items:center;gap:10px">'
+          +'<div class="aqswrap"><div class="aqs">'
+          +'<div class="v" style="color:#059669;font-size:22px">'+item.units+'</div>'
+          +'<div class="l">累積組數</div></div></div>'
+          +'</div></div></div>';
+      }).join('');
+
+      div.innerHTML=
+        '<div class="group-header" onclick="tG(\''+grp.k+'\')">'
+        +'<div class="group-header-left">'
+        +'<div class="group-icon" style="background:#ecfdf5;color:#059669;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">'+grp.ic+'</div>'
+        +'<div style="margin-left:12px"><div class="group-title">'+grp.lb+' <span class="group-pr">'+grp.pr+'</span></div>'
+        +'<div class="group-subtitle">'+grp.items.length+' 個活動項目</div></div></div>'
+        +'<div style="display:flex;align-items:center;gap:20px">'
+        +'<div class="gs-wrap">'
+        +'<div class="gs-item"><div class="gs-v" style="color:#059669">'+totalUnits+'組</div><div class="gs-l">累積組數</div></div>'
+        +'</div><div class="chev open" id="cg-'+grp.k+'">▼</div></div></div>'
+        +'<div class="group-body open" id="gb-'+grp.k+'">'+itemRows+'</div>';
+      C.appendChild(div);
+    });
+  }
+
   // If ACTF active but nothing matched, show hint
-  if(ACTF&&!actualShowRW&&!actualShowYQ){
+  if(ACTF&&!actualShowRW&&!actualShowYQ&&!isOLStore){
     C.innerHTML='<p style="padding:32px 24px;color:#94a3b8;font-size:13px">篩選條件下找不到符合的活動</p>';
   }
 }
@@ -1635,6 +1698,18 @@ YQS.forEach(s=>{
   SP.appendChild(p);
 });
 
+// Separator
+(()=>{const sep=document.createElement('span');sep.className='store-sep';SP.appendChild(sep);})();
+
+// 線上通路
+(()=>{
+  const p=document.createElement('span');p.className='pill store';p.textContent='線上通路';
+  p.dataset.store='線上通路';
+  const _c=SC['線上通路'];
+  p.style.cssText='background:#f8fafc;color:'+_c+';border:1.5px solid '+_c+'55';
+  p.onclick=()=>setStore('線上通路');
+  SP.appendChild(p);
+})();
 
 
 build();
@@ -1700,6 +1775,11 @@ const TIMELINE=[
    d:'極萃皙P4：5盒$4,999 ／ 10贈2 $9,999 ／ 㮀HAN任選5樣$3,999 ／ 玻色因膠原精華12入$3,999'},
   {b:'產品',a:'母親節加碼極萃皙',s:'2026-05-14',e:'2026-06-30',c:'#059669',gid:'gb-j',
    d:'極萃全系列任選4樣 $3,999，贈帆布袋＋沐浴露'},
+  // ── 線上通路 ──────────────────────────────────────────────────────────────
+  {b:'線上通路',a:'618活動',s:'2026-06-12',e:'2026-06-20',c:'#059669',gid:null,
+   d:'618活動'},
+  {b:'線上通路',a:'七月夏日優惠',s:'2026-07-01',e:'2026-07-31',c:'#059669',gid:null,
+   d:'七月夏日優惠'},
 ];
 
 // ─── Tab switching ────────────────────────────────────────────────────────────
@@ -1718,7 +1798,7 @@ function switchTab(tab){
 const GS_CSV_URL='https://docs.google.com/spreadsheets/d/1_Yo9nLhdpCbQlmcEN-uorLJnLL9vV_foOIQaI9lROkg/export?format=csv&gid=1644518075';
 const LS_KEY='gantt_cache_v4';  // bump version to clear stale cache
 const LS_DATE_KEY='gantt_cache_date_v4';
-const BRAND_DEFAULT_COLOR={'原綺':'#ec4899','原渥':'#3b82f6','產品':'#10b981'};
+const BRAND_DEFAULT_COLOR={'原綺':'#ec4899','原渥':'#3b82f6','產品':'#10b981','線上通路':'#059669'};
 function _parseGanttCSV(csv){
   // ── RFC-4180 compliant CSV parser: handles \r\n, multi-line quoted fields ──
   function parseCsvToRows(text){
