@@ -577,7 +577,14 @@ function renderStaff(){
           <table class="mini-table">
             <thead><tr><th class="row-label">指標</th>${groups.map(g=>`<th>${g==='渥'?'原渥':'原綺'}</th>`).join('')}</tr></thead>
             <tbody>
-              ${[['詢問數',g=>bg[g].inq],['預約數',g=>bg[g].book],['轉換率',g=>bg[g].conv+'%'],
+              ${[['詢問數',g=>bg[g].inq],['預約數',g=>bg[g].book],
+                 ['轉換率',g=>{
+                   const rate=bg[g].conv;
+                   if(!bg[g].inq) return '<span style="color:#aea9a4">—</span>';
+                   const thresh=g==='渥'?25:15;
+                   const clr=rate>=thresh?'#15803d':'#dc2626';
+                   return `<span style="font-weight:700;color:${clr}">${rate}%</span>`;
+                 }],
                  ['新客到店',g=>bg[g].new],['舊客到店',g=>bg[g].old],
                  ['達成率',g=>{const a=bg[g].ach;return pillAch(a)}],
               ].map(([lbl,fn])=>`<tr><td class="row-label">${lbl}</td>${groups.map(g=>`<td>${fn(g)}</td>`).join('')}</tr>`).join('')}
@@ -1070,6 +1077,21 @@ async function syncPerfData() {
   perf['綺'].新客到店 = toGrid(q新客);
   perf['綺'].舊客到店 = toGrid(q舊客);
   perf['綺'].目標    = toGrid(q目標);
+
+  // 已知目標修正：若 Apps Script 返回的 6月原綺目標總和不符，強制修正
+  // （6月原綺正確目標 = 140）
+  (function fixQiTargetJune(){
+    const mi = 5; // 6月
+    const correctTotal = 140;
+    if (!perf['綺'].目標[mi]) perf['綺'].目標[mi] = [0,0,0,0,0];
+    const currentSum = perf['綺'].目標[mi].reduce((s,v)=>s+(v||0),0);
+    if (currentSum !== correctTotal) {
+      const diff = correctTotal - currentSum;
+      // 將差值加到第一個非零格，或加到第一格
+      const idx = perf['綺'].目標[mi].findIndex(v=>(v||0)>0);
+      perf['綺'].目標[mi][idx >= 0 ? idx : 0] += diff;
+    }
+  })();
 
   // 用績效資料補充 2026 歷年趨勢（無需等待趨勢 sheet 填妥）
   const sumM = (arr, mi) => (arr||[]).slice(mi*5, mi*5+5).reduce((s,v)=>s+(v||0),0);
@@ -2037,7 +2059,7 @@ function renderSource(){
         <td style="background:#ece8e1;color:${convClr(g,rate)};font-weight:700">${rateStr}</td>`;
   });
   h+=`</tr></tbody></table>`;
-  h+=`<div style="margin-top:8px;font-size:10px;color:#aea9a4">🎯 目標：原渥詢問轉換 ≥ 25%、原綺詢問轉換 ≥ 15%　低於目標標示紅色</div>`;
+  h+=`<div style="margin-top:8px;font-size:10px;color:#aea9a4">🎯 目標：原渥詢問轉換 ≥ 25%、原綺詢問轉換 ≥ 15%　<span style="color:#dc2626">低於目標紅色</span>　<span style="color:#15803d">達標綠色</span></div>`;
   wrap.innerHTML=h;
 }
 
