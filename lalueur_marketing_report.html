@@ -600,7 +600,7 @@ const kpiTrend = {
         rev:    [1330203, 1708771, 3518069, 2859727, 2113528, 21749],
         aov:    [10993, 13562, 14129, 15713, 13210, 10875],
         spend25:[134530, 161213, 251679, 274369, 243781, 229851],
-        spend26:[242658, 254273, 223347, 153933, 165101, null],
+        spend26:[242658, 254273, 223347, 153933, 165101, 92331],
         tp:     [84, 87, 177, 127, 116, 2],
         tc:     [37, 39,  72,  55,  44, 0] },
   qi: { labels:['1月','2月','3月','4月','5月','6月'],
@@ -610,7 +610,7 @@ const kpiTrend = {
         rev:    [5219341, 3465578, 4173471, 2534797, 2618201, 54998],
         aov:    [31254, 30400, 28391, 26132, 25175, 18333],
         spend25:[158597, 290593, 447667, 391339, 301972, 340071],
-        spend26:[358651, 339117, 376282, 266074, 272460,  31500],
+        spend26:[358651, 339117, 376282, 266074, 272460, 142036],
         tp:     [110, 86, 106, 69, 75, 3],
         tc:     [ 57, 28,  41, 28, 29, 0] }
 };
@@ -1170,21 +1170,21 @@ async function initAutoFetch() {
     } catch(e) { errors.push(`原渥${mi+1}月業績：${e.message}`); }
   }
 
-  // 原渥 6月廣告花費：從「年度新客目標」V26 抓
+  // 原渥 6月廣告花費：從「年度新客目標」V25 抓（廣告花費列；V26=SEO費用）
   try {
-    const spendResp = await gvizJSONP('年度新客目標', 'V26:V26');
+    const spendResp = await gvizJSONP('年度新客目標', 'V25:V25');
     const v = spendResp?.table?.rows?.[0]?.c?.[0]?.v;
-    if (v != null && !isNaN(+v)) {
+    if (v != null && !isNaN(+v) && v > 50000) {
       kpiTrend.wo.spend26[5] = +v;
       if (typeof renderSpendRows === 'function') renderSpendRows();
       anyUpdated = true;
     }
   } catch(e) { errors.push(`原渥6月花費：${e.message}`); }
-  // 原綺 6月廣告花費：從「年度新客目標」I26 抓
+  // 原綺 6月廣告花費：從「年度新客目標」I25 抓（廣告花費列；I26=SEO費用）
   try {
-    const spendResp = await gvizJSONP('年度新客目標', 'I26:I26');
+    const spendResp = await gvizJSONP('年度新客目標', 'I25:I25');
     const v = spendResp?.table?.rows?.[0]?.c?.[0]?.v;
-    if (v != null && !isNaN(+v)) {
+    if (v != null && !isNaN(+v) && v > 50000) {
       kpiTrend.qi.spend26[5] = +v;
       anyUpdated = true;
     }
