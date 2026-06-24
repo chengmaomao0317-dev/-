@@ -297,6 +297,7 @@ canvas{max-height:240px}
 const STAFF_INFO=[
   {en:"Tracy",  zh:"陳薇如"},
   {en:"Fiona",  zh:"吳維君"},
+  {en:"MO",     zh:"MO", left:true},   // 1月後離職，2月起資料為0
   {en:"Chloe",  zh:"曾宥蓁"},
   {en:"Sabrina",zh:"陳暄穎"},
   {en:"Jenny",  zh:"童怡君"},
@@ -311,22 +312,25 @@ const ML=["1月","2月","3月","4月","5月","6月"];
 // perf 資料來源：Google Sheets「客服個人績效總表」gid=377263112，2026/05/30 校正
 // 人員順序：[Tracy(0), Fiona(1), Chloe(2), Sabrina(3), Jenny(4)]
 // 原渥達標 = 新客到店/目標；原綺達標 = (新客到店+舊客到店)/目標
+// 靜態備用資料（Apps Script 同步後會覆寫）
+// 人員順序：[Tracy(0), Fiona(1), MO(2,1月後離職), Chloe(3), Sabrina(4), Jenny(5)]
+// 欄位對應：B(Tracy) C(Fiona) D(MO) E(Chloe) F(Sabrina) G(Jenny)，每月6欄，共36欄B:AK
 const perf={
   渥:{
-    詢問數:  [[41,238,385,0,0],[40,144,410,406,389],[8,1,787,488,491],[4,19,768,630,646],[56,1,417,381,507],[0,0,0,0,0]],
-    預約數:  [[67,35,77,0,0],[9,25,60,87,47],[6,3,177,133,99],[2,4,180,187,82],[8,1,87,90,86],[0,0,12,10,0]],
-    新客到店:[[10,28,38,0,0],[21,25,55,39,18],[2,4,100,86,62],[3,1,111,125,80],[1,1,80,85,58],[0,0,4,5,4]],
-    舊客到店:[[5,2,5,0,0],[5,2,8,2,4],[2,0,12,8,13],[3,0,14,3,4],[2,0,11,0,13],[2,0,1,1,1]],
-    目標:    [[50,65,30,0,0],[20,50,50,30,30],[0,0,90,65,65],[0,0,70,75,75],[0,0,70,75,75],[0,10,90,90,50]],
-    達成率:  [[20,43,127,0,0],[105,50,110,130,60],[0,0,111,132,95],[0,0,159,167,107],[0,0,114,113,77],[0,0,4,6,8]],
+    詢問數:  [[41,238,0,385,0,0],[40,144,0,410,406,389],[8,1,0,787,488,491],[4,19,0,768,630,646],[56,1,0,417,381,507],[0,0,0,0,0,0]],
+    預約數:  [[67,35,0,77,0,0],[9,25,0,60,87,47],[6,3,0,177,133,99],[2,4,0,180,187,82],[8,1,0,87,90,86],[0,0,0,12,10,0]],
+    新客到店:[[10,28,0,38,0,0],[21,25,0,55,39,18],[2,4,0,100,86,62],[3,1,0,111,125,80],[1,1,0,80,85,58],[0,0,0,4,5,4]],
+    舊客到店:[[5,2,0,5,0,0],[5,2,0,8,2,4],[2,0,0,12,8,13],[3,0,0,14,3,4],[2,0,0,11,0,13],[2,0,0,1,1,1]],
+    目標:    [[50,65,0,30,0,0],[20,50,0,50,30,30],[0,0,0,90,65,65],[0,0,0,70,75,75],[0,0,0,70,75,75],[0,10,0,90,90,50]],
+    達成率:  [[20,43,0,127,0,0],[105,50,0,110,130,60],[0,0,0,111,132,95],[0,0,0,159,167,107],[0,0,0,114,113,77],[0,0,0,4,6,8]],
   },
   綺:{
-    詢問數:  [[621,657,28,0,0],[404,678,319,2,0],[411,636,326,24,20],[181,432,289,56,155],[214,389,315,93,92],[0,0,0,0,0]],
-    預約數:  [[140,102,2,0,0],[67,64,22,0,0],[94,93,24,5,2],[59,83,21,8,6],[47,87,19,6,8],[0,0,1,1,0]],
-    新客到店:[[69,81,0,0,0],[41,52,11,0,0],[55,56,15,0,1],[23,57,12,3,6],[20,48,19,4,7],[0,1,1,0,3]],
-    舊客到店:[[8,1,0,0,0],[6,10,1,0,0],[9,6,1,0,1],[11,12,2,2,2],[8,17,4,0,1],[0,1,0,0,0]],
-    目標:    [[70,50,0,0,0],[60,55,15,0,0],[50,60,0,0,0],[20,60,20,10,10],[20,60,20,10,10],[20,60,20,10,10]],
-    達成率:  [[110,164,0,0,0],[78,113,80,0,0],[128,103,0,0,0],[170,115,70,50,80],[140,108,115,40,80],[0,3,5,0,30]],
+    詢問數:  [[621,657,0,28,0,0],[404,678,0,319,2,0],[411,636,0,326,24,20],[181,432,0,289,56,155],[214,389,0,315,93,92],[0,0,0,0,0,0]],
+    預約數:  [[140,102,0,2,0,0],[67,64,0,22,0,0],[94,93,0,24,5,2],[59,83,0,21,8,6],[47,87,0,19,6,8],[0,0,0,1,1,0]],
+    新客到店:[[69,81,0,0,0,0],[41,52,0,11,0,0],[55,56,0,15,0,1],[23,57,0,12,3,6],[20,48,0,19,4,7],[0,1,0,1,0,3]],
+    舊客到店:[[8,1,0,0,0,0],[6,10,0,1,0,0],[9,6,0,1,0,1],[11,12,0,2,2,2],[8,17,0,4,0,1],[0,1,0,0,0,0]],
+    目標:    [[70,50,0,0,0,0],[60,55,0,15,0,0],[50,60,0,0,0,0],[20,60,0,20,10,10],[20,60,0,20,10,10],[20,60,0,20,10,10]],
+    達成率:  [[110,164,0,0,0,0],[78,113,0,80,0,0],[128,103,0,0,0,0],[170,115,0,70,50,80],[140,108,0,115,40,80],[0,3,0,5,0,30]],
   },
 };
 const history={
@@ -1056,12 +1060,23 @@ async function syncPerfData() {
   const { w詢問, w預約, w新客預約, w新客, w舊客, w目標,
           q詢問, q預約, q新客預約, q新客, q舊客, q目標 } = data;
 
-  // 將30個數字拆成 [6個月][5人] 的二維陣列
+  // 1月有MO（6人），2月起無MO（5人）→ 統一輸出6人格式，MO補0
+  // Sheet 實際欄位：1月B-G(6欄) + 2-6月各5欄 = 共31欄 B:AF
   function toGrid(data) {
     const grid = [];
+    let offset = 0;
     for (let mi = 0; mi < 6; mi++) {
-      const month = [];
-      for (let si = 0; si < 5; si++) month.push(data[mi*5 + si] || 0);
+      const month = [0,0,0,0,0,0]; // 6人：Tracy,Fiona,MO,Chloe,Sabrina,Jenny
+      if (mi === 0) {
+        // 1月：6人直接讀
+        for (let si = 0; si < 6; si++) month[si] = data[offset + si] || 0;
+        offset += 6;
+      } else {
+        // 2月起：5人，跳過MO位置(index 2)
+        const map = [0,1,3,4,5]; // sheet位置→6人陣列索引
+        for (let si = 0; si < 5; si++) month[map[si]] = data[offset + si] || 0;
+        offset += 5;
+      }
       grid.push(month);
     }
     return grid;
@@ -1083,7 +1098,7 @@ async function syncPerfData() {
   (function fixQiTargetJune(){
     const mi = 5; // 6月
     const correctTotal = 140;
-    if (!perf['綺'].目標[mi]) perf['綺'].目標[mi] = [0,0,0,0,0];
+    if (!perf['綺'].目標[mi]) perf['綺'].目標[mi] = [0,0,0,0,0,0];
     const currentSum = perf['綺'].目標[mi].reduce((s,v)=>s+(v||0),0);
     if (currentSum !== correctTotal) {
       const diff = correctTotal - currentSum;
@@ -1094,7 +1109,9 @@ async function syncPerfData() {
   })();
 
   // 用績效資料補充 2026 歷年趨勢（無需等待趨勢 sheet 填妥）
-  const sumM = (arr, mi) => (arr||[]).slice(mi*5, mi*5+5).reduce((s,v)=>s+(v||0),0);
+  // 1月6欄(含MO)、2月起5欄，起始位移 = [0,6,11,16,21,26]
+  const _mOff=[0,6,11,16,21,26], _mLen=[6,5,5,5,5,5];
+  const sumM=(arr,mi)=>(arr||[]).slice(_mOff[mi],_mOff[mi]+_mLen[mi]).reduce((s,v)=>s+(v||0),0);
   if (!history['渥'][2026]) history['渥'][2026]={p:Array(12).fill(null),n:Array(12).fill(null)};
   if (!history['綺'][2026]) history['綺'][2026]={p:Array(12).fill(null),n:Array(12).fill(null)};
   if (!sheetTotal['渥']) sheetTotal['渥']={arrive:{},booknew:{}};
@@ -1930,20 +1947,27 @@ function renderStaffPerfContent(){
     const thB='padding:5px 10px;text-align:center;font-size:11px;font-weight:700;border:1px solid #e8e4de;white-space:nowrap';
     const tdB='padding:5px 10px;text-align:center;font-size:12px;border:1px solid #eee;white-space:nowrap';
     function pct2(a,b){return b>0?Math.round(a/b*100):0;}
+    const convThreshM={渥:25,綺:15};
     let t=`<table style="border-collapse:collapse;width:100%;font-size:12px">
       <thead><tr>
         <th style="${thB};background:#1a1a1a;color:#fff;text-align:left">月份</th>
-        ${groups.map(g=>`<th colspan="3" style="${thB};background:${g==='渥'?'#1e3a8a':'#831843'};color:#fff">${g==='渥'?'原渥':'原綺'}</th>`).join('')}
+        ${groups.map(g=>`<th colspan="4" style="${thB};background:${g==='渥'?'#1e3a8a':'#831843'};color:#fff">${g==='渥'?'原渥':'原綺'}</th>`).join('')}
       </tr><tr>
         <th style="${thB};background:#f5f3f0"></th>
-        ${groups.map(()=>`<th style="${thB};background:#f5f3f0">目標</th><th style="${thB};background:#f5f3f0">到店數</th><th style="${thB};background:#f5f3f0">達成率</th>`).join('')}
+        ${groups.map(()=>`<th style="${thB};background:#f5f3f0">目標</th><th style="${thB};background:#f5f3f0">到店數</th><th style="${thB};background:#f5f3f0">轉換率</th><th style="${thB};background:#f5f3f0">達成率</th>`).join('')}
       </tr></thead><tbody>`;
     ML.forEach((m,mi)=>{
       t+=`<tr><td style="${tdB};font-weight:700;background:#faf9f7;text-align:left;padding-left:14px">${m}</td>`;
       groups.forEach(g=>{
         const arr=g==='渥'?perf[g].新客到店[mi][si]:perf[g].新客到店[mi][si]+perf[g].舊客到店[mi][si];
         const tar=perf[g].目標[mi][si];
-        t+=`<td style="${tdB};color:#9a9490">${tar||'—'}</td><td style="${tdB}">${arr}</td><td style="${tdB}">${pillAch(tar>0?pct2(arr,tar):0)}</td>`;
+        const inq=perf[g].詢問數[mi][si]||0;
+        const conv=inq>0?Math.round(arr/inq*100):null;
+        const convThr=convThreshM[g];
+        const convHtml=conv===null
+          ?`<span style="color:#aea9a4">—</span>`
+          :`<span style="font-weight:700;color:${conv>=convThr?'#15803d':'#dc2626'}">${conv}%</span>`;
+        t+=`<td style="${tdB};color:#9a9490">${tar||'—'}</td><td style="${tdB}">${arr}</td><td style="${tdB}">${convHtml}</td><td style="${tdB}">${pillAch(tar>0?pct2(arr,tar):0)}</td>`;
       });
       t+=`</tr>`;
     });
