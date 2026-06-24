@@ -95,6 +95,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC','Micr
 .gi-e{background:linear-gradient(135deg,#f97316,#ea580c)}
 .gi-l{background:linear-gradient(135deg,#9333ea,#7c3aed)}
 .gi-b{background:linear-gradient(135deg,#eab308,#ca8a04)}
+.gi-s{background:linear-gradient(135deg,#fbbf24,#f97316)}
 .gi-a{background:linear-gradient(135deg,#06b6d4,#0891b2)}
 .group-title{font-size:15px;font-weight:700;color:#1e293b}
 .group-subtitle{font-size:11px;color:#94a3b8;margin-top:2px}
@@ -437,6 +438,9 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 {"date": "2026-06-20", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "吳佳燕", "subtotal": 6999, "ext_revenue": 6000, "store": "板橋店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "蕭又齊", "subtotal": 999, "ext_revenue": 0, "store": "板橋店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "童顏$6000", "act_price": 6000, "client_type": "新客", "client_name": "許凱玲", "subtotal": 6000, "ext_revenue": 0, "store": "板橋店", "period": "20260514-20260630"},
+// 板橋 6/23
+{"date": "2026-06-23", "month": "2026-06", "activity": "童顏$6000", "act_price": 6000, "client_type": "新客", "client_name": "王郁綺", "subtotal": 6000, "ext_revenue": 0, "store": "板橋店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "吳欣芫", "subtotal": 2498, "ext_revenue": 1499, "store": "板橋店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 台中", "activity": "童顏$6000", "act_price": 6000, "client_type": "新客", "client_name": "劉芸霏", "subtotal": 6000.0, "ext_revenue": 0.0, "text": "(2026限時優惠)購童顏V臉6000發贈2000發$6000現金付清", "store": "台中店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 台中", "activity": "童顏$6000", "act_price": 6000, "client_type": "新客", "client_name": "許靜芳", "subtotal": 6999.0, "ext_revenue": 999.0, "text": "(2026限時優惠)購童顏V臉6000發贈2000發$6000+購2026競賽-無針水光1堂999現金付清", "store": "台中店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 台中", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "許靜芳", "subtotal": 6999.0, "ext_revenue": 6000.0, "text": "(2026限時優惠)購童顏V臉6000發贈2000發$6000+購2026競賽-無針水光1堂999現金付清", "store": "台中店", "period": "20260514-20260630"},
@@ -488,6 +492,8 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 {"date": "2026-06-20", "month": "2026-06", "activity": "水光10堂$19999", "act_price": 19999, "client_type": "舊客", "client_name": "林怡菁", "subtotal": 19999, "ext_revenue": 0, "store": "台中店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "陳怡伶", "subtotal": 999, "ext_revenue": 0, "store": "台中店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "陳怡靜", "subtotal": 999, "ext_revenue": 0, "store": "台中店", "period": "20260514-20260630"},
+// 台中 6/23
+{"date": "2026-06-23", "month": "2026-06", "activity": "童顏V臉$24000", "act_price": 24000, "client_type": "舊客", "client_name": "林緁廷", "subtotal": 24000, "ext_revenue": 0, "store": "台中店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 忠孝", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "簡綺瑩", "subtotal": 999.0, "ext_revenue": 0.0, "text": "2026競賽-體驗無針水光999(期限一年)未使用 匯款付清", "store": "忠孝店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 忠孝", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "呂姿儀", "subtotal": 999.0, "ext_revenue": 0.0, "text": "2026競賽-體驗無針水光999已使用 LINEPAY", "store": "忠孝店", "period": "20260514-20260630"},
 {"date": "2026-05-29", "month": "2026-05", "sheet": "115529 SPA VIP 忠孝", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "張悅殷", "subtotal": 2199.0, "ext_revenue": 1200.0, "text": "2026競賽-體驗無針水光999已使用+加購濃縮精華2支1200 linepay付清", "store": "忠孝店", "period": "20260514-20260630"},
@@ -662,6 +668,15 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 {"date": "2026-06-20", "month": "2026-06", "activity": "童顏$6000", "act_price": 6000, "client_type": "新客", "client_name": "潘沄漊", "subtotal": 6999, "ext_revenue": 999, "store": "站前店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "張宇孟", "subtotal": 999, "ext_revenue": 0, "store": "站前店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "李垣勛", "subtotal": 3098, "ext_revenue": 2099, "store": "站前店", "period": "20260514-20260630"},
+// 站前 6/22
+{"date": "2026-06-22", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "張雅婷", "subtotal": 14498, "ext_revenue": 13499, "store": "站前店", "period": "20260514-20260630"},
+{"date": "2026-06-22", "month": "2026-06", "activity": "童顏$6000", "act_price": 6000, "client_type": "新客", "client_name": "張雅婷", "subtotal": 14498, "ext_revenue": 8498, "store": "站前店", "period": "20260514-20260630"},
+// 站前 6/23
+{"date": "2026-06-23", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "張紫穎", "subtotal": 2498, "ext_revenue": 1499, "store": "站前店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "林婉琦", "subtotal": 999, "ext_revenue": 0, "store": "站前店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "呂翊甄", "subtotal": 999, "ext_revenue": 0, "store": "站前店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "童顏$6000", "act_price": 6000, "client_type": "舊客", "client_name": "楊斯涵", "subtotal": 6000, "ext_revenue": 0, "store": "站前店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "童顏V臉$24000", "act_price": 24000, "client_type": "舊客", "client_name": "陳采彤", "subtotal": 24000, "ext_revenue": 0, "store": "站前店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 大安", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "余芝穎", "subtotal": 999.0, "ext_revenue": 0.0, "text": "購2026競賽-無針水光1堂999匯款付清(期限1年)", "store": "大安店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 大安", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "楊鈞婷", "subtotal": 56499.0, "ext_revenue": 55500.0, "text": "購2026競賽-無針水光1堂999匯款付清(期限1年)+課程尾款等", "store": "大安店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 大安", "activity": "童顏$6000", "act_price": 6000, "client_type": "舊客", "client_name": "楊鈞婷", "subtotal": 56499.0, "ext_revenue": 50499.0, "text": "2026限時優惠-童顏V臉8000發6000匯款付清(期限1年)+課程尾款等", "store": "大安店", "period": "20260514-20260630"},
@@ -758,6 +773,16 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 {"date": "2026-06-20", "month": "2026-06", "activity": "水光5堂$9999", "act_price": 9999, "client_type": "舊客", "client_name": "顏葦婷", "subtotal": 15999, "ext_revenue": 6000, "store": "大安店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "顏葦婷", "subtotal": 999, "ext_revenue": 0, "store": "大安店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "林筱君", "subtotal": 16398, "ext_revenue": 15399, "store": "大安店", "period": "20260514-20260630"},
+{"date": "2026-06-20", "month": "2026-06", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "林哲筠", "subtotal": 12480, "ext_revenue": 8481, "store": "大安店", "period": "20260514-20260630"},
+// 大安 6/22
+{"date": "2026-06-22", "month": "2026-06", "activity": "童顏$6000", "act_price": 6000, "client_type": "新客", "client_name": "陳子媗", "subtotal": 6000, "ext_revenue": 0, "store": "大安店", "period": "20260514-20260630"},
+{"date": "2026-06-22", "month": "2026-06", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "張愷倫", "subtotal": 3999, "ext_revenue": 0, "store": "大安店", "period": "20260514-20260630"},
+// 大安 6/23
+{"date": "2026-06-23", "month": "2026-06", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "新客", "client_name": "黃慧", "subtotal": 18499, "ext_revenue": 2999, "store": "大安店", "period": "20260623-20260731"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "梅嬡翎", "subtotal": 27498, "ext_revenue": 23499, "store": "大安店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "梅嬡翎", "subtotal": 27498, "ext_revenue": 23499, "store": "大安店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "柳湘琳", "subtotal": 999, "ext_revenue": 0, "store": "大安店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "陳珮駿", "subtotal": 999, "ext_revenue": 0, "store": "大安店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 東門", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "郭貞蘭", "subtotal": 999.0, "ext_revenue": 0.0, "text": "購競賽無針優惠活動$999現金付清(未消耗)", "store": "東門店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 東門", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "李怡慧", "subtotal": 999.0, "ext_revenue": 0.0, "text": "購競賽無針優惠活動$999匯款付清(已消耗)", "store": "東門店", "period": "20260514-20260630"},
 {"date": "2026-05-28", "month": "2026-05", "sheet": "115528 SPA VIP 東門", "activity": "童顏$6000", "act_price": 6000, "client_type": "舊客", "client_name": "曾湘羚", "subtotal": 6999.0, "ext_revenue": 999.0, "text": "購童顏優惠活動8000發$6000刷卡付清", "store": "東門店", "period": "20260514-20260630"},
@@ -802,6 +827,14 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 {"date": "2026-06-20", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "丁子芸", "subtotal": 8999, "ext_revenue": 8000, "store": "東門店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "童顏$6000", "act_price": 6000, "client_type": "新客", "client_name": "丁子芸", "subtotal": 8999, "ext_revenue": 2999, "store": "東門店", "period": "20260514-20260630"},
 {"date": "2026-06-20", "month": "2026-06", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "林育亘", "subtotal": 2499, "ext_revenue": 0, "store": "東門店", "period": "20260514-20260630"},
+// 東門 6/23
+{"date": "2026-06-23", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "新客", "client_name": "張廷瑀", "subtotal": 999, "ext_revenue": 0, "store": "東門店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "童顏V臉$24000", "act_price": 24000, "client_type": "舊客", "client_name": "劉倍嘉", "subtotal": 30600, "ext_revenue": 6600, "store": "東門店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "水光5堂$9999", "act_price": 9999, "client_type": "舊客", "client_name": "劉倍嘉", "subtotal": 30600, "ext_revenue": 20601, "store": "東門店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "陳佳聆", "subtotal": 999, "ext_revenue": 0, "store": "東門店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "童顏$6000", "act_price": 6000, "client_type": "舊客", "client_name": "吳依貞", "subtotal": 6999, "ext_revenue": 999, "store": "東門店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "無針$999", "act_price": 999, "client_type": "舊客", "client_name": "吳依貞", "subtotal": 6999, "ext_revenue": 6000, "store": "東門店", "period": "20260514-20260630"},
+{"date": "2026-06-23", "month": "2026-06", "activity": "童顏$6000", "act_price": 6000, "client_type": "舊客", "client_name": "林姿含", "subtotal": 6000, "ext_revenue": 0, "store": "東門店", "period": "20260514-20260630"},
 ];
 
 // ─── Store config ───────────────────────────────────────────────────────
@@ -823,6 +856,7 @@ const BADGE={
   l:'background:#faf5ff;color:#7c3aed;border:1.5px solid #e9d5ff',
   b:'background:#fefce8;color:#ca8a04;border:1.5px solid #fde68a',
   a:'background:#ecfeff;color:#0e7490;border:1.5px solid #a5f3fc',
+  s:'background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa',
 };
 
 // ─── 原渥 activity groups ────────────────────────────────────────────────
@@ -840,6 +874,10 @@ const GS=[
   ]},
   {k:'j',ic:'✦',lb:'母親節加碼-極萃皙',acts:[
     {k:'極萃皙$3999',    lb:'極萃皙任選4樣$3,999 贈帆布袋+沐浴露',                                                   p:3999, pr:'2026/05/14－2026/06/30'},
+  ]},
+  {k:'s',ic:'☀️',lb:'夏日限定課程',acts:[
+    {k:'夏日限定$15500', lb:'體雕4堂＋肩4堂＋P4*1盒 $15,500',  p:15500, pr:'2026/06/23－2026/07/31'},
+    {k:'夏日限定$17400', lb:'體雕4堂＋胸4堂＋P4*1盒 $17,400',  p:17400, pr:'2026/06/23－2026/07/31'},
   ]},
 ];
 
@@ -1949,6 +1987,8 @@ const TIMELINE=[
    d:'水光$999（限購一次）／ 5堂$9,999贈P4*1 ／ 10堂$19,999贈P4*2＋面膜擇一 ／ 20堂$39,999贈P4*3＋防曬霜＋慕斯＋面膜＋修復精萃'},
   {b:'原渥',a:'母親節童顏V臉加碼',s:'2026-05-14',e:'2026-06-30',c:'#8b5cf6',gid:'gb-t',
    d:'8,000發$6,000（限購一次）／ 12,000+6,000發$24,000贈P4*1＋面膜 ／ 24,000+18,000發$48,000贈P4*2＋防曬霜30ml'},
+  {b:'原渥',a:'夏日限定',s:'2026-06-23',e:'2026-07-31',c:'#f97316',gid:'gb-s',
+   d:'體雕4堂＋肩4堂＋P4*1盒 $15,500 ／ 體雕4堂＋胸4堂＋P4*1盒 $17,400'},
   // ── 產品 ─────────────────────────────────────────────────────────────────
   {b:'產品',a:'女神節極萃皙',s:'2026-03-01',e:'2026-03-31',c:'#10b981',gid:'gb-rh-gs',actKey:'極萃皙任選6盒',
    d:'極萃皙任選6盒 $6,666'},
