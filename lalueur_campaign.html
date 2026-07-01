@@ -1141,7 +1141,7 @@ const GS_YQ=[
 const OL_DATA=[
   {k:'ol618',ic:'🛒',lb:'618活動',pr:'2026/06/12 – 06/20',
    items:[
-     {lb:'HAN 防曬霜／玫瑰面膜／胜肽面膜 任選2件 $1,680',units:0},
+     {lb:'HAN 防曬霜／玫瑰面膜／胜肽面膜 任選2件 $1,680',units:2},
    ]
   },
   {k:'olsummer',ic:'☀️',lb:'七月夏日優惠',pr:'2026/07/01 – 07/31',
@@ -1789,13 +1789,20 @@ function _buildActFilter(){
     o.value='yq::'+g.lb;o.textContent='[原綺] '+g.lb;
     sel.appendChild(o);
   });
+  // 線上通路 groups
+  OL_DATA.forEach(g=>{
+    const o=document.createElement('option');
+    o.value='ol::'+g.k;o.textContent='[線上通路] '+g.lb;
+    sel.appendChild(o);
+  });
   sel.value=cur;
 }
 
 function build(){
   const data=fl(RAW);
   const isYQStore=YQS.includes(SS)||SS==='原綺全門市';
-  const isOLStore=SS==='線上通路';
+  const fOL=ACTF.startsWith('ol::')?ACTF.slice(4):null;
+  const isOLStore=SS==='線上通路'||fOL!==null;
   const showRW=!isYQStore&&!isOLStore;
   const showYQ=(SS==='全集團'||isYQStore)&&!isOLStore;
 
@@ -1952,7 +1959,7 @@ function build(){
 
   // ── 線上通路 section ────────────────────────────────────────────────────
   if(isOLStore){
-    OL_DATA.forEach(grp=>{
+    (fOL?OL_DATA.filter(g=>g.k===fOL):OL_DATA).forEach(grp=>{
       const totalUnits=grp.items.reduce((s,i)=>s+i.units,0);
       const div=document.createElement('div');
       div.className='activity-group';
