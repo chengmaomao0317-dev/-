@@ -107,7 +107,7 @@ tr:last-child td { border-bottom: none; }
 .prod-tbl tr.prod-exp td { padding:0; background:#f8f8f6; border-bottom:0.5px solid rgba(0,0,0,.06); }
 .prod-chev { display:inline-block; font-size:11px; margin-left:4px; transition:transform .18s; color:#b0afa9; }
 .prod-row-open .prod-chev { transform:rotate(180deg); }
-.pmg { display:grid; grid-template-columns:42px repeat(6,1fr); font-size:11px; padding:5px 8px 7px 8px; }
+.pmg { display:grid; grid-template-columns:42px repeat(7,1fr); font-size:11px; padding:5px 8px 7px 8px; }
 .pmg-hdr { color:#b0afa9; text-align:center; padding:2px 0; font-size:10px; }
 .pmg-loc { color:#888780; display:flex; align-items:center; gap:3px; padding:3px 0; }
 .pmg-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
@@ -369,7 +369,7 @@ tr:last-child td { border-bottom: none; }
         <div style="position:relative;height:210px;">
           <canvas id="chartWo" role="img" aria-label="原渥廣告新客1至5月趨勢"></canvas>
         </div>
-        <div id="spend-row-wo" style="display:flex;align-items:stretch;gap:0;margin-top:6px;border-top:0.5px solid rgba(0,0,0,0.08);padding-top:8px;"></div>
+        <div id="spend-row-wo"></div>
         <div style="border-top:1px solid rgba(0,0,0,0.07);margin:10px 0 8px;"></div>
         <div style="display:flex;justify-content:center;gap:12px;margin-bottom:6px;font-size:10px;color:#888780;">
           <span style="display:flex;align-items:center;gap:3px;"><span style="width:9px;height:9px;border-radius:2px;background:#378ADD;display:inline-block;"></span>台北</span>
@@ -392,7 +392,7 @@ tr:last-child td { border-bottom: none; }
         <div style="position:relative;height:210px;">
           <canvas id="chartQi" role="img" aria-label="原綺廣告新客1至5月趨勢"></canvas>
         </div>
-        <div id="spend-row-qi" style="display:flex;align-items:stretch;gap:0;margin-top:6px;border-top:0.5px solid rgba(0,0,0,0.08);padding-top:8px;"></div>
+        <div id="spend-row-qi"></div>
         <div style="border-top:1px solid rgba(0,0,0,0.07);margin:10px 0 8px;"></div>
         <div style="display:flex;justify-content:center;gap:12px;margin-bottom:6px;font-size:10px;color:#888780;">
           <span style="display:flex;align-items:center;gap:3px;"><span style="width:9px;height:9px;border-radius:2px;background:#D4537E;display:inline-block;"></span>台北</span>
@@ -439,6 +439,10 @@ tr:last-child td { border-bottom: none; }
 </div><!-- /tab-budget -->
 
 <div id="tab-ads" style="display:none;">
+  <!-- 花費摘要 -->
+  <div class="section" style="margin-bottom:0;padding-bottom:0;">
+    <div id="ads-spend-summary" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;"></div>
+  </div>
   <!-- 廣告指標表格 -->
   <div class="section">
     <div class="sec-title">📊 各品項廣告指標（5月）</div>
@@ -650,6 +654,7 @@ const kpiTrend = {
 // index 0=1月, 1=2月, 2=3月, 3=4月, 4=5月, 5=6月
 // ── Google Sheets 自動同步設定 ────────────────────────────────
 const GSHEET_ID = '1sdjXTUo1tW9-fLWlUaWnXqNxxdzK573YuUSJcZdWSns';
+const PREV_YEAR_SHEET_ID = '1ELPrRP7lfkcFtwgexMNzE9HQVukfLbJhL_TGYz3aIcA'; // 2025 年度新客目標
 // 各月廣告工作表名稱（依實際 Sheet 分頁名稱調整）
 const GSHEET_TABS = {
   wo: ['1月廣告','2月廣告','3月廣告','4月廣告','5月廣告','6月廣告','7月廣告'],
@@ -912,7 +917,7 @@ let prodData = {
 };
 
 // ── Google Sheets 自動同步 ────────────────────────────────────
-function gvizJSONP(sheetTab, range) {
+function gvizJSONP(sheetTab, range, sheetId) {
   return new Promise((resolve, reject) => {
     // 每次呼叫使用獨立 callback 名稱，避免多個並行請求 callback 互搶
     const cbName = '_gviz_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
@@ -927,7 +932,8 @@ function gvizJSONP(sheetTab, range) {
       if (s.parentNode) s.remove();
       resolve(resp);
     };
-    const url = `https://docs.google.com/spreadsheets/d/${GSHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetTab)}&range=${encodeURIComponent(range)}&headers=0&tqx=reqId:1;responseHandler:${cbName}`;
+    const sid = sheetId || GSHEET_ID;
+    const url = `https://docs.google.com/spreadsheets/d/${sid}/gviz/tq?sheet=${encodeURIComponent(sheetTab)}&range=${encodeURIComponent(range)}&headers=0&tqx=reqId:1;responseHandler:${cbName}`;
     const s = document.createElement('script');
     s.onerror = () => { clearTimeout(timer); delete window[cbName]; if (s.parentNode) s.remove(); reject(new Error('載入失敗')); };
     document.head.appendChild(s);
@@ -1167,8 +1173,13 @@ async function initAutoFetch() {
             }
           } catch(e) { errors.push(`原綺${mi+1}月媒體合計：${e.message}`); }
         }
-        if (Object.keys(adsData.products).length > 0 || Object.keys(adsData.mediaChannels).length > 0)
+        if (Object.keys(adsData.products).length > 0 || Object.keys(adsData.mediaChannels).length > 0) {
           adsMonthlyData[brand][mi] = adsData;
+          // 從廣告成效 tab 同步花費（各媒體合計列已有雙品牌總花費，與本月總花費顯示一致）
+          const mc = adsData.mediaChannels;
+          const computedSpend = (mc.metaTpe||0)+(mc.metaTca||0)+(mc.googleTpe||0)+(mc.googleTca||0)+(mc.lineat||0)+(mc.koubei||0)+(mc.seo||0);
+          if (computedSpend > 0) { kpiTrend[brand].spend26[mi] = computedSpend; anyUpdated = true; }
+        }
       } catch(e) {
         errors.push(`${brand} ${mi+1}月：${e.message}`);
       }
@@ -1199,26 +1210,6 @@ async function initAutoFetch() {
     } catch(e) { errors.push(`原渥${mi+1}月業績：${e.message}`); }
   }
 
-  // 原渥 6月廣告花費：從「年度新客目標」V25 抓（廣告花費列；V26=SEO費用）
-  try {
-    const spendResp = await gvizJSONP('年度新客目標', 'V25:V25');
-    const v = spendResp?.table?.rows?.[0]?.c?.[0]?.v;
-    if (v != null && !isNaN(+v) && v > 50000) {
-      kpiTrend.wo.spend26[5] = +v;
-      if (typeof renderSpendRows === 'function') renderSpendRows();
-      anyUpdated = true;
-    }
-  } catch(e) { errors.push(`原渥6月花費：${e.message}`); }
-  // 原綺 6月廣告花費：從「年度新客目標」I25 抓（廣告花費列；I26=SEO費用）
-  try {
-    const spendResp = await gvizJSONP('年度新客目標', 'I25:I25');
-    const v = spendResp?.table?.rows?.[0]?.c?.[0]?.v;
-    if (v != null && !isNaN(+v) && v > 50000) {
-      kpiTrend.qi.spend26[5] = +v;
-      anyUpdated = true;
-    }
-  } catch(e) { errors.push(`原綺6月花費：${e.message}`); }
-
   // 6月新客＋業績（年度新客目標 Sheet）
   const fetchCell = async (range) => {
     const r = await gvizJSONP('年度新客目標', range);
@@ -1242,24 +1233,38 @@ async function initAutoFetch() {
     if (v != null) { kpiTrend.wo.rev[5] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原渥6月業績：${e.message}`); }
 
-  // 原渥 7月廣告花費：從「年度新客目標」W25 抓
+  // 原渥 7月新客目標：從「年度新客目標」W24 抓
   try {
-    const spendResp = await gvizJSONP('年度新客目標', 'W25:W25');
-    const v = spendResp?.table?.rows?.[0]?.c?.[0]?.v;
-    if (v != null && !isNaN(+v) && +v > 50000) {
-      kpiTrend.wo.spend26[6] = +v;
-      anyUpdated = true;
-    }
-  } catch(e) { errors.push(`原渥7月花費：${e.message}`); }
-  // 原綺 7月廣告花費：從「年度新客目標」J25 抓
+    const v = await fetchCell('W24:W24');
+    if (v != null && v > 0) { kpiTrend.wo.target[6] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原渥7月目標：${e.message}`); }
+  // 原綺 7月新客目標：從「年度新客目標」J24 抓
   try {
-    const spendResp = await gvizJSONP('年度新客目標', 'J25:J25');
-    const v = spendResp?.table?.rows?.[0]?.c?.[0]?.v;
-    if (v != null && !isNaN(+v) && +v > 50000) {
-      kpiTrend.qi.spend26[6] = +v;
-      anyUpdated = true;
+    const v = await fetchCell('J24:J24');
+    if (v != null && v > 0) { kpiTrend.qi.target[6] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原綺7月目標：${e.message}`); }
+  // 去年同期新客數＋花費：從 2025 年度新客目標 Sheet 抓
+  // D20:W26 → row0=新客數, row5=廣告花費; qi=cols0-6(D-J), wo=cols13-19(Q-W)
+  try {
+    const prevResp = await gvizJSONP('年度新客目標', 'D20:W26', PREV_YEAR_SHEET_ID);
+    const rows = prevResp?.table?.rows || [];
+    const nv = (row, col) => { const v = row?.c?.[col]?.v; return (v != null && !isNaN(+v)) ? +v : null; };
+    const prevRow  = rows[0]; // 新客數
+    const spendRow = rows[5]; // 廣告花費
+    if (prevRow || spendRow) {
+      for (let mi = 0; mi < 7; mi++) {
+        // qi: cols 0-6 (D-J), wo: cols 13-19 (Q-W)
+        const qiPrev  = prevRow  ? nv(prevRow,  mi)      : null;
+        const woPrev  = prevRow  ? nv(prevRow,  mi + 13) : null;
+        const qiSpend = spendRow ? nv(spendRow, mi)      : null;
+        const woSpend = spendRow ? nv(spendRow, mi + 13) : null;
+        if (qiPrev  != null) { kpiTrend.qi.prev[mi]    = qiPrev;  anyUpdated = true; }
+        if (woPrev  != null) { kpiTrend.wo.prev[mi]    = woPrev;  anyUpdated = true; }
+        if (qiSpend != null) { kpiTrend.qi.spend25[mi] = qiSpend; anyUpdated = true; }
+        if (woSpend != null) { kpiTrend.wo.spend25[mi] = woSpend; anyUpdated = true; }
+      }
     }
-  } catch(e) { errors.push(`原綺7月花費：${e.message}`); }
+  } catch(e) { errors.push(`去年同期資料：${e.message}`); }
 
   // 從績效 Sheet 更新 kpiTrend tp/tc/rev（新客數、新客業績），比 prodData 更準確
   for (const b of ['wo','qi']) {
@@ -1291,6 +1296,7 @@ async function initAutoFetch() {
 
   // 更新圖表資料（在 renderTrendCharts 之前先刷新 Chart.js 圖表）
   refreshKpiCharts();
+  if (typeof renderSpendRows === 'function') renderSpendRows();
   // 更新副標題顯示同步時間
   const _now = new Date();
   const _hhmm = _now.getHours().toString().padStart(2,'0')+':'+_now.getMinutes().toString().padStart(2,'0');
@@ -1830,15 +1836,21 @@ function renderTrendCharts() {
 }
 
 function renderAchieveRows() {
-  const MONTHS = ['1月','2月','3月','4月','5月','6月'];
   ['wo','qi'].forEach(b => {
     const el = document.getElementById(`achieve-row-${b}`);
     if (!el) return;
+    const labels = kpiTrend[b].labels;
     const actual = kpiTrend[b].data;
     const target = kpiTrend[b].target;
-    const cells = MONTHS.map((m, i) => {
-      const a = actual[i] ?? 0;
+    const n = labels.length;
+    const cells = labels.map((m, i) => {
+      const a = actual[i];
       const t = target[i] ?? 0;
+      // 尚無資料（null）→ 灰色佔位
+      if (a == null) return `<div style="background:rgba(0,0,0,0.03);border:0.5px dashed rgba(0,0,0,0.12);border-radius:6px;padding:6px 2px;text-align:center;min-width:0;">
+        <div style="font-size:12px;font-weight:500;color:#bbb;">—</div>
+        <div style="font-size:9px;color:#ccc;margin-top:2px;">${m}</div>
+      </div>`;
       if (!t) return `<div style="background:rgba(0,0,0,0.04);border-radius:6px;padding:6px 2px;text-align:center;min-width:0;">
         <div style="font-size:12px;font-weight:500;color:#888780;">—</div>
         <div style="font-size:9px;color:#888780;margin-top:2px;">${m}</div>
@@ -1857,7 +1869,7 @@ function renderAchieveRows() {
     }).join('');
     el.innerHTML = `<div style="border-top:1px solid rgba(0,0,0,0.07);margin:10px 0 8px;"></div>
       <div style="font-size:10px;color:#888780;margin-bottom:6px;">月達標率</div>
-      <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;">${cells}</div>
+      <div style="display:grid;grid-template-columns:repeat(${n},minmax(0,1fr));gap:4px;">${cells}</div>
       <div style="display:flex;gap:8px;margin-top:8px;font-size:10px;">
         <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:2px;background:#EAF3DE;border:0.5px solid #3B6D11;display:inline-block;"></span><span style="color:#3B6D11;">達標</span></span>
         <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:2px;background:#FAEEDA;border:0.5px solid #854F0B;display:inline-block;"></span><span style="color:#854F0B;">≥80%</span></span>
@@ -2242,14 +2254,42 @@ const adsExtInitRows = {
   qi: JSON.parse(JSON.stringify(adsExt.qi.rows)),
 };
 
+// 廣告成效頁頂部花費摘要（原渥 / 原綺 / 雙品牌合計）
+function renderAdsSpendSummary(mi) {
+  const el = document.getElementById('ads-spend-summary');
+  if (!el) return;
+  const isAll = isNaN(mi);
+  const fmt = v => v != null && v > 0 ? '$' + Math.round(v).toLocaleString() : '—';
+  const getSpend = (b) => {
+    if (isAll) {
+      return (kpiTrend[b].spend26 || []).reduce((s, v) => s + (v || 0), 0) || null;
+    }
+    return kpiTrend[b].spend26?.[mi] ?? null;
+  };
+  const woSpend = getSpend('wo');
+  const qiSpend = getSpend('qi');
+  const totalSpend = (woSpend != null || qiSpend != null)
+    ? (woSpend || 0) + (qiSpend || 0) : null;
+  const card = (label, val, color, bgColor) => `
+    <div style="background:${bgColor};border:0.5px solid var(--border,rgba(0,0,0,0.1));border-radius:10px;padding:14px 16px;">
+      <div style="font-size:11px;color:${color};opacity:.75;margin-bottom:4px;font-weight:500;">${label}</div>
+      <div style="font-size:18px;font-weight:500;color:${color};letter-spacing:-.3px;">${fmt(val)}</div>
+    </div>`;
+  el.innerHTML =
+    card('原渥 廣告花費', woSpend, '#185FA5', '#E6F1FB') +
+    card('原綺 廣告花費', qiSpend, '#993556', '#FBEAF0') +
+    card('雙品牌合計', totalSpend, '#fff', '#111');
+}
+
 // 將指定月份的 adsMonthlyData 同步進 adsExt 並重新渲染廣告表
 // mi = NaN → 全部月份加總
 function syncAdsToMonth(mi) {
   _currentAdsMi = mi;
-  const MONTH_LABELS = ['1月','2月','3月','4月','5月','6月'];
+  const MONTH_LABELS = ['1月','2月','3月','4月','5月','6月','7月'];
   const isAll = isNaN(mi);
   const title = document.querySelector('#tab-ads .sec-title');
   if (title) title.textContent = `📊 各品項廣告指標（${isAll ? '2026 全部' : MONTH_LABELS[mi] || ''}）`;
+  renderAdsSpendSummary(mi);
 
   ['wo','qi'].forEach(b => {
     // 重置 rows：保留品項結構，但數值全部歸零（避免靜態估算值污染月份加總）
@@ -2836,12 +2876,7 @@ function initKpiCharts() {
               ctx.fillText(td.labels[i], scales.x.getPixelForTick(i), chartArea.bottom + 14);
             });
             ctx.restore();
-            // 讓 spend row grid 欄寬對齊圖表實際尺寸
-            const el = document.getElementById('spend-row-' + b);
-            if (el) {
-              const colW = (chartArea.right - chartArea.left) / 6;
-              el.style.gridTemplateColumns = `${chartArea.left}px repeat(6, ${colW}px)`;
-            }
+            // (spend row 已改為卡片式，不再需要對齊圖表欄寬)
           }
         },
         {
@@ -2869,30 +2904,37 @@ function initKpiCharts() {
     });
   });
 
-  // 填入 HTML 廣告花費列（欄寬由 afterDraw 依圖表實際尺寸設定）
+  // 廣告花費卡片列（月份卡片橫向滑動，完整金額 + YOY%）
   window.renderSpendRows = function renderSpendRows() {
+    const brandColors = { wo:'#378ADD', qi:'#D4537E' };
     ['wo','qi'].forEach(b => {
       const td = kpiTrend[b];
       const el = document.getElementById('spend-row-' + b);
       if (!el) return;
-      const fmt = v => v != null ? '$' + v.toLocaleString() : '—';
-      // grid: [左邊距佔位] [6個月份欄]
-      el.style.display = 'grid';
+      const fmt = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
+      const cards = td.labels.map((lbl, i) => {
+        const v26 = td.spend26[i], v25 = td.spend25[i];
+        const isPending = v26 == null;
+        const yoyNum = (v26 != null && v25 != null && v25 > 0) ? Math.round((v26 - v25) / v25 * 100) : null;
+        const yoyColor = yoyNum == null ? 'var(--text-muted)' : yoyNum >= 0 ? '#27500A' : '#791F1F';
+        const yoyBg   = yoyNum == null ? 'transparent' : yoyNum >= 0 ? '#EAF3DE' : '#FCEBEB';
+        const yoyStr  = yoyNum == null ? '' : (yoyNum >= 0 ? '+' : '') + yoyNum + '%';
+        return `<div style="flex-shrink:0;min-width:96px;background:var(--surface-2,#fff);border:0.5px solid ${isPending?'var(--border)':'var(--border)'};border-radius:8px;padding:8px 10px;${isPending?'opacity:0.45;border-style:dashed;':''}"
+          title="${v26!=null?'花費：$'+Math.round(v26).toLocaleString()+'　去年：$'+(v25!=null?Math.round(v25).toLocaleString():'—'):''}">
+          <div style="font-size:10px;color:var(--text-muted,#888);margin-bottom:5px;font-weight:500;">${lbl}</div>
+          <div style="font-size:12px;font-weight:500;color:var(--text-primary,#222);line-height:1.2;margin-bottom:3px;">${fmt(v26)}</div>
+          <div style="font-size:11px;color:var(--text-secondary,#888);line-height:1.2;margin-bottom:5px;">${fmt(v25)}</div>
+          ${yoyStr ? `<span style="font-size:10px;font-weight:500;color:${yoyColor};background:${yoyBg};border-radius:4px;padding:1px 5px;">${yoyStr}</span>` : ''}
+        </div>`;
+      });
+      el.style.cssText = 'display:flex;align-items:stretch;gap:6px;margin-top:6px;border-top:0.5px solid var(--border,rgba(0,0,0,0.08));padding-top:8px;overflow-x:auto;padding-bottom:4px;';
       el.innerHTML = `
-        <div style="display:flex;align-items:stretch;gap:3px;height:52px;">
-          <div style="background:#111;border-radius:4px;width:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-            <span style="writing-mode:vertical-lr;font-size:8.5px;font-weight:700;color:#fff;letter-spacing:0.06em;">廣告花費</span>
-          </div>
-          <div style="display:flex;flex-direction:column;justify-content:space-evenly;padding:2px 0;">
-            <span style="font-size:9.5px;font-weight:700;color:#444;line-height:1;">'26</span>
-            <span style="font-size:9.5px;font-weight:700;color:#bbb;line-height:1;">'25</span>
+        <div style="display:flex;align-items:center;flex-shrink:0;margin-right:4px;">
+          <div style="background:#111;border-radius:4px;width:20px;align-self:stretch;display:flex;align-items:center;justify-content:center;min-height:72px;">
+            <span style="writing-mode:vertical-lr;font-size:8.5px;font-weight:700;color:#fff;letter-spacing:0.06em;white-space:nowrap;">廣告花費</span>
           </div>
         </div>
-        ${td.spend26.map((v,i)=>`
-        <div style="display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;text-align:center;">
-          <span style="font-size:11px;font-weight:500;color:#333;">${fmt(v)}</span>
-          <span style="font-size:11px;color:#bbb;">${fmt(td.spend25[i])}</span>
-        </div>`).join('')}`;
+        ${cards.join('')}`;
     });
   }
   renderSpendRows();
@@ -3096,8 +3138,7 @@ function renderSpendChartCard() {
   const el = document.getElementById('spend-chart-card');
   if (!el) return;
 
-  const MONTHS = ['1月','2月','3月','4月','5月','6月'];
-  const OTHER_SPEND = { wo:[11760,0,0,0,0,0], qi:[11760,0,0,0,0,0] };
+  const MONTHS = kpiTrend.wo.labels; // 動態，目前 1-7月
 
   // 取得各品牌各月媒體明細（以 spend26 為總量基準，其他 = 差額）
   function getMonthBreakdown(b, mi) {
@@ -3171,48 +3212,64 @@ function renderSpendChartCard() {
     </div>`;
   }
 
-  // 渲染合計柱狀圖（wo + qi 堆疊）
+  // 渲染合計柱狀圖（原渥 / 原綺 分組並排，底部顯示雙品牌合計）
   function buildTotalChart() {
-    const woData = MONTHS.map((_,i) => (kpiTrend.wo.spend26[i]) || 0);
-    const qiData = MONTHS.map((_,i) => (kpiTrend.qi.spend26[i]) || 0);
-    const totals = MONTHS.map((_,i) => woData[i] + qiData[i]);
-    const max = Math.max(...totals) || 1;
-    const BAR_H = 90;
+    const ALL_MONTHS = kpiTrend.wo.labels;
+    const woData = ALL_MONTHS.map((_,i) => kpiTrend.wo.spend26[i] || 0);
+    const qiData = ALL_MONTHS.map((_,i) => kpiTrend.qi.spend26[i] || 0);
+    const totals = ALL_MONTHS.map((_,i) => woData[i] + qiData[i]);
+    const maxSingle = Math.max(...woData, ...qiData) || 1;
+    const BAR_H = 100;
+    const fmtK = v => v > 0 ? '$' + Math.round(v/1000) + 'K' : '—';
+    const fmtFull = v => v > 0 ? '$' + Math.round(v).toLocaleString() : '—';
 
-    const cols = MONTHS.map((m, i) => {
-      const total = totals[i];
-      if (!total) {
-        return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:2px;">
-          <span style="font-size:9px;color:var(--color-text-tertiary);">-</span>
-          <div style="flex:1;width:100%;"></div>
-          <div style="width:100%;height:1px;background:var(--color-border-tertiary);"></div>
-          <span style="font-size:10px;color:var(--color-text-secondary);margin-top:3px;">${m}</span>
-        </div>`;
-      }
-      const h = Math.round(total / max * BAR_H);
-      const woPct = woData[i] / total;
-      const qiPct = qiData[i] / total;
-      return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:2px;">
-        <span style="font-size:9px;color:var(--color-text-tertiary);line-height:1.3;text-align:center;">${fmt(total)}</span>
-        <div style="flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;">
-          <div style="width:100%;height:${h}px;display:flex;flex-direction:column;border-radius:3px 3px 0 0;overflow:hidden;">
-            <div style="flex:${woPct};background:#185FA5;"></div>
-            <div style="flex:${qiPct};background:#993556;"></div>
+    const cols = ALL_MONTHS.map((m, i) => {
+      const wo = woData[i], qi = qiData[i], total = totals[i];
+      const woH = Math.round(wo / maxSingle * BAR_H);
+      const qiH = Math.round(qi / maxSingle * BAR_H);
+      const isEmpty = !wo && !qi;
+      if (isEmpty) return `
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;">
+          <div style="display:flex;gap:3px;align-items:flex-end;width:100%;height:${BAR_H}px;">
+            <div style="flex:1;"></div><div style="flex:1;"></div>
           </div>
-        </div>
-        <div style="width:100%;height:1px;background:var(--color-border-tertiary);"></div>
-        <span style="font-size:10px;color:var(--color-text-secondary);margin-top:3px;">${m}</span>
-      </div>`;
+          <div style="display:flex;align-items:center;gap:2px;width:100%;margin-top:4px;">
+            <div style="flex:1;height:1px;background:var(--color-border-tertiary);"></div>
+            <span style="font-size:9px;color:var(--color-text-tertiary);padding:0 2px;">—</span>
+            <div style="flex:1;height:1px;background:var(--color-border-tertiary);"></div>
+          </div>
+          <span style="font-size:10px;color:var(--color-text-secondary);margin-top:4px;">${m}</span>
+        </div>`;
+      return `
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;">
+          <div style="display:flex;gap:3px;align-items:flex-end;width:100%;height:${BAR_H}px;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px;">
+              <span style="font-size:8.5px;font-weight:500;color:#185FA5;white-space:nowrap;">${fmtK(wo)}</span>
+              <div style="width:100%;height:${woH}px;background:#378ADD;border-radius:3px 3px 0 0;"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px;">
+              <span style="font-size:8.5px;font-weight:500;color:#993556;white-space:nowrap;">${fmtK(qi)}</span>
+              <div style="width:100%;height:${qiH}px;background:#D4537E;border-radius:3px 3px 0 0;"></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:2px;width:100%;margin-top:4px;">
+            <div style="flex:1;height:1px;background:var(--color-border-tertiary);"></div>
+            <span style="font-size:8.5px;color:var(--color-text-tertiary);white-space:nowrap;padding:0 2px;">${fmtFull(total)}</span>
+            <div style="flex:1;height:1px;background:var(--color-border-tertiary);"></div>
+          </div>
+          <span style="font-size:10px;color:var(--color-text-secondary);margin-top:4px;">${m}</span>
+        </div>`;
     }).join('');
 
     return `<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;margin-top:12px;">
       <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
         <span style="font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;background:var(--color-background-secondary);color:var(--color-text-secondary);">雙品牌合計</span>每月廣告花費
       </div>
-      <div style="display:flex;align-items:flex-end;gap:5px;height:${BAR_H+28}px;padding-bottom:4px;">${cols}</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#185FA5;flex-shrink:0;"></span>原渥</span>
-        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#993556;flex-shrink:0;"></span>原綺</span>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:${BAR_H+40}px;padding-bottom:4px;">${cols}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#378ADD;flex-shrink:0;"></span>原渥</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#D4537E;flex-shrink:0;"></span>原綺</span>
+        <span style="font-size:10px;color:var(--color-text-tertiary);">— 雙品牌合計</span>
       </div>
     </div>`;
   }
