@@ -1630,11 +1630,15 @@ function buildBrandChart(g,canvasId,staffIdxs){
   const bookC=isW?'#6b8fd4':'#d4618a';
   const arrC=isW?'#0ea5e9':'#f43f5e';
   const tdC='padding:3px 0;text-align:center;font-size:11px';
+  const convThresh=isW?25:15;
+
+  const bookRates=inq.map((iv,idx)=>iv>0?Math.round(book[idx]/iv*100):null);
+  const convRates=inq.map((iv,idx)=>iv>0?Math.round(arrive[idx]/iv*100):null);
 
   let html=`<div id="${tableWrapId}" style="border-top:1px solid #e8e4de;margin:0 16px;padding-bottom:10px">
     <table style="width:100%;border-collapse:collapse;font-size:11px">
       <tr>
-        <td style="padding:4px 0;color:${inqC};font-weight:700;width:64px;white-space:nowrap">詢問數</td>
+        <td style="padding:4px 0;color:${inqC};font-weight:700;width:72px;white-space:nowrap">詢問數</td>
         ${inq.map(v=>`<td style="${tdC}">${v.toLocaleString()}</td>`).join('')}
       </tr>
       <tr>
@@ -1642,8 +1646,16 @@ function buildBrandChart(g,canvasId,staffIdxs){
         ${book.map(v=>`<td style="${tdC}">${v.toLocaleString()}</td>`).join('')}
       </tr>
       <tr>
+        <td style="padding:2px 0 2px 10px;color:${bookC};font-size:10px;white-space:nowrap">└ 預約率</td>
+        ${bookRates.map(v=>v===null?`<td style="${tdC};color:#aea9a4">—</td>`:`<td style="${tdC};font-weight:700;color:${bookC}">${v}%</td>`).join('')}
+      </tr>
+      <tr>
         <td style="padding:4px 0;color:${arrC};font-weight:700">到店數</td>
         ${arrive.map(v=>`<td style="${tdC}">${v.toLocaleString()}</td>`).join('')}
+      </tr>
+      <tr>
+        <td style="padding:2px 0 4px 10px;color:${arrC};font-size:10px;white-space:nowrap">└ 轉換率</td>
+        ${convRates.map(v=>v===null?`<td style="${tdC};color:#aea9a4">—</td>`:`<td style="${tdC};font-weight:700;color:${v>=convThresh?'#15803d':'#dc2626'}">${v}%</td>`).join('')}
       </tr>`;
 
   if(staffIdxs.length>1){
