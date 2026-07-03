@@ -433,6 +433,13 @@ tr:last-child td { border-bottom: none; }
     <div class="card" id="media-card"></div>
   </div>
   <div class="section">
+    <div class="sec-title" style="margin-bottom:8px;">📈 各媒體每月花費趨勢</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="card" id="media-trend-wo"></div>
+      <div class="card" id="media-trend-qi"></div>
+    </div>
+  </div>
+  <div class="section">
     <div class="sec-title" style="margin-bottom:8px;">📅 每月廣告花費狀況</div>
     <div id="spend-chart-card"></div>
   </div>
@@ -1312,6 +1319,7 @@ async function initAutoFetch() {
 
   renderBudgetCard();
   renderMediaCard();
+  renderMediaTrendChart();
   renderSpendChartCard();
   renderMonthlyFunnel();
 
@@ -3132,6 +3140,111 @@ function renderMediaCard() {
     </div>`;
 }
 renderMediaCard();
+
+// ── 各媒體每月花費趨勢（折線圖）───────────────────────────────
+const _mediaTrendCharts = {};
+function renderMediaTrendChart() {
+  const MONTH_LABELS = kpiTrend.wo.labels;
+  const NAMES = { meta:'Meta', google:'Google', lineat:'LINE@', koubei:'口碑', seo:'SEO' };
+  const woColors = { meta:'#185FA5', seo:'#888780', lineat:'#378ADD', koubei:'#85B7EB' };
+  const qiColors = { meta:'#993556', google:'#D4537E', seo:'#888780', lineat:'#ED93B1', koubei:'#F4C0D1' };
+
+  const getChannelData = (b) => {
+    const keys = b === 'wo'
+      ? ['meta','lineat','koubei','seo']
+      : ['meta','google','lineat','koubei','seo'];
+    const colors = b === 'wo' ? woColors : qiColors;
+    return keys.map(k => ({
+      key: k,
+      label: NAMES[k],
+      color: colors[k],
+      data: MONTH_LABELS.map((_, mi) => {
+        const mc = adsMonthlyData[b][mi]?.mediaChannels;
+        if (!mc) return null;
+        if (k === 'meta')   return (mc.metaTpe||0) + (mc.metaTca||0);
+        if (k === 'google') return (mc.googleTpe||0) + (mc.googleTca||0);
+        if (k === 'lineat') return mc.lineat || 0;
+        if (k === 'koubei') return mc.koubei || 0;
+        if (k === 'seo')    return mc.seo || 0;
+        return 0;
+      })
+    }));
+  };
+
+  ['wo','qi'].forEach(b => {
+    const elId = `media-trend-${b}`;
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const tagHtml = b === 'wo'
+      ? '<span class="tag-wo" style="font-size:10px;padding:2px 8px;border-radius:20px;">原渥</span>'
+      : '<span class="tag-qi" style="font-size:10px;padding:2px 8px;border-radius:20px;">原綺</span>';
+    const channels = getChannelData(b);
+    const hasData = channels.some(c => c.data.some(v => v > 0));
+
+    // legend HTML
+    const legHtml = channels.filter(c => c.data.some(v => v > 0)).map(c =>
+      `<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);">
+        <span style="width:14px;height:3px;border-radius:2px;background:${c.color};flex-shrink:0;display:inline-block;"></span>${c.label}</span>`
+    ).join('');
+
+    const canvasId = `canvas-media-trend-${b}`;
+    el.innerHTML = `
+      <div style="font-size:11px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+        ${tagHtml}<span style="color:var(--color-text-secondary);">各媒體每月花費</span>
+      </div>
+      <div style="height:150px;"><canvas id="${canvasId}"></canvas></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">${legHtml}</div>`;
+
+    // 銷毀舊圖表
+    if (_mediaTrendCharts[b]) { _mediaTrendCharts[b].destroy(); }
+
+    const datasets = channels.filter(c => c.data.some(v => v > 0)).map(c => ({
+      label: c.label,
+      data: c.data,
+      borderColor: c.color,
+      backgroundColor: c.color + '15',
+      borderWidth: 2,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      tension: 0.3,
+      fill: false,
+      spanGaps: false,
+    }));
+
+    _mediaTrendCharts[b] = new Chart(document.getElementById(canvasId), {
+      type: 'line',
+      data: { labels: MONTH_LABELS, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.dataset.label}: $${Math.round(ctx.parsed.y).toLocaleString()}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 10 }, color: '#888780' },
+            border: { display: false }
+          },
+          y: {
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: {
+              font: { size: 9 }, color: '#888780',
+              callback: v => '$' + (v >= 1000 ? Math.round(v/1000) + 'K' : v)
+            },
+            border: { display: false }
+          }
+        }
+      }
+    });
+  });
+}
+renderMediaTrendChart();
 
 // ── 每月花費圖表（雙品牌個別 + 合計）────────────────────────────
 function renderSpendChartCard() {
