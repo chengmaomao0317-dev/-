@@ -33,6 +33,7 @@ header{background:#1a1a1a;color:#fff;padding:12px 28px;display:flex;align-items:
 .team-kpi-col{display:flex;flex-direction:column;gap:8px}
 .team-kpi-row{display:grid;grid-template-columns:1fr;gap:8px}
 .team-kpi-card{border-radius:8px;padding:12px 14px;text-align:center;border:1px solid #e8e4de}
+.team-four-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .grp{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block}
 .grp-w{background:#dbeafe;color:#1e40af}
 .grp-q{background:#fce7f3;color:#9d174d}
@@ -116,7 +117,8 @@ canvas{max-height:240px}
 .source-table tr:nth-child(even) td{background:#faf9f7}
 .source-table .row-lbl{text-align:left;font-weight:700;color:#6b6460;background:#faf9f7!important;position:sticky;left:0;z-index:2;white-space:nowrap}
 @media(max-width:860px){
-  .team-block,.charts-row,.staff-charts-row{grid-template-columns:1fr}
+  .charts-row,.staff-charts-row{grid-template-columns:1fr}
+  .team-four-grid{grid-template-columns:repeat(2,1fr)}
   .staff-grid{grid-template-columns:1fr}
   .kpi-grid,.perf-grid{grid-template-columns:1fr 1fr}
   .tab-nav{margin-left:0}
@@ -199,10 +201,9 @@ canvas{max-height:240px}
 <div id="view-main" class="main">
   <div class="card">
     <div class="section-title">🏟 團隊績效達成率總覽</div>
-    <div class="team-block">
-      <div id="team-kpi"></div>
-      <div class="team-detail" id="team-detail"></div>
-    </div>
+    <div id="team-kpi"></div>
+    <div class="team-detail" id="team-detail" style="margin-top:12px"></div>
+    <div id="team-annual"></div>
   </div>
   <div class="kpi-grid" id="kpi-row"></div>
   <!-- 各來源預約分析 -->
@@ -396,17 +397,18 @@ function renderTeam(){
   });
   const ANNUAL={渥:2650,綺:1500};
   const allMidxs=[0,1,2,3,4];
-  let lh='<div class="team-kpi-col">';
-  if(groups.length===2)lh+='<div class="team-kpi-row">';
   // 日進度計算（昨日為基準，只在當月單月模式顯示）
   const _kt=new Date(),_ktm=_kt.getMonth()+1,_ky=_kt.getDate()-1;
   const _kshow=curMonth>0&&curMonth===_ktm&&_ky>0;
   const _kdim=_kshow?new Date(_kt.getFullYear(),_ktm,0).getDate():0;
   const _ktick=_kshow?(_ky/_kdim*100).toFixed(1):0;
+
+  // ── 4 張獨立卡片：本月渥｜本月綺｜年度渥｜年度綺，電腦4欄手機2欄
+  let lh='<div class="team-four-grid">';
+
+  // 前兩張：本月績效
   groups.forEach(g=>{
     const d=info[g],bw=Math.min(d.target>0?Math.round(d.progress/d.target*100):0,100);
-    const midBlock=`<div class="progress-num">${d.progress}</div>
-      <div class="prog-bar-wrap"><div class="prog-bar" style="width:${bw}%;background:${achColor(d.ach)}"></div></div>`;
     let dailyBlock='';
     if(_kshow&&d.target>0){
       const exp=Math.round(d.target*_ky/_kdim);
@@ -414,31 +416,31 @@ function renderTeam(){
       const fill=Math.min(100,d.target>0?(d.progress/d.target*100):0).toFixed(1);
       const barC=g==='渥'?'#2563eb':'#be185d';
       const badS=dp>=0?'color:#15803d;background:#dcfce7':'color:#b91c1c;background:#fee2e2';
-      dailyBlock=`<div style="border-top:0.5px solid #f1ede8;margin-top:6px;padding-top:8px;text-align:left">
-        <div style="font-size:10px;color:#aea9a4;margin-bottom:4px">日進度　${ML[curMonth-1]} 第${_ky}天 / 共${_kdim}天</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-          <span style="font-size:12px;color:#1a1a1a"><b style="font-size:15px;font-weight:700">${d.progress}</b> / ${exp} 應達</span>
-          <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;${badS}">${dp>=0?'領先 '+dp:'落後 '+Math.abs(dp)}</span>
+      dailyBlock=`<div style="border-top:0.5px solid #f1ede8;margin-top:6px;padding-top:6px;text-align:left">
+        <div style="font-size:9px;color:#aea9a4;margin-bottom:3px">日進度 第${_ky}天 / 共${_kdim}天</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:11px;color:#1a1a1a"><b style="font-size:13px;font-weight:700">${d.progress}</b> / ${exp} 應達</span>
+          <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:999px;${badS}">${dp>=0?'領先 '+dp:'落後 '+Math.abs(dp)}</span>
         </div>
-        <div style="position:relative;width:100%;height:6px;background:#f1ede8;border-radius:3px">
-          <div style="width:${fill}%;height:6px;background:${barC};border-radius:3px;position:absolute;top:0;left:0"></div>
-          <div style="position:absolute;top:-3px;left:${_ktick}%;width:2px;height:12px;background:#94a3b8;border-radius:1px;transform:translateX(-50%)"></div>
+        <div style="position:relative;width:100%;height:5px;background:#f1ede8;border-radius:3px">
+          <div style="width:${fill}%;height:5px;background:${barC};border-radius:3px;position:absolute;top:0;left:0"></div>
+          <div style="position:absolute;top:-3px;left:${_ktick}%;width:2px;height:11px;background:#94a3b8;border-radius:1px;transform:translateX(-50%)"></div>
         </div>
       </div>`;
     }
     lh+=`<div class="team-kpi-card">
+      <div style="font-size:12px;font-weight:700;color:#6b6460;margin-bottom:6px">📊 本月績效</div>
       <div class="grp grp-${g==='渥'?'w':'q'}">${g==='渥'?'原渥':'原綺'}</div>
       <div class="target-num">目標 ${d.target}</div>
-      ${midBlock}
+      <div class="progress-num">${d.progress}</div>
+      <div class="prog-bar-wrap"><div class="prog-bar" style="width:${bw}%;background:${achColor(d.ach)}"></div></div>
       <div class="ach ${achLabel(d.ach)}">${d.ach>0?d.ach+'%':'—'}</div>
       <div class="diff ${d.diff>=0?'pos':'neg'}">${d.diff>=0?'+':''}${d.diff} vs 目標</div>
       ${dailyBlock}
     </div>`;
   });
-  if(groups.length===2)lh+='</div>';
-  // ── 年度達標進度（左欄下方，不受月份篩選影響）
-  lh+=`<div style="border-top:1px solid #f1ede8;padding-top:10px;margin-top:4px">
-    <div style="font-size:11px;font-weight:700;color:#6b6460;margin-bottom:8px">📅 年度達標進度</div>`;
+
+  // 後兩張：年度達標進度
   groups.forEach(g=>{
     const annTar=ANNUAL[g];
     let prog=0;
@@ -453,22 +455,24 @@ function renderTeam(){
     const remaining=annTar-prog;
     const pb=g==='渥'?'#dbeafe':'#fce7f3';
     const pc=g==='渥'?'#1e40af':'#9d174d';
-    lh+=`<div class="team-kpi-card" style="margin-bottom:8px">
+    lh+=`<div class="team-kpi-card">
+      <div style="font-size:12px;font-weight:700;color:#6b6460;margin-bottom:6px">📅 年度達標進度</div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <span style="padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;background:${pb};color:${pc}">${g==='渥'?'原渥':'原綺'}</span>
-        <span style="font-size:10px;color:#aea9a4">年度目標 ${annTar.toLocaleString()}</span>
+        <span style="padding:1px 7px;border-radius:20px;font-size:11px;font-weight:700;background:${pb};color:${pc}">${g==='渥'?'原渥':'原綺'}</span>
+        <span style="font-size:9px;color:#aea9a4">年度目標 ${annTar.toLocaleString()}</span>
       </div>
-      <div style="display:flex;align-items:baseline;gap:6px">
-        <span style="font-size:20px;font-weight:800;color:${clr}">${prog.toLocaleString()}</span>
+      <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:4px">
+        <span style="font-size:22px;font-weight:800;color:${clr}">${prog.toLocaleString()}</span>
         <span style="font-size:13px;font-weight:700;color:${clr}">${pct}%</span>
       </div>
       <div class="prog-bar-wrap"><div class="prog-bar" style="width:${bar}%;background:${clr}"></div></div>
-      <div style="font-size:11px;font-weight:600;color:${clr}">${remaining>0?`距目標還差 ${remaining.toLocaleString()} 人`:`已超標 +${Math.abs(remaining).toLocaleString()} 人`}</div>
+      <div style="font-size:11px;font-weight:600;color:${clr};margin-top:4px">${remaining>0?`還差 ${remaining.toLocaleString()} 人`:`超標 +${Math.abs(remaining).toLocaleString()} 人`}</div>
     </div>`;
   });
-  lh+='</div>';
+
   lh+='</div>';
   document.getElementById('team-kpi').innerHTML=lh;
+  document.getElementById('team-annual').innerHTML='';
 
   const stickyMon='position:sticky;left:0;z-index:3;background:#1a1a1a;white-space:nowrap';
   const stickyBrd='position:sticky;left:54px;z-index:3;background:#1a1a1a;white-space:nowrap';
@@ -1772,30 +1776,6 @@ function buildBrandChart(g,canvasId,staffIdxs){
   }
 
   html+=`</table>`;
-  // 日進度條（只在單月且為當月時顯示，以昨日為基準）
-  (()=>{
-    const _t=new Date(),_tm=_t.getMonth()+1,_y=_t.getDate()-1;
-    if(midxs.length===1&&curMonth===_tm&&_y>0){
-      const _dim=new Date(_t.getFullYear(),_tm,0).getDate();
-      const _tick=(_y/_dim*100).toFixed(1);
-      const tar=totalTarget[0],arr=arrive[0];
-      const exp=Math.round(tar*_y/_dim);
-      const diff=arr-exp;
-      const fill=Math.min(100,tar>0?(arr/tar*100):0).toFixed(1);
-      const badS=diff>=0?'color:#15803d;background:#dcfce7':'color:#b91c1c;background:#fee2e2';
-      html+=`<div style="padding:8px 16px 12px;border-top:0.5px solid #f1ede8">
-        <div style="font-size:10px;color:#aea9a4;margin-bottom:4px">日進度　${ML[curMonth-1]} 第${_y}天 / 共${_dim}天</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-          <div style="font-size:11px;color:#1a1a1a"><span style="font-size:16px;font-weight:600">${arr}</span> / ${exp} 應達</div>
-          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;${badS}">${diff>=0?'領先 '+diff:'落後 '+Math.abs(diff)}</span>
-        </div>
-        <div style="position:relative;width:100%;height:6px;background:#f1ede8;border-radius:3px">
-          <div style="width:${fill}%;height:6px;background:${isW?'#2563eb':'#be185d'};border-radius:3px;position:absolute;top:0;left:0"></div>
-          <div style="position:absolute;top:-3px;left:${_tick}%;width:2px;height:12px;background:#94a3b8;border-radius:1px;transform:translateX(-50%)"></div>
-        </div>
-      </div>`;
-    }
-  })();
   html+=`</div>`;
   canvas.parentElement.insertAdjacentHTML('afterend',html);
 }
