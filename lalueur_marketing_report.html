@@ -1643,6 +1643,45 @@ function renderPerfGrid(mi) {
       </div>`;
     }
     const p = pN(actual, target), ok = p >= 100, diff = actual - target;
+
+    // 日進度（只在當月顯示）
+    let dailyPaceHtml = '';
+    if (!isAll) {
+      const today = new Date();
+      const isCurrentMonth = today.getFullYear() === 2026 && today.getMonth() === mi;
+      if (isCurrentMonth) {
+        const daysInMonth = new Date(2026, mi + 1, 0).getDate();
+        const daysElapsed = today.getDate() - 1; // 統計至昨日
+        const expectedPace = daysElapsed > 0 ? Math.round(target / daysInMonth * daysElapsed) : 0;
+        const monthLabel = kpiTrend[b].labels[mi];
+        const paceDiff = actual - expectedPace;
+        const diffLabel = paceDiff >= 0 ? `超前 ${paceDiff}` : `落後 ${Math.abs(paceDiff)}`;
+        const diffColor = paceDiff >= 0 ? '#3B6D11' : '#A32D2D';
+        const diffBg    = paceDiff >= 0 ? '#EAF3DE' : '#FCEBEB';
+        const barColor  = b === 'wo' ? '#378ADD' : '#C9618A';
+        const numColor  = b === 'wo' ? '#185FA5' : '#993556';
+        const fillPct   = target > 0 ? Math.min(actual / target * 100, 100) : 0;
+        const tickPct   = target > 0 ? Math.min(expectedPace / target * 100, 100) : 0;
+        dailyPaceHtml = `
+        <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid rgba(0,0,0,0.08);">
+          <div style="font-size:10px;color:#888780;margin-bottom:7px;">日進度　${monthLabel} 第${daysElapsed}天 / 共${daysInMonth}天</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="display:flex;align-items:baseline;gap:3px;flex-shrink:0;">
+              <span style="font-size:14px;font-weight:500;color:${numColor};">${actual}</span>
+              <span style="font-size:10px;color:#888780;">/</span>
+              <span style="font-size:14px;font-weight:500;color:#555;">${expectedPace}</span>
+              <span style="font-size:10px;color:#888780;">應達</span>
+            </div>
+            <div style="flex:1;height:5px;background:#ebebeb;border-radius:3px;position:relative;min-width:0;">
+              <div style="width:${fillPct}%;height:100%;background:${barColor};border-radius:3px;position:absolute;top:0;left:0;"></div>
+              ${tickPct > 0 ? `<div style="width:2px;height:12px;background:#333;position:absolute;top:-3.5px;left:${tickPct}%;border-radius:1px;transform:translateX(-50%);"></div>` : ''}
+            </div>
+            <span style="font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;flex-shrink:0;background:${diffBg};color:${diffColor};">${diffLabel}</span>
+          </div>
+        </div>`;
+      }
+    }
+
     return `<div class="card">
       <div style="margin-bottom:10px;">${btag(b)}</div>
       <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0 14px;align-items:start;">
@@ -1666,6 +1705,7 @@ function renderPerfGrid(mi) {
           </div>
         </div>
       </div>
+      ${dailyPaceHtml}
     </div>`;
   }).join('');
 
