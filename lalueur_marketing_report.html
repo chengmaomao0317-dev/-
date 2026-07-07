@@ -2574,7 +2574,7 @@ function buildAdsSummary(b) {
 
 function openProdModal(b, name) {
   const monthly = (monthlyProdSpend[b]||{})[name] || [];
-  const labels = ['1月','2月','3月','4月','5月','6月'];
+  const labels = ['1月','2月','3月','4月','5月','6月','7月'];
   const tpColor = b==='wo'?'#378ADD':'#D4537E';
   const tcColor = b==='wo'?'#B5D4F4':'#F4C0D1';
   const vals = monthly.map(m => m ? (m.tpe||0)+(m.tca||0) : null);
