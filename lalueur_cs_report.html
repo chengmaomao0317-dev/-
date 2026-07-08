@@ -1021,6 +1021,24 @@ function renderHistoryTable(groups){
             <td style="${totalStyle};color:${avgYOY!==null?(avgYOY>=0?'#15803d':'#dc2626'):'#aea9a4'}">${avgYOY!==null?avgYOY+'%':'—'}</td>
           </tr>`;
         }
+        // 人均新客數行（新客數 ÷ 客服人數）
+        if(m.key==='newc'){
+          const perVals=M12.map((_,mi)=>{
+            const nc=val(year,mi,'newc'),st=val(year,mi,'staff');
+            if(nc===null||st===null||st===0)return null;
+            return Math.round(nc/st);
+          });
+          html+=`<tr style="background:#f5f3ff">
+            <td style="${rowLblStyle};color:#7c3aed">人均新客數</td>
+            ${perVals.map((v,mi)=>{
+              const fade=!hasMon[mi]?'opacity:.35':'';
+              return v===null
+                ?`<td style="${cellBase};color:#d4cfc8;${fade}">—</td>`
+                :`<td style="${cellBase};color:#7c3aed;font-weight:700;${fade}">${v}</td>`;
+            }).join('')}
+            <td style="${totalStyle};color:#aea9a4">—</td>
+          </tr>`;
+        }
       });
     }
 
