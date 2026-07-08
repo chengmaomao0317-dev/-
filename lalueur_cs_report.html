@@ -867,7 +867,7 @@ function renderTrend(){
 const staffCount={
   2024:[2,2,2,2,2,2,2,2,2,2,2,3],    // 2024/12 新增1人→3人
   2025:[3,3,4,4,3,3,3,3,3,3,3,4],    // 2025/03-04 增至4人，12月再增至4人（確認自「預約狀況同期比較」）
-  2026:[3,5,5,5,5,5,5,5,5,5,5,5],    // 2026/01 = 3人，02起增至5人（確認自「預約狀況同期比較」）
+  2026:[3,5,5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5],    // 2026/01=3人，02-03=5人，04起=4.5人
 };
 
 // ── 品牌分開的年度彙整數據（直接來自「預約狀況同期比較」Google Sheet）
@@ -1019,6 +1019,24 @@ function renderHistoryTable(groups){
               return `<td style="${cellBase};color:${clr};font-weight:700">${v}%</td>`;
             }).join('')}
             <td style="${totalStyle};color:${avgYOY!==null?(avgYOY>=0?'#15803d':'#dc2626'):'#aea9a4'}">${avgYOY!==null?avgYOY+'%':'—'}</td>
+          </tr>`;
+        }
+        // 人均新客數行（新客數 ÷ 客服人數）
+        if(m.key==='newc'){
+          const perVals=M12.map((_,mi)=>{
+            const nc=val(year,mi,'newc'),st=val(year,mi,'staff');
+            if(nc===null||st===null||st===0)return null;
+            return Math.round(nc/st);
+          });
+          html+=`<tr style="background:#f5f3ff">
+            <td style="${rowLblStyle};color:#7c3aed">人均新客數</td>
+            ${perVals.map((v,mi)=>{
+              const fade=!hasMon[mi]?'opacity:.35':'';
+              return v===null
+                ?`<td style="${cellBase};color:#d4cfc8;${fade}">—</td>`
+                :`<td style="${cellBase};color:#7c3aed;font-weight:700;${fade}">${v}</td>`;
+            }).join('')}
+            <td style="${totalStyle};color:#aea9a4">—</td>
           </tr>`;
         }
       });
@@ -1222,9 +1240,10 @@ async function syncPerfData() {
     const wArr=wNw+wOd, qArr=qNw+qOd;
     if (wArr||qArr) { sheetTotal['渥'].arrive[2026][mi]=wArr; sheetTotal['綺'].arrive[2026][mi]=qArr; }
     // 客服預約新客數（需 Apps Script 回傳 w新客預約 / q新客預約）
+    // 防呆：月合計須 >= 5（整數人數），否則視為錯誤資料不採用
     if (w新客預約 && q新客預約) {
       const wBn=sumM(w新客預約,mi), qBn=sumM(q新客預約,mi);
-      if (wBn||qBn) { sheetTotal['渥'].booknew[2026][mi]=wBn; sheetTotal['綺'].booknew[2026][mi]=qBn; }
+      if (wBn>=5 || qBn>=5) { sheetTotal['渥'].booknew[2026][mi]=wBn; sheetTotal['綺'].booknew[2026][mi]=qBn; }
     }
   }
 
