@@ -1860,35 +1860,41 @@ function _buildActFilter(){
   if(!sel)return;
   const cur=ACTF;
   sel.innerHTML='<option value="">全部活動</option>';
-  // 原渥 groups (hist + live, dedup by lb)
+  // helper: create optgroup with label
+  const mkGrp=lb=>{const g=document.createElement('optgroup');g.label=lb;sel.appendChild(g);return g;};
+  // 原渥
+  const grpRW=mkGrp('原渥');
   const seenRW=new Set();
   [...GS_HIST,...GS].forEach(g=>{
     if(seenRW.has(g.lb))return;
     seenRW.add(g.lb);
     const o=document.createElement('option');
-    o.value='rw::'+g.lb;o.textContent='[原渥] '+g.lb;
-    sel.appendChild(o);
+    o.value='rw::'+g.lb;o.textContent=g.lb;
+    grpRW.appendChild(o);
   });
-  // 原綺 groups
+  // 原綺
+  const grpYQ=mkGrp('原綺');
   GS_YQ.forEach(g=>{
     const o=document.createElement('option');
-    o.value='yq::'+g.lb;o.textContent='[原綺] '+g.lb;
-    sel.appendChild(o);
+    o.value='yq::'+g.lb;o.textContent=g.lb;
+    grpYQ.appendChild(o);
   });
-  // 線上通路 groups
+  // 線上通路
+  const grpOL=mkGrp('線上通路');
   OL_DATA.forEach(g=>{
     const o=document.createElement('option');
-    o.value='ol::'+g.k;o.textContent='[線上通路] '+g.lb;
-    sel.appendChild(o);
+    o.value='ol::'+g.k;o.textContent=g.lb;
+    grpOL.appendChild(o);
   });
-  // 產品 groups (hist + live, dedup by lb)
+  // 產品
+  const grpPD=mkGrp('產品');
   const seenPD=new Set();
   [...GS_HIST_PROD,...GS_PROD].forEach(g=>{
     if(seenPD.has(g.lb))return;
     seenPD.add(g.lb);
     const o=document.createElement('option');
-    o.value='pd::'+g.lb;o.textContent='[產品] '+g.lb;
-    sel.appendChild(o);
+    o.value='pd::'+g.lb;o.textContent=g.lb;
+    grpPD.appendChild(o);
   });
   sel.value=cur;
 }
