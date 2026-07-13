@@ -452,7 +452,13 @@ tr:last-child td { border-bottom: none; }
   </div>
   <!-- 廣告指標表格 -->
   <div class="section">
-    <div class="sec-title">📊 各品項廣告指標（5月）</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;">
+      <div class="sec-title" style="margin-bottom:0;">📊 各品項廣告指標（5月）</div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="openReportModal('wo')" style="background:#EBF2FA;color:#185FA5;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.3px;">原渥 截圖簡表</button>
+        <button onclick="openReportModal('qi')" style="background:#FAE8F1;color:#993556;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.3px;">原綺 截圖簡表</button>
+      </div>
+    </div>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <div class="card">
         <div id="ads-summary-wo" class="ads-summary"></div>
@@ -1011,7 +1017,7 @@ async function fetchSheetProd(sheetTab, brand) {
 function parseAdsMetricsFromGviz(json, brand) {
   const COL_K = 9; // K 欄從 B=0 起算
   const ADS_SKIP = new Set(['LINE@','口碑','SEO','總計','小計','合計','Meta','Google','Google/SEO',
-    '媒體花費合計','廣告合計','廣告花費合計','整體','整體合計','品牌廣告','合計（含廠商）']);
+    '媒體花費合計','廣告合計','廣告花費合計','整體','整體合計','品牌廣告','合計（含廠商）','品項']);
   const rows = json.table.rows;
   const products = {};
   const factoryVendors = {};
@@ -1043,10 +1049,12 @@ function parseAdsMetricsFromGviz(json, brand) {
     if (trimmed === '口碑')  { mediaChannels.koubei  = n(cv(COL_K)); continue; }
     if (trimmed === 'SEO')   { mediaChannels.seo     = n(cv(COL_K)); continue; }
     if (ADS_SKIP.has(trimmed)) continue;
+    // 跳過預算備註列（如 Meta3000070000、Meta北92000/中46000）
+    if (/^Meta[\d\/北中南]/.test(trimmed)) continue;
 
     const isFactory = /[\(（\[【〔{]廠[\)）\]】〕}]/.test(trimmed);
     let adsName;
-    if (trimmed === '品牌') {
+    if (trimmed === '品牌' || trimmed.startsWith('品牌/') || trimmed.startsWith('品牌 ')) {
       adsName = '不分品項';
     } else {
       let cleaned = trimmed.replace(/^\d+\/\d+\s*/, '').replace(/\s*[(（(][\s\S]*?[)）)]\s*/g, '').trim();
@@ -1368,12 +1376,12 @@ function renderMonthlyFunnel() {
   ];
 
   // 從 adsMonthlyData 取當月總詢問數
+  // 注意：只算品項主列，不加廠商(廠)列，避免詢問數重複計算
   function getInq(b, mi) {
     const ad = adsMonthlyData[b][mi];
     if (!ad) return null;
     const prodInq = Object.values(ad.products || {}).reduce((s,p) => s + (p.inq||0) + (p.inq2||0), 0);
-    const fvInq   = Object.values(ad.factoryVendors || {}).reduce((s,fv) => s + (fv.inq||0), 0);
-    const total = prodInq + fvInq;
+    const total = prodInq;
     return total > 0 ? total : null;
   }
 
@@ -2282,6 +2290,8 @@ const adsExt = {
       { name:'消脂針/瘦瘦筆',  tpe:0,     tca:0,     inq:0,   ...D.ads.qi.rows[12] },
       { name:'CMslim',         tpe:0,     tca:0,     inq:0,   ...D.ads.qi.rows[13] },
       { name:'逆時針',         tpe:1028,  tca:685,   inq:8,   ...D.ads.qi.rows[14] },
+      { name:'天使電波',       tpe:0,     tca:0,     inq:0,   tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
+      { name:'再生針',         tpe:0,     tca:0,     inq:0,   tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
       { name:'不分品項',       tpe:0,     tca:0,     inq:0,   ...D.ads.qi.rows[15] },
     ],
     media: [
@@ -2412,10 +2422,12 @@ function syncAdsToMonth(mi) {
       }
     });
 
-    // 補上新品項（不分品項等，該月有但初始列表沒有）
+    // 補上新品項（該月有但初始列表沒有）
+    // 條件：有花費、有新客、或有詢問數，三者擇一即加入
     const existingNames = new Set(adsExt[b].rows.map(r => r.name));
     Object.values(liveProds).forEach(live => {
-      if (!existingNames.has(live.name) && (live.spend > 0 || live.clients > 0))
+      const hasInq = (live.inq||0) + (live.inq2||0) > 0;
+      if (!existingNames.has(live.name) && (live.spend > 0 || live.clients > 0 || hasInq))
         adsExt[b].rows.push({ ...live });
     });
 
@@ -2501,9 +2513,8 @@ function buildAdsSummary(b) {
   const spend26Total = (kpiTrend[b].spend26||[]).reduce((s,v)=>s+(v||0),0);
   const totalSpend = isAllMode ? spend26Total : (medSum || D.ads[b].total.spend);
 
-  // 與 buildKpiTable 同邏輯的統計
-  const inqTotal  = rows.reduce((s,r)=>s+(r.inq||0)+(r.inq2||0),0)
-                  + Object.values(vendors).reduce((s,fv)=>s+(fv.inq||0),0);
+  // 詢問數只算品項主列，不加廠商(廠)列（廠商列詢問數為重複計算）
+  const inqTotal  = rows.reduce((s,r)=>s+(r.inq||0)+(r.inq2||0),0);
   const tpTotal   = rows.reduce((s,r)=>s+(r.tp||0),0)
                   + Object.values(vendors).reduce((s,fv)=>s+(fv.tp||0),0);
   const tcTotal   = rows.reduce((s,r)=>s+(r.tc||0),0)
@@ -2649,7 +2660,155 @@ function closeProdModal() {
   const el = document.getElementById('prod-modal');
   if (el) el.remove();
 }
-document.addEventListener('keydown', e => { if (e.key==='Escape') closeProdModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') { closeProdModal(); closeReportModal(); }
+});
+
+// ── 截圖簡表 ──────────────────────────────────────────────────
+// 分組定義：parent = 顯示名稱, members = 實際品項名稱集合
+const REPORT_GROUPS = {
+  wo: [{ label: '體雕', members: new Set(['體雕不分部位','腹部','馬鞍','手臂','小腿']) }],
+  qi: []
+};
+
+function openReportModal(b) {
+  const MONTH_LABELS = ['1月','2月','3月','4月','5月','6月','7月'];
+  const mi = _currentAdsMi;
+  const isAll = isNaN(mi);
+  const monthLabel = isAll ? '全期' : (MONTH_LABELS[mi] || '');
+  const brandName  = b === 'wo' ? '原渥' : '原綺';
+  const brandColor = b === 'wo' ? '#185FA5' : '#993556';
+  const brandBg    = b === 'wo' ? '#EBF2FA' : '#FAE8F1';
+
+  const groups = REPORT_GROUPS[b] || [];
+  const groupedNames = new Set(groups.flatMap(g => [...g.members]));
+  const allRows = adsExt[b].rows || [];
+  const hasData = r => !r.isVendor && ((r.inq||0)+(r.inq2||0) > 0 || (r.clients||0) > 0);
+
+  function rateChip(inq, clients) {
+    if (!inq) return '<span style="color:#bbb;">—</span>';
+    const pct = (clients / inq * 100).toFixed(1);
+    const col = pct >= 30 ? '#2D6A1F' : pct >= 15 ? '#855C00' : '#A32D2D';
+    const bg  = pct >= 30 ? '#E6F4DE' : pct >= 15 ? '#FFF3CD' : '#FCEBEB';
+    return `<span style="background:${bg};color:${col};padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600;">${pct}%</span>`;
+  }
+
+  // 建立顯示項目列表（群組優先，其餘按詢問數排序）
+  const displayItems = [];
+
+  groups.forEach(g => {
+    const members = allRows.filter(r => g.members.has(r.name) && hasData(r));
+    if (!members.length) return;
+    const gInq = members.reduce((s,r) => s+(r.inq||0)+(r.inq2||0), 0);
+    const gCli = members.reduce((s,r) => s+(r.clients||0), 0);
+    const subs = [...members].sort((a,z) => (z.clients||0) - (a.clients||0));
+    displayItems.push({ isGroup: true, label: g.label, inq: gInq, clients: gCli, subs, sortInq: gInq });
+  });
+
+  allRows
+    .filter(r => !r.isVendor && !groupedNames.has(r.name) && hasData(r))
+    .forEach(r => displayItems.push({ isGroup: false, row: r, inq: (r.inq||0)+(r.inq2||0), clients: r.clients||0, sortInq: (r.inq||0)+(r.inq2||0) }));
+
+  displayItems.sort((a,z) => z.sortInq - a.sortInq);
+
+  let totalInq = 0, totalClients = 0;
+  displayItems.forEach(item => { totalInq += item.inq; totalClients += item.clients; });
+
+  const cellBase = 'padding:9px 14px;border-bottom:1px solid #f0f0f0;';
+  const subCellBase = 'padding:7px 14px;border-bottom:1px solid #f5f5f5;background:#FAFAFA;';
+
+  const rowsHtml = displayItems.map(item => {
+    if (item.isGroup) {
+      // 群組父列
+      const subRows = item.subs.map(r => {
+        const cli = r.clients||0;
+        return `<tr>
+          <td style="${subCellBase}font-size:12.5px;color:#888;padding-left:22px;">└ ${r.name}</td>
+          <td style="${subCellBase}text-align:center;font-size:12.5px;color:#aaa;">—</td>
+          <td style="${subCellBase}text-align:center;font-size:12.5px;color:#777;font-weight:500;">${cli||'—'}</td>
+          <td style="${subCellBase}text-align:center;"><span style="font-size:11px;color:#aaa;">—</span></td>
+        </tr>`;
+      }).join('');
+      return `<tr style="background:#F2F2F5;">
+        <td style="${cellBase}background:#F2F2F5;font-size:13.5px;font-weight:600;color:#333;">${item.label}</td>
+        <td style="${cellBase}background:#F2F2F5;text-align:center;font-size:13.5px;font-weight:600;color:#333;">${item.inq||'—'}</td>
+        <td style="${cellBase}background:#F2F2F5;text-align:center;font-size:13.5px;font-weight:600;color:#333;">${item.clients||'—'}</td>
+        <td style="${cellBase}background:#F2F2F5;text-align:center;">${rateChip(item.inq,item.clients)}</td>
+      </tr>${subRows}`;
+    } else {
+      const r = item.row;
+      const inq = item.inq;
+      const cli = item.clients;
+      return `<tr>
+        <td style="${cellBase}font-size:13.5px;color:#222;">${r.name}</td>
+        <td style="${cellBase}text-align:center;font-size:13.5px;font-weight:600;color:#333;">${inq||'—'}</td>
+        <td style="${cellBase}text-align:center;font-size:13.5px;font-weight:600;color:#333;">${cli||'—'}</td>
+        <td style="${cellBase}text-align:center;">${rateChip(inq,cli)}</td>
+      </tr>`;
+    }
+  }).join('');
+
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
+
+  const html = `<div id="report-modal-overlay"
+    onclick="if(event.target===this)closeReportModal()"
+    style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px;">
+    <div id="report-modal-card" style="background:#fff;border-radius:16px;width:360px;max-width:100%;box-shadow:0 12px 48px rgba(0,0,0,0.28);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
+      <div style="background:#1C1C1E;padding:15px 18px;display:flex;align-items:center;gap:10px;">
+        <span style="background:${brandBg};color:${brandColor};font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;">${brandName}</span>
+        <span style="color:#fff;font-size:15px;font-weight:500;flex:1;">${monthLabel}廣告成效摘要</span>
+        <button onclick="closeReportModal()" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;">✕</button>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="background:#F5F5F7;">
+            <th style="padding:9px 14px;text-align:left;font-size:11.5px;color:#888;font-weight:600;letter-spacing:.4px;">品項</th>
+            <th style="padding:9px 14px;text-align:center;font-size:11.5px;color:#888;font-weight:600;letter-spacing:.4px;">詢問數</th>
+            <th style="padding:9px 14px;text-align:center;font-size:11.5px;color:#888;font-weight:600;letter-spacing:.4px;">到店數</th>
+            <th style="padding:9px 14px;text-align:center;font-size:11.5px;color:#888;font-weight:600;letter-spacing:.4px;">轉換率</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+          <tr style="background:#F7F7F8;">
+            <td style="padding:11px 14px;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">合計</td>
+            <td style="padding:11px 14px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalInq}</td>
+            <td style="padding:11px 14px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalClients}</td>
+            <td style="padding:11px 14px;text-align:center;border-top:1.5px solid #e0e0e0;">${rateChip(totalInq,totalClients)}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:11px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f0f0f0;">
+        <span style="font-size:11px;color:#bbb;">${dateStr} · 資料來源：各媒體廣告成效</span>
+        <button id="copy-report-btn" onclick="copyReportTable()" style="background:#1C1C1E;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;">複製</button>
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('report-modal-overlay')?.remove();
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  document.body.appendChild(wrapper.firstElementChild);
+}
+
+function closeReportModal() {
+  document.getElementById('report-modal-overlay')?.remove();
+}
+
+function copyReportTable() {
+  const card = document.getElementById('report-modal-card');
+  if (!card) return;
+  let text = '';
+  card.querySelectorAll('table tr').forEach(tr => {
+    const cells = [...tr.querySelectorAll('th,td')].map(c => c.textContent.trim());
+    text += cells.join('\t') + '\n';
+  });
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-report-btn');
+    if (btn) { btn.textContent = '已複製 ✓'; setTimeout(()=>{ btn.textContent='複製'; },1800); }
+  });
+}
 
 function toggleVendorRows(groupId) {
   const subRows = document.querySelectorAll(`[data-vendor-group="${groupId}"]`);
@@ -2778,7 +2937,7 @@ function buildKpiTable(b) {
   const factoryTpTotal  = Object.values(vendors).reduce((s,fv)=>s+(fv.tp||0),0);
   const factoryTcTotal  = Object.values(vendors).reduce((s,fv)=>s+(fv.tc||0),0);
   const grossTotal = tpeTotal + tcaTotal + factorySpendTotal + vendorFeeTotal;
-  const allInq     = inqTotal + factoryInqTotal;
+  const allInq     = inqTotal; // 不加廠商列，避免重複
   const allTp      = tpTotal  + factoryTpTotal;
   const allTc      = tcTotal  + factoryTcTotal;
 
