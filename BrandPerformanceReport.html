@@ -93,15 +93,65 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .tbl-section{margin-bottom:14px}
 .tbl-brand-bar{display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:7px;margin-bottom:8px}
 .store-tables{display:grid;gap:10px}
-.store-tbl-card{background:#fff;border:0.5px solid rgba(0,0,0,.09);border-radius:9px;padding:11px 13px}
+.store-tbl-card{background:#fff;border:0.5px solid rgba(0,0,0,.09);border-radius:12px;overflow:hidden}
 .store-tbl-title{font-size:11px;font-weight:700;color:#1a1a18;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+/* store header */
+.store-hd{padding:14px 16px;border-bottom:0.5px solid rgba(0,0,0,.07)}
+.store-hd-name{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.store-name-big{font-size:21px;font-weight:500}
+.store-summary-top{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start}
+.store-summary-left{}
+.store-rev-big{font-size:22px;font-weight:500;letter-spacing:-.02em;margin:4px 0 2px}
+.store-summary-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.store-met{background:#f5f3ee;border-radius:7px;padding:8px 4px;text-align:center}
+.store-met-v{font-size:13px;font-weight:500}
+.store-met-l{font-size:9px;color:#aaa;margin-top:1px}
+/* table */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .perf-tbl{width:100%;border-collapse:collapse;font-size:10px}
-.perf-tbl th{color:#888780;font-weight:500;padding:3px 6px;text-align:right;border-bottom:0.5px solid rgba(0,0,0,.08);white-space:nowrap}
-.perf-tbl th:first-child{text-align:left}
-.perf-tbl td{padding:3px 6px;text-align:right;color:#1a1a18;border-bottom:0.5px solid rgba(0,0,0,.04)}
-.perf-tbl td:first-child{text-align:left;color:#444}
-.perf-tbl tr:last-child td{font-weight:700;border-bottom:none;border-top:0.5px solid rgba(0,0,0,.09);background:#fafaf8}
+.perf-tbl th{color:#888780;font-weight:500;padding:5px 8px;text-align:right;border-bottom:0.5px solid rgba(0,0,0,.08);white-space:nowrap;background:#fafaf8}
+.perf-tbl th:first-child{text-align:left;position:sticky;left:0;z-index:2;background:#fafaf8}
+.perf-tbl td{padding:5px 8px;text-align:right;color:#1a1a18;border-bottom:0.5px solid rgba(0,0,0,.04)}
+.perf-tbl td:first-child{text-align:left;color:#444;position:sticky;left:0;background:#fff;z-index:1}
+.perf-tbl tr:last-child td{font-weight:700;border-bottom:none;border-top:0.5px solid rgba(0,0,0,.09);background:#f7f5f1}
+.perf-tbl tr:last-child td:first-child{background:#f7f5f1}
 .perf-tbl .subtotal td{font-weight:600;color:#888;font-size:9px}
+/* source panel */
+.store-src-panel{padding:12px 16px 14px}
+.store-src-inner{background:#f7f5f1;border-radius:10px;padding:12px 14px}
+.store-src-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+/* expandable month rows */
+.tab3-nav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;position:sticky;top:125px;z-index:50;background:#f5f4f0;padding:8px 0;margin-top:-8px}
+.tab3-pg{display:flex;gap:4px;align-items:center;border-radius:10px;padding:5px 8px;border:0.5px solid}
+.tab3-pg.ki{background:rgba(192,64,112,.07);border-color:rgba(192,64,112,.2)}
+.tab3-pg.wo{background:rgba(45,90,158,.07);border-color:rgba(45,90,158,.2)}
+.tab3-psep{width:0.5px;height:14px;flex-shrink:0}
+.tab3-pg.ki .tab3-psep{background:rgba(192,64,112,.2)}
+.tab3-pg.wo .tab3-psep{background:rgba(45,90,158,.2)}
+.tab3-pill{border:none;background:transparent;font-size:12px;font-weight:400;cursor:pointer;border-radius:6px;padding:4px 9px;display:inline-flex;align-items:center;gap:4px;transition:background .12s;white-space:nowrap}
+.tab3-pill.ki{color:#c04070}.tab3-pill.wo{color:#2d5a9e}
+.tab3-pill.ki.act{background:rgba(192,64,112,.15);font-weight:500}
+.tab3-pill.wo.act{background:rgba(45,90,158,.15);font-weight:500}
+.tab3-pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tab3-pill.ki .tab3-pdot{background:#c04070}.tab3-pill.wo .tab3-pdot{background:#2d5a9e}
+.toggle-btn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:3px;border:.5px solid rgba(0,0,0,.15);cursor:pointer;font-size:9px;color:#888;margin-right:4px;vertical-align:middle;background:#f0ede8;user-select:none;flex-shrink:0}
+.toggle-btn.open{background:#e0dcd5;color:#333}
+.exp-row>td{padding:0 !important;border-bottom:.5px solid rgba(0,0,0,.08)}
+.exp-inner{background:#f9f8f6;padding:10px 14px 12px 36px;border-top:.5px solid rgba(0,0,0,.05)}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px}
+.exp-sec-label{font-size:10px;font-weight:500;color:#555;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.exp-src-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:.5px solid rgba(0,0,0,.05);font-size:10px;color:#666}
+.exp-src-row:last-child{border-bottom:none}
+.exp-src-name{display:flex;align-items:center;gap:5px}
+.exp-src-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+@media(max-width:600px){.exp-inner{padding-left:14px}.exp-grid{grid-template-columns:1fr}}
+/* responsive */
+@media(max-width:600px){
+  .store-summary-top{display:block}
+  .store-summary-left{margin-bottom:12px}
+  .store-summary-metrics{grid-template-columns:repeat(2,1fr)}
+  .store-src-grid{grid-template-columns:1fr 1fr}
+}
 /* ── Brand badge pill ── */
 .brand-pill{display:inline-flex;align-items:center;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.3px}
 .bp-ki{background:#fde8f0;color:#c04070}
@@ -150,46 +200,114 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .yr-axis span{font-size:8px;color:#888780}
 
 /* ══ 每月業績狀況進度 Tab ══ */
-.mo-tabs-wrap{display:flex;gap:4px;margin-bottom:14px;background:#f0ede8;padding:4px;border-radius:10px;width:fit-content}
+.mo-tabs-wrap{display:flex;gap:4px;margin-bottom:14px;background:#f0ede8;padding:4px;border-radius:10px;width:fit-content;position:sticky;top:125px;z-index:50}
 .mo-tab-btn{padding:5px 14px;border-radius:7px;cursor:pointer;font-size:12px;font-weight:500;color:#888;background:none;border:none;transition:background .12s}
 .mo-tab-btn:hover:not(.dim){background:rgba(0,0,0,.05)}
 .mo-tab-btn.active{background:#fff;color:#1a1a18;box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .mo-tab-btn.dim{color:#ccc;cursor:default}
 .mo-brand-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.mo-bc{border-radius:12px;padding:13px 15px}
-.mo-bc.ki{background:#fde8f0;border:.5px solid #e8a0b8}
-.mo-bc.wo{background:#e8effe;border:.5px solid #a0b8e8}
-.mo-bc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.mo-bc-name{font-size:13px;font-weight:700}
-.mo-bc-name.ki{color:#c04070}.mo-bc-name.wo{color:#2d5a9e}
-.mo-bc-chip{font-size:12px;font-weight:600;padding:2px 9px;border-radius:5px}
-.mo-bc-chip.r{background:rgba(192,57,43,.12);color:#c0392b}
-.mo-bc-chip.g{background:rgba(26,107,60,.12);color:#1a6b3c}
-.mo-bc-plabel{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px}
-.mo-bc-plabel b{font-weight:600}
-.mo-bc-track{height:5px;background:rgba(0,0,0,.1);border-radius:3px;overflow:hidden;margin-bottom:10px}
-.mo-bc-fill{height:100%;border-radius:3px}
-.mo-bc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.mo-bc-stat{text-align:center}
+.mo-bc{border-radius:12px;border:.5px solid var(--border,rgba(0,0,0,.1));background:#fff;overflow:hidden}
+.mo-bc.ki{background:rgba(192,64,112,.08);border-color:rgba(192,64,112,.2)}
+.mo-bc.wo{background:rgba(45,90,158,.08);border-color:rgba(45,90,158,.2)}
+.mo-bc.ki .mo-bc-bar-wrap{background:rgba(192,64,112,.12)}
+.mo-bc.wo .mo-bc-bar-wrap{background:rgba(45,90,158,.12)}
+.mo-bc.ki .mo-bc-2cell{border-color:rgba(192,64,112,.15)}
+.mo-bc.wo .mo-bc-2cell{border-color:rgba(45,90,158,.15)}
+.mo-bc-top{display:flex;align-items:center;justify-content:space-between;padding:12px 15px 8px}
+.mo-bc-brand{display:flex;align-items:center;gap:7px}
+.mo-bc-dot{width:8px;height:8px;border-radius:50%}
+.mo-bc-dot.ki{background:#c04070}.mo-bc-dot.wo{background:#2d5a9e}
+.mo-bc-name{font-size:13px;font-weight:500;color:#1a1a18}
+.mo-bc-chip{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
+.mo-bc-chip.r{background:rgba(192,57,43,.1);color:#c0392b}
+.mo-bc-chip.g{background:rgba(26,107,60,.1);color:#1a6b3c}
+.mo-bc-body{display:flex;align-items:flex-end;justify-content:space-between;padding:0 15px 11px;gap:12px}
+.mo-bc-rev{font-size:22px;font-weight:500;color:#1a1a18;letter-spacing:-.02em}
+.mo-bc-tgt{font-size:10px;color:#888780;margin-top:3px}
+.mo-bc-stats{display:flex;gap:16px}
+.mo-bc-stat{text-align:right}
 .mo-bc-stat-label{font-size:9px;color:#888780}
-.mo-bc-stat-val{font-size:12px;font-weight:600;color:#1a1a18;margin-top:2px}
-.mo-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.mo-kpi{background:#fff;border:.5px solid rgba(0,0,0,.09);border-radius:10px;padding:10px 13px}
-.mo-kpi-label{font-size:10px;color:#888780;margin-bottom:2px}
-.mo-kpi-val{font-size:16px;font-weight:700;color:#1a1a18}
-.mo-kpi-sub{font-size:10px;color:#888780;margin-top:1px}
-.mo-brand-head{display:flex;align-items:center;padding:6px 11px;border-radius:8px;margin-bottom:7px}
-.mo-brand-head.ki{background:#fde8f0}.mo-brand-head.wo{background:#e8effe}
-.mo-brand-head-name{font-size:11px;font-weight:700}
-.mo-brand-head-name.ki{color:#c04070}.mo-brand-head-name.wo{color:#2d5a9e}
-.mo-store-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
-.mo-sc{background:#fff;border:.5px solid rgba(0,0,0,.09);border-radius:10px;padding:11px 13px}
+.mo-bc-stat-val{font-size:13px;font-weight:500;color:#1a1a18;margin-top:2px}
+.mo-bc-bar-wrap{height:3px;background:rgba(0,0,0,.07)}
+.mo-bc-bar{height:100%}
+.mo-bc-2grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.mo-bc-2cell{padding:8px 13px;border-right:.5px solid rgba(0,0,0,.07);border-top:.5px solid rgba(0,0,0,.07)}
+.mo-bc-2cell:nth-child(2n){border-right:none}
+.mo-bc-2cell-v{font-size:13px;font-weight:500;color:#1a1a18}
+.mo-bc-2cell-l{font-size:9.5px;color:#888780;margin-top:1px}
+.mo-group-card{background:#fff;border:.5px solid rgba(0,0,0,.09);border-radius:14px;padding:18px 20px;margin-bottom:12px}
+.mo-group-label{font-size:10px;color:#aaa;font-weight:600;letter-spacing:.07em;margin-bottom:8px}
+.mo-group-row{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.mo-group-rev{font-size:34px;font-weight:500;color:#1a1a18;letter-spacing:-.03em;line-height:1}
+.mo-group-ach{font-size:22px;font-weight:500}
+.mo-group-meta{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.mo-group-tgt{font-size:11px;color:#aaa}
+.mo-group-gap{font-size:10px;background:rgba(200,50,50,.08);color:#c03030;padding:2px 8px;border-radius:8px}
+.mo-group-bar{height:3px;background:rgba(0,0,0,.07);border-radius:2px;overflow:hidden}
+/* ── Daily progress ── */
+.mo-day-prog{border-top:.5px solid rgba(0,0,0,.07);margin-top:8px}
+/* store card: inset strip edge-to-edge */
+.mo-sc .mo-day-prog{background:rgba(0,0,0,.022);margin:8px -13px 9px;padding:9px 13px 11px;border-top:.5px solid rgba(0,0,0,.07);border-bottom:.5px solid rgba(0,0,0,.07)}
+/* brand card: inset with brand-tinted bg */
+.mo-bc.ki .mo-day-prog{background:rgba(192,64,112,.06);padding:10px 15px 14px}
+.mo-bc.wo .mo-day-prog{background:rgba(45,90,158,.06);padding:10px 15px 14px}
+/* group card: inset spanning full card */
+.mo-group-card .mo-day-prog{background:rgba(0,0,0,.022);margin:8px -20px -18px;padding:10px 20px 15px;border-top:.5px solid rgba(0,0,0,.07)}
+.mo-day-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.mo-day-label{font-size:10px;color:#aaa}
+.mo-day-badge{font-size:10px;font-weight:600;padding:1px 8px;border-radius:10px}
+.mo-day-badge.behind{background:rgba(180,30,30,.1);color:#c0392b}
+.mo-day-badge.ahead{background:rgba(26,107,60,.1);color:#1a6b3c}
+.mo-day-nums{display:flex;align-items:baseline;gap:4px;margin-bottom:7px}
+.mo-group-card .mo-day-cur{font-size:19px}
+.mo-bc .mo-day-cur{font-size:15px}
+.mo-sc .mo-day-cur{font-size:14px}
+.mo-day-cur{font-weight:500;color:#1a1a18}
+.mo-day-sep{font-size:12px;color:#ccc}
+.mo-day-exp{font-size:12px;color:#888780}
+.mo-day-exp-lbl{font-size:9.5px;color:#aaa}
+.mo-day-bar{height:7px;background:rgba(0,0,0,.08);border-radius:4px;position:relative}
+.mo-day-fill{height:100%;border-radius:4px;position:absolute;top:0;left:0}
+.mo-sc.ki .mo-day-fill,.mo-bc.ki .mo-day-fill{background:#c04070}
+.mo-sc.wo .mo-day-fill,.mo-bc.wo .mo-day-fill{background:#2d5a9e}
+.mo-group-card .mo-day-fill{background:#888780}
+.mo-day-tick{position:absolute;top:-4px;width:2px;height:15px;background:rgba(0,0,0,.25);border-radius:1px;transform:translateX(-50%)}
+.mo-day-bar-lbls{display:flex;justify-content:space-between;margin-top:3px}
+.mo-day-bar-lbls span{font-size:9px;color:rgba(0,0,0,.3)}
+@media(max-width:600px){.mo-group-rev{font-size:26px}.mo-group-ach{font-size:18px}}
+.mo-brand-head{display:none}
+.mo-brand-head-name{display:none}
+.mo-store-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.mo-brand-sec{border-radius:12px;padding:10px;margin-bottom:10px}
+.mo-brand-sec.ki{background:rgba(192,64,112,.06);border:0.5px solid rgba(192,64,112,.15)}
+.mo-brand-sec.wo{background:rgba(45,90,158,.06);border:0.5px solid rgba(45,90,158,.15)}
+.mo-brand-sec-hd{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.mo-brand-sec-dot{width:6px;height:6px;border-radius:50%}
+.mo-brand-sec.ki .mo-brand-sec-dot{background:#c04070}
+.mo-brand-sec.wo .mo-brand-sec-dot{background:#2d5a9e}
+.mo-brand-sec-name{font-size:10px;font-weight:600}
+.mo-brand-sec.ki .mo-brand-sec-name{color:#8c2044}
+.mo-brand-sec.wo .mo-brand-sec-name{color:#1a3a6e}
+.mo-brand-sec-cnt{font-size:10px;color:#aaa}
+.mo-brand-sec .mo-sc{border:0.5px solid rgba(0,0,0,.07)}
+.mo-brand-sec.ki .mo-sc{border-left-color:#c04070}
+.mo-brand-sec.wo .mo-sc{border-left-color:#2d5a9e}
+.mo-sc{background:#fff;border:.5px solid rgba(0,0,0,.09);border-radius:10px;padding:11px 13px;border-left-width:3px;border-left-style:solid;overflow:hidden}
+.mo-sc.ki{border-left-color:#c04070}
+.mo-sc.wo{border-left-color:#2d5a9e}
+.mo-sc-brand-tag{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.mo-sc-brand-tag.ki{color:#c04070}
+.mo-sc-brand-tag.wo{color:#2d5a9e}
 .mo-sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
 .mo-sc-name{font-size:13px;font-weight:700;color:#1a1a18}
 .mo-sc-chip{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
 .mo-sc-chip.r{background:#fce4e4;color:#c0392b}.mo-sc-chip.g{background:#d4edda;color:#1a6b3c}
-.mo-prog-label{display:flex;justify-content:space-between;font-size:10px;color:#888780;margin-bottom:3px}
-.mo-prog-track{height:5px;background:#ede9e3;border-radius:3px;overflow:hidden;margin-bottom:9px}
+.mo-prog-label{display:none}
+.mo-rev-line{display:flex;align-items:baseline;gap:7px;margin-bottom:5px}
+.mo-rev-val{font-size:20px;font-weight:500;letter-spacing:-.02em;color:#1a1a18}
+.mo-rev-sep{font-size:13px;color:#ccc}
+.mo-rev-tgt{font-size:13px;color:#aaa}
+.mo-prog-track{height:3px;background:rgba(0,0,0,.08);border-radius:2px;overflow:hidden;margin-bottom:9px}
 .mo-prog-fill{height:100%;border-radius:3px}
 .mo-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px}
 .mo-stat{background:#f5f3ee;border:.5px solid rgba(0,0,0,.07);border-radius:6px;padding:5px 4px;text-align:center}
@@ -211,6 +329,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .mo-src-legend-row{display:flex;gap:12px;margin-top:5px}
 .mo-src-leg{display:flex;align-items:center;gap:4px;font-size:9px;color:#888780}
 .mo-src-leg-swatch{width:20px;height:6px;border-radius:2px}
+
+/* ── H1 Matrix ── */
+.mch-wrap{background:var(--surface-2,#fff);border:.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.mch-scroll{overflow-x:auto}
+.mch-tbl{width:100%;border-collapse:collapse;white-space:nowrap;font-size:10px}
+.mch-tbl thead th{font-size:9px;color:#888780;font-weight:500;padding:5px 8px;text-align:center;border-bottom:.5px solid rgba(0,0,0,.07)}
+.mch-tbl thead th:first-child{text-align:left}
+.mch-tbl td{padding:5px 8px;text-align:center;border-bottom:.5px solid rgba(0,0,0,.05);vertical-align:middle}
+.mch-tbl td:first-child{text-align:left;font-weight:500;color:#1a1a18;padding-left:12px}
+.mch{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:500;line-height:1.4}
+.mch-g{background:#d4edda;color:#1a6b3c}.mch-r{background:#fce4e4;color:#c0392b}.mch-na{background:#f5f3ee;color:#888780}
+.mch-rev{font-size:9px;color:#888780;margin-top:2px}
+.mch-brand-hd.ki td{background:#fde8f0}.mch-brand-hd.wo td{background:#e8effe}
+.mch-brand-hd td{padding:5px 10px;font-size:11px;font-weight:500}
+.mch-sub td{background:#f8f7f4;font-weight:500}
+.mch-divider{display:flex;align-items:center;gap:10px;margin:4px 0 12px;font-size:11px;font-weight:500;color:#888780}
+.mch-divider::before,.mch-divider::after{content:'';flex:1;height:.5px;background:rgba(0,0,0,.1)}
 </style>
 </head>
 <body>
@@ -236,6 +371,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
     <button class="nav-item active" onclick="switchTab(0,this)">各門市年度達成</button>
     <button class="nav-item" onclick="switchTab(1,this)">業績細項</button>
     <button class="nav-item" onclick="switchTab(2,this)">每月業績狀況進度</button>
+    <button class="nav-item" onclick="switchTab(3,this)">每月達標狀況</button>
     <div class="nav-filter">
       <span class="filter-label">年份</span>
       <select id="year-filter" onchange="refreshAll()"><option value="2026" selected>2026</option></select>
@@ -260,6 +396,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
   <!-- ── TAB 3: 每月業績狀況進度 ── -->
   <div id="tab2" class="tab-content">
     <div id="tab4-body"></div>
+  </div>
+
+  <!-- ── TAB 4: 每月達標狀況 ── -->
+  <div id="tab3" class="tab-content">
+    <div id="tab5-body"></div>
   </div>
 
 </div>
@@ -489,6 +630,7 @@ function switchTab(idx, el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   el.classList.add('active');
   if(idx===2) renderTab4();
+  if(idx===3) renderAchMatrix();
 }
 
 // ══════════════════════════════════════════
@@ -953,7 +1095,39 @@ function renderTab2(){
 // ══════════════════════════════════════════
 //  RENDER TAB 3: 業績細項
 // ══════════════════════════════════════════
-function renderStoreDetail(s){
+const STORE_LABELS_T3={ki_taipei:'台北',ki_taichung:'台中',wo_zhanqian:'站前',wo_daan:'大安',wo_zhongxiao:'忠孝',wo_dongmen:'東門',wo_taichung:'台中',wo_banqiao:'板橋'};
+
+function filterTab3(key){
+  document.querySelectorAll('.tab3-pill').forEach(b=>b.classList.remove('act'));
+  const active=document.querySelector(`.tab3-pill[data-key="${key}"]`);
+  if(active) active.classList.add('act');
+  const kiSec=document.getElementById('tab3-ki-sec');
+  const woSec=document.getElementById('tab3-wo-sec');
+  const wraps=document.querySelectorAll('.tab3-sw');
+  if(key==='ki_all'){
+    kiSec.style.display=''; woSec.style.display='none';
+    wraps.forEach(w=>{ w.style.display=w.dataset.brand==='ki'?'':'none'; });
+  } else if(key==='wo_all'){
+    kiSec.style.display='none'; woSec.style.display='';
+    wraps.forEach(w=>{ w.style.display=w.dataset.brand==='wo'?'':'none'; });
+  } else {
+    const brand=key.startsWith('ki')?'ki':'wo';
+    kiSec.style.display=brand==='ki'?'':'none';
+    woSec.style.display=brand==='wo'?'':'none';
+    wraps.forEach(w=>{ w.style.display=w.dataset.key===key?'':'none'; });
+  }
+}
+
+function toggleMonthRow(btn, id){
+  const row = document.getElementById(id);
+  if(!row) return;
+  const open = row.style.display !== 'none';
+  row.style.display = open ? 'none' : '';
+  btn.textContent = open ? '+' : '–';
+  btn.classList.toggle('open', !open);
+}
+
+function renderStoreDetail(s, storeKey){
   const [badgeClass, badgeText] = achieveBadge(s.achieve_h1);
   // Per-store source data (from sync) takes priority over brand aggregate
   const srcRaw = s.new_src || BRAND_SOURCES[s.brandKey];
@@ -969,7 +1143,7 @@ function renderStoreDetail(s){
     `<div style="width:${(v/srcTotal*100).toFixed(1)}%;background:${colors[k]}"></div>`
   ).join('');
   const srcLegend = Object.entries(src).map(([k,v])=>
-    `<div class="src-item"><div class="src-dot" style="background:${colors[k]}"></div>${k}：${v}人 (${srcTotal>0?(v/srcTotal*100).toFixed(0):0}%)</div>`
+    `<div style="display:flex;align-items:center;font-size:11px;"><div style="width:7px;height:7px;border-radius:50%;background:${colors[k]};margin-right:5px;flex-shrink:0"></div>${k} ${v}人 <span style="margin-left:auto;font-weight:500;color:${colors[k]}">${srcTotal>0?(v/srcTotal*100).toFixed(0):0}%</span></div>`
   ).join('');
 
   const TGT_CELL = 'background:#f5f3ee;border-left:0.5px solid #dbd8d0';
@@ -984,80 +1158,139 @@ function renderStoreDetail(s){
     // Priority: m.tgt (from sync) → monthly_tgt[idx] (hardcoded) → back-calc from achieve
     const tgt = m.tgt||(s.monthly_tgt?s.monthly_tgt[idx]:null)||((m.achieve&&m.achieve>0&&m.rev>0)?Math.round(m.rev/m.achieve):null);
     const achStr = m.achieve!==null ? `<span style="color:${pctTextColor(m.achieve)}">${fmtPct(m.achieve)}</span>` : '—';
+    const snap = (typeof MO_SNAP_DATA!=='undefined'&&MO_SNAP_DATA[idx]&&storeKey)?MO_SNAP_DATA[idx][storeKey]:null;
+    const hasSrc = snap&&(snap.src_new||snap.src_old);
+    const expId = `exp_${storeKey}_${idx}`;
+    const srcColors = {行銷:'#5b8dee',業務:'#e27575',團購:'#f0a030',其他:'#5bbf8a'};
+    function srcRows(obj, total){
+      if(!obj) return '<div style="font-size:10px;color:#aaa">無資料</div>';
+      return Object.entries(obj).map(([k,v])=>`
+        <div class="exp-src-row">
+          <span class="exp-src-name"><span class="exp-src-dot" style="background:${srcColors[k]}"></span>${k}</span>
+          <span><span style="font-weight:500;color:#1a1a18">${v}人</span><span style="font-size:9px;color:#aaa;margin-left:4px">${total>0?Math.round(v/total*100):0}%</span></span>
+        </div>`).join('');
+    }
+    const expRow = hasSrc ? `
+    <tr id="${expId}" class="exp-row" style="display:none">
+      <td colspan="8"><div class="exp-inner"><div class="exp-grid">
+        <div>
+          <div class="exp-sec-label"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e87b8d"></span>新客來源（${snap.new_n||0}人）</div>
+          ${srcRows(snap.src_new, snap.new_n)}
+        </div>
+        <div>
+          <div class="exp-sec-label"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e8c86e"></span>舊客來源（${snap.old_n||0}人）</div>
+          ${srcRows(snap.src_old, snap.old_n)}
+        </div>
+      </div></div></td>
+    </tr>` : '';
+    const toggleBtn = hasSrc ? `<span class="toggle-btn" onclick="toggleMonthRow(this,'${expId}')">+</span>` : `<span style="display:inline-block;width:19px"></span>`;
     return `<tr>
-      <td>${m.m}</td>
+      <td>${toggleBtn}${m.m}</td>
       <td>${fmtM(m.new_rev)}</td><td>${m.new_n||'—'}</td>
       <td>${fmtM(m.old_rev)}</td><td>${m.old_n||'—'}</td>
       <td>${fmtM(m.rev)}</td>
       <td style="${TGT_CELL}">${tgt?fmtM(tgt):'—'}</td>
       <td>${achStr}</td>
-    </tr>`;
+    </tr>${expRow}`;
   }).filter(Boolean).join('');
 
   const new_pct_total = s.revenue>0?Math.round(s.new_rev/s.revenue*100):0;
 
+  const new_avg = s.new_count>0?fmtM(Math.round(s.new_rev/s.new_count)):'—';
+  const old_avg = s.old_count>0?fmtM(Math.round(s.old_rev/s.old_count)):'—';
+
   return `<div class="store-tbl-card">
-    <div class="store-tbl-title">
-      <span class="brand-pill ${s.brandKey==='ki'?'bp-ki':'bp-wo'}">${s.brand}</span>
-      ${s.label}
-      <span class="sc-badge ${badgeClass}" style="font-size:9px;padding:2px 7px;border-radius:12px;font-weight:600;margin-left:8px">${badgeText} ${fmtPct(s.achieve_h1)}</span>
-      ${yoyBadge(s.yoy_h1)}
-      <span style="margin-left:auto;font-size:10px;color:#888780">累計 ${fmtM(s.revenue)}｜新客 ${fmtN(s.new_count)} 人｜舊客 ${fmtN(s.old_count)} 人</span>
-    </div>
 
-    <table class="perf-tbl" style="font-size:9.5px;margin-bottom:12px">
-      <tr>
-        <th>月份</th>
-        <th>新客業績</th><th>新客數</th>
-        <th>舊客業績</th><th>舊客數</th>
-        <th>總業績</th>
-        <th style="background:#f5f3ee;color:#6b6860;border-left:0.5px solid #dbd8d0;font-weight:600">當月目標</th>
-        <th>達成率</th>
-      </tr>
-      ${monthRows}
-      <tr>
-        <td>合計</td>
-        <td>${fmtM(s.new_rev)}</td><td>${fmtN(s.new_count)}</td>
-        <td>${fmtM(s.old_rev)}</td><td>${fmtN(s.old_count)}</td>
-        <td>${fmtM(s.revenue)}</td>
-        <td style="${TGT_CELL}">${s.target_h1?fmtM(s.target_h1):'—'}</td>
-        <td><span style="color:${pctTextColor(s.achieve_h1)}">${fmtPct(s.achieve_h1)}</span></td>
-      </tr>
-    </table>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div style="background:#f7f5f1;border-radius:8px;padding:12px">
-        <div style="font-size:10px;font-weight:600;color:#444;margin-bottom:8px">${srcTitle}</div>
-        <div style="height:8px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:10px">${srcBars}</div>
-        <div class="src-legend" style="flex-direction:column;gap:5px">${srcLegend}</div>
+    <!-- header + H1 summary -->
+    <div class="store-hd">
+      <div class="store-hd-name">
+        <span class="brand-pill ${s.brandKey==='ki'?'bp-ki':'bp-wo'}">${s.brand}</span>
+        <span class="store-name-big">${s.label}</span>
+        <span class="sc-badge ${badgeClass}" style="font-size:9px;padding:2px 8px;border-radius:12px;font-weight:600">${badgeText} ${fmtPct(s.achieve_h1)}</span>
+        ${yoyBadge(s.yoy_h1)}
       </div>
-      <div style="background:#f7f5f1;border-radius:8px;padding:12px">
-        <div style="font-size:10px;font-weight:600;color:#444;margin-bottom:8px">新舊客業績結構</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-          <div><div style="font-size:9px;color:#888780">新客業績</div><div style="font-size:18px;font-weight:700;color:${newColor}">${new_pct_total}%</div></div>
-          <div style="text-align:right"><div style="font-size:9px;color:#888780">舊客業績</div><div style="font-size:18px;font-weight:700;color:${oldColor}">${100-new_pct_total}%</div></div>
+      <div class="store-summary-top">
+        <div class="store-summary-left">
+          <div style="font-size:10px;color:#aaa">H1 累計</div>
+          <div class="store-rev-big">${fmtM(s.revenue)} <span style="font-size:14px;font-weight:500;color:${pctTextColor(s.achieve_h1)}">${fmtPct(s.achieve_h1)}</span></div>
+          <div style="font-size:10px;color:#aaa">目標 ${s.target_h1?fmtM(s.target_h1):'—'}</div>
         </div>
-        <div style="height:8px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:6px">
-          <div style="width:${new_pct_total}%;background:${newColor}"></div>
-          <div style="width:${100-new_pct_total}%;background:${oldColor}"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:9px;color:#888;margin-bottom:6px">
-          <span>${fmtM(s.new_rev)}</span><span>${fmtM(s.old_rev)}</span>
-        </div>
-        <div style="font-size:9px;color:#888780;padding-top:6px;border-top:0.5px solid #dbd8d0">
-          累計 ${fmtM(s.revenue)}｜新客 ${fmtN(s.new_count)} 人｜舊客 ${fmtN(s.old_count)} 人
+        <div>
+          <div style="height:6px;border-radius:3px;overflow:hidden;display:flex;gap:1px;margin-bottom:5px">
+            <div style="flex:${new_pct_total};background:${newColor}"></div>
+            <div style="flex:${100-new_pct_total};background:${oldColor}"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:10px;color:#aaa">
+            <span>● 新客 ${new_pct_total}%　${fmtM(s.new_rev)}</span>
+            <span>舊客 ${100-new_pct_total}%　${fmtM(s.old_rev)} ●</span>
+          </div>
+          <div class="store-summary-metrics">
+            <div class="store-met"><div class="store-met-v">${fmtN(s.new_count)}</div><div class="store-met-l">新客數</div></div>
+            <div class="store-met"><div class="store-met-v">${new_avg}</div><div class="store-met-l">新客客單</div></div>
+            <div class="store-met"><div class="store-met-v">${fmtN(s.old_count)}</div><div class="store-met-l">舊客數</div></div>
+            <div class="store-met"><div class="store-met-v">${old_avg}</div><div class="store-met-l">舊客客單</div></div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- table with sticky month col -->
+    <div class="tbl-scroll">
+      <table class="perf-tbl">
+        <tr>
+          <th>月份</th>
+          <th>新客業績</th><th>新客數</th>
+          <th>舊客業績</th><th>舊客數</th>
+          <th>總業績</th>
+          <th style="background:#f5f3ee;color:#6b6860;border-left:0.5px solid #dbd8d0;font-weight:600">當月目標</th>
+          <th>達成率</th>
+        </tr>
+        ${monthRows}
+        <tr>
+          <td>合計</td>
+          <td>${fmtM(s.new_rev)}</td><td>${fmtN(s.new_count)}</td>
+          <td>${fmtM(s.old_rev)}</td><td>${fmtN(s.old_count)}</td>
+          <td>${fmtM(s.revenue)}</td>
+          <td style="${TGT_CELL}">${s.target_h1?fmtM(s.target_h1):'—'}</td>
+          <td><span style="color:${pctTextColor(s.achieve_h1)}">${fmtPct(s.achieve_h1)}</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- source analysis -->
+    <div class="store-src-panel">
+      <div class="store-src-inner">
+        <div style="font-size:10px;color:#aaa;margin-bottom:8px">${srcTitle}</div>
+        <div style="height:7px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:10px">${srcBars}</div>
+        <div class="store-src-grid">${srcLegend}</div>
+      </div>
+    </div>
+
   </div>`;
 }
 
 function renderTab3(){
-  const kiDetails = KI_STORES.map(k=>renderStoreDetail(DATA[k])).join('');
-  const woDetails = WO_STORES.map(k=>renderStoreDetail(DATA[k])).join('');
+  const kiDetails = KI_STORES.map(k=>`<div class="tab3-sw" data-key="${k}" data-brand="ki">${renderStoreDetail(DATA[k],k)}</div>`).join('');
+  const woDetails = WO_STORES.map(k=>`<div class="tab3-sw" data-key="${k}" data-brand="wo">${renderStoreDetail(DATA[k],k)}</div>`).join('');
+
+  const kiPills = KI_STORES.map(k=>`<button class="tab3-pill ki" data-key="${k}" onclick="filterTab3('${k}')">${STORE_LABELS_T3[k]}</button>`).join('');
+  const woPills = WO_STORES.map(k=>`<button class="tab3-pill wo" data-key="${k}" onclick="filterTab3('${k}')">${STORE_LABELS_T3[k]}</button>`).join('');
 
   document.getElementById('tab3-body').innerHTML = `
-    <div class="tbl-section">
+    <div class="tab3-nav">
+      <div class="tab3-pg ki">
+        <button class="tab3-pill ki act" data-key="ki_all" onclick="filterTab3('ki_all')"><span class="tab3-pdot"></span>原綺全門市</button>
+        <div class="tab3-psep"></div>
+        ${kiPills}
+      </div>
+      <div class="tab3-pg wo">
+        <button class="tab3-pill wo" data-key="wo_all" onclick="filterTab3('wo_all')"><span class="tab3-pdot"></span>原渥全門市</button>
+        <div class="tab3-psep"></div>
+        ${woPills}
+      </div>
+    </div>
+
+    <div id="tab3-ki-sec" class="tbl-section">
       <div class="tbl-brand-bar ki">
         <span class="brand-name" style="color:#c04070">原綺</span>
         <span class="brand-sum" style="margin-left:8px">新客來源：行銷 645｜業務 78｜團購 1｜其他 119</span>
@@ -1065,7 +1298,7 @@ function renderTab3(){
       <div style="display:flex;flex-direction:column;gap:10px">${kiDetails}</div>
     </div>
 
-    <div class="tbl-section sec-sep">
+    <div id="tab3-wo-sec" class="tbl-section sec-sep" style="display:none">
       <div class="tbl-brand-bar wo">
         <span class="brand-name" style="color:#2d5a9e">原渥</span>
         <span class="brand-sum" style="margin-left:8px">新客來源：行銷 888｜業務 122｜團購 208｜其他 59</span>
@@ -1119,6 +1352,118 @@ function parseMoSheet(gd){
 }
 
 // ══════════════════════════════════════════
+//  H1 MATRIX (top of monthly tab)
+// ══════════════════════════════════════════
+function renderH1Matrix(){
+  const MOS=['1月','2月','3月','4月','5月','6月'];
+  function chip(p){
+    if(p===null) return '<span class="mch mch-na">—</span>';
+    return`<span class="mch ${p>=1?'mch-g':'mch-r'}">${Math.round(p*100)}%</span>`;
+  }
+  function moCell(key,i){
+    const m=DATA[key].months[i];
+    if(!m||m.rev===0) return`<td>${chip(null)}</td>`;
+    return`<td>${chip(m.achieve)}<div class="mch-rev">${fmtM(m.rev)}</div></td>`;
+  }
+  function totalCell(key){
+    const s=DATA[key];
+    return`<td>${chip(s.achieve_h1)}<div class="mch-rev">${fmtM(s.revenue)}</div></td>`;
+  }
+  function brandMoCell(keys,i){
+    let rev=0,tgt=0;
+    keys.forEach(k=>{
+      const m=DATA[k].months[i]; if(!m) return;
+      rev+=m.rev||0;
+      tgt+=(m.tgt||(DATA[k].monthly_tgt?DATA[k].monthly_tgt[i]:0)||0);
+    });
+    if(!rev) return`<td>${chip(null)}</td>`;
+    return`<td>${chip(tgt>0?rev/tgt:null)}<div class="mch-rev">${fmtM(rev)}</div></td>`;
+  }
+  function brandTotCell(keys){
+    let rev=0,tgt=0;
+    keys.forEach(k=>{rev+=DATA[k].revenue;tgt+=DATA[k].target_h1;});
+    return`<td>${chip(tgt>0?rev/tgt:null)}<div class="mch-rev">${fmtM(rev)}</div></td>`;
+  }
+  function storeRow(key){
+    return`<tr>
+      <td>${DATA[key].label}</td>
+      ${MOS.map((_,i)=>moCell(key,i)).join('')}
+      ${totalCell(key)}
+    </tr>`;
+  }
+  function section(keys,label,cls,color){
+    const rev=keys.reduce((s,k)=>s+DATA[k].revenue,0);
+    const tgt=keys.reduce((s,k)=>s+DATA[k].target_h1,0);
+    return`<tr class="mch-brand-hd ${cls}">
+        <td colspan="8"><span style="color:${color}">${label}</span>
+          <span style="font-size:10px;color:#888780;margin-left:8px">H1 ${fmtM(rev)} ／ 目標 ${fmtM(tgt)}</span></td>
+      </tr>
+      ${keys.map(storeRow).join('')}
+      <tr class="mch-sub">
+        <td>品牌小計</td>
+        ${MOS.map((_,i)=>brandMoCell(keys,i)).join('')}
+        ${brandTotCell(keys)}
+      </tr>`;
+  }
+  return`<div class="mch-wrap">
+    <div class="mch-scroll">
+      <table class="mch-tbl">
+        <thead><tr>
+          <th>門市</th>${MOS.map(m=>`<th>${m}</th>`).join('')}<th>H1合計</th>
+        </tr></thead>
+        <tbody>
+          ${section(KI_STORES,'原綺','ki','#c04070')}
+          ${section(WO_STORES,'原渥','wo','#2d5a9e')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+//  RENDER TAB 5: 每月達標狀況
+// ══════════════════════════════════════════
+function renderAchMatrix(){
+  const el=document.getElementById('tab5-body');
+  if(!el) return;
+  const curMo=new Date().getMonth()+1;
+  const MOS=Array.from({length:curMo},(_,i)=>(i+1)+'月');
+  const cols=MOS.length+1;
+  function chip(p){
+    if(p===null||p===undefined) return'<span class="mch mch-na">—</span>';
+    return`<span class="mch ${p>=1?'mch-g':'mch-r'}">${Math.round(p*100)}%</span>`;
+  }
+  function moCell(key,i){
+    const m=DATA[key].months&&DATA[key].months[i];
+    // Fall back to MO_SNAP_DATA for months not yet in the main store sheet (e.g. current month)
+    if(!m||m.rev===0){
+      const snap=MO_SNAP_DATA[i]&&MO_SNAP_DATA[i][key];
+      if(snap&&snap.total_rev>0){
+        const tgt=snap.target||(DATA[key].monthly_tgt?DATA[key].monthly_tgt[i]:0)||(DATA[key].target_h1/6)||0;
+        const ach=tgt>0?snap.total_rev/tgt:null;
+        return`<td>${chip(ach)}<div class="mch-rev">${fmtM(snap.total_rev)}</div></td>`;
+      }
+      return`<td>${chip(null)}</td>`;
+    }
+    return`<td>${chip(m.achieve)}<div class="mch-rev">${fmtM(m.rev)}</div></td>`;
+  }
+  function storeRow(key){
+    return`<tr><td>${DATA[key].label}</td>${MOS.map((_,i)=>moCell(key,i)).join('')}</tr>`;
+  }
+  el.innerHTML=`<div class="mch-wrap"><div class="mch-scroll">
+    <table class="mch-tbl">
+      <thead><tr><th>門市</th>${MOS.map(m=>`<th>${m}</th>`).join('')}</tr></thead>
+      <tbody>
+        <tr class="mch-brand-hd ki"><td colspan="${cols}"><span style="color:#c04070">原綺</span></td></tr>
+        ${KI_STORES.map(storeRow).join('')}
+        <tr class="mch-brand-hd wo"><td colspan="${cols}"><span style="color:#2d5a9e">原渥</span></td></tr>
+        ${WO_STORES.map(storeRow).join('')}
+      </tbody>
+    </table>
+  </div></div>`;
+}
+
+// ══════════════════════════════════════════
 //  RENDER TAB 4: 每月業績狀況進度
 // ══════════════════════════════════════════
 function renderTab4(){
@@ -1165,21 +1510,65 @@ function renderTab4(){
   function achCls(p){return p===null?'r':p>=1?'g':'r';}
   function achTxt(p){return p===null?'—':Math.round(p*100)+'%';}
 
-  // Brand card
+  // Daily progress (only for current month tab)
+  const _now=new Date();
+  const _isCurMo=(_curMoTab===_now.getMonth());
+  const _dayOfMo=Math.max(1,_now.getDate()-1);
+  const _daysInMo=new Date(_now.getFullYear(),_curMoTab+1,0).getDate();
+  const _dayRatio=_dayOfMo/_daysInMo;
+  function dailyProg(rev,tgt){
+    if(!_isCurMo||!tgt||!rev) return'';
+    const exp=Math.round(tgt*_dayRatio);
+    const gap=rev-exp;
+    const isAhead=gap>=0;
+    const bCls=isAhead?'ahead':'behind';
+    const bTxt=isAhead?'超前':'落後';
+    const fillPct=Math.min(rev/tgt*100,100).toFixed(1);
+    const tickPct=Math.min(_dayRatio*100,100).toFixed(1);
+    return`<div class="mo-day-prog">
+      <div class="mo-day-row">
+        <span class="mo-day-label">日進度 第${_dayOfMo}天 / 共${_daysInMo}天</span>
+        <span class="mo-day-badge ${bCls}">${bTxt} ${fmtM(Math.abs(gap))}</span>
+      </div>
+      <div class="mo-day-nums">
+        <span class="mo-day-cur">${fmtM(rev)}</span>
+        <span class="mo-day-sep"> / </span>
+        <span class="mo-day-exp">${fmtM(exp)}</span>
+        <span class="mo-day-exp-lbl"> 應達</span>
+      </div>
+      <div class="mo-day-bar">
+        <div class="mo-day-fill" style="width:${fillPct}%"></div>
+        <div class="mo-day-tick" style="left:${tickPct}%"></div>
+      </div>
+      <div class="mo-day-bar-lbls"><span>0</span><span>月目標</span></div>
+    </div>`;
+  }
+
+  // Brand card — tinted brand color bg, dark brand text
   function bCard(label,cls,color,t){
     const pct=t.achieve!==null?Math.min(t.achieve,1)*100:0;
+    const revClr=cls==='ki'?'#5a0f2a':'#0d2247';
+    const labelClr=cls==='ki'?'#8c2044':'#1a3a6e';
+    const chipBg=achCls(t.achieve)==='g'?'rgba(26,107,60,.12)':'rgba(180,30,30,.1)';
+    const chipClr=achCls(t.achieve)==='g'?'#1a6b3c':'#c0392b';
     return`<div class="mo-bc ${cls}">
-      <div class="mo-bc-head">
-        <span class="mo-bc-name ${cls}">${label}</span>
-        <span class="mo-bc-chip ${achCls(t.achieve)}">達成 ${achTxt(t.achieve)}</span>
+      <div class="mo-bc-top">
+        <div class="mo-bc-brand">
+          <div class="mo-bc-dot ${cls}"></div>
+          <span class="mo-bc-name" style="color:${labelClr}">${label}</span>
+        </div>
+        <span style="font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;background:${chipBg};color:${chipClr}">達成 ${achTxt(t.achieve)}</span>
       </div>
-      <div class="mo-bc-plabel"><b>${fmtM(t.rev)}</b><span style="color:#888780">目標 ${fmtM(t.tgt)}</span></div>
-      <div class="mo-bc-track"><div class="mo-bc-fill" style="width:${pct}%;background:${color}"></div></div>
-      <div class="mo-bc-stats">
-        <div class="mo-bc-stat"><div class="mo-bc-stat-label">新客數</div><div class="mo-bc-stat-val">${fmtN(t.new_n)}</div></div>
-        <div class="mo-bc-stat"><div class="mo-bc-stat-label">舊客數</div><div class="mo-bc-stat-val">${fmtN(t.old_n)}</div></div>
-        <div class="mo-bc-stat"><div class="mo-bc-stat-label">新客客單</div><div class="mo-bc-stat-val">${fmtM(t.new_avg)}</div></div>
-        <div class="mo-bc-stat"><div class="mo-bc-stat-label">舊客客單</div><div class="mo-bc-stat-val">${fmtM(t.old_avg)}</div></div>
+      <div style="padding:0 15px 11px">
+        <div class="mo-bc-rev" style="color:${revClr}">${fmtM(t.rev)}</div>
+        <div class="mo-bc-tgt" style="color:${labelClr}">目標 ${fmtM(t.tgt)}</div>
+      </div>
+      ${dailyProg(t.rev,t.tgt)}
+      <div class="mo-bc-2grid">
+        <div class="mo-bc-2cell"><div class="mo-bc-2cell-v" style="color:${revClr}">${fmtN(t.new_n)}</div><div class="mo-bc-2cell-l" style="color:${labelClr}">新客數</div></div>
+        <div class="mo-bc-2cell"><div class="mo-bc-2cell-v" style="color:${revClr}">${fmtN(t.old_n)}</div><div class="mo-bc-2cell-l" style="color:${labelClr}">舊客數</div></div>
+        <div class="mo-bc-2cell"><div class="mo-bc-2cell-v" style="color:${revClr}">${fmtM(t.new_avg)}</div><div class="mo-bc-2cell-l" style="color:${labelClr}">新客客單</div></div>
+        <div class="mo-bc-2cell"><div class="mo-bc-2cell-v" style="color:${revClr}">${fmtM(t.old_avg)}</div><div class="mo-bc-2cell-l" style="color:${labelClr}">舊客客單</div></div>
       </div>
     </div>`;
   }
@@ -1224,13 +1613,19 @@ function renderTab4(){
     const ach=tgt>0?d.total_rev/tgt:d.achieve;
     const pct=ach!==null?Math.min(ach,1)*100:0;
     const bc=s.brandKey==='ki'?'#c04070':'#2d5a9e';
-    return`<div class="mo-sc">
+    const bLabel=s.brandKey==='ki'?'原綺':'原渥';
+    return`<div class="mo-sc ${s.brandKey}">
+      <div class="mo-sc-brand-tag ${s.brandKey}">${bLabel}</div>
       <div class="mo-sc-head">
         <span class="mo-sc-name">${s.label}</span>
         <span class="mo-sc-chip ${achCls(ach)}">${achTxt(ach)}</span>
       </div>
-      <div class="mo-prog-label"><span>業績 ${fmtM(d.total_rev)}</span><span>目標 ${tgt?fmtM(tgt):'—'}</span></div>
-      <div class="mo-prog-track"><div class="mo-prog-fill" style="width:${pct}%;background:${bc}"></div></div>
+      <div class="mo-rev-line">
+        <span class="mo-rev-val">${fmtM(d.total_rev)}</span>
+        <span class="mo-rev-sep">/</span>
+        <span class="mo-rev-tgt">${tgt?fmtM(tgt):'—'}</span>
+      </div>
+      ${dailyProg(d.total_rev,tgt)}
       <div class="mo-stats-row">
         <div class="mo-stat"><div class="mo-stat-label">新客數</div><div class="mo-stat-val">${d.new_n}</div></div>
         <div class="mo-stat"><div class="mo-stat-label">舊客數</div><div class="mo-stat-val">${d.old_n}</div></div>
@@ -1241,22 +1636,45 @@ function renderTab4(){
     </div>`;
   }
 
+  const gapHtml = tot_ach!==null&&tot_ach<1
+    ? `<span class="mo-group-gap">落後 ${fmtM(tot_tgt-tot_rev)}</span>`
+    : `<span style="font-size:10px;background:rgba(26,107,60,.08);color:#1a6b3c;padding:2px 8px;border-radius:8px">已達標</span>`;
+  const achColor = tot_ach!==null&&tot_ach>=1?'#1a6b3c':'#c0392b';
+
   el.innerHTML=`
     <div class="mo-tabs-wrap">${tabsHtml}</div>
+    <div class="mo-group-card">
+      <div class="mo-group-label">集團月業績</div>
+      <div class="mo-group-row">
+        <span class="mo-group-rev">${fmtM(tot_rev)}</span>
+        <span class="mo-group-ach" style="color:${achColor}">${achTxt(tot_ach)}</span>
+      </div>
+      <div class="mo-group-meta">
+        <span class="mo-group-tgt">目標 ${fmtM(tot_tgt)}</span>
+        ${gapHtml}
+      </div>
+      ${dailyProg(tot_rev,tot_tgt)}
+    </div>
     <div class="mo-brand-row">
-      ${bCard('原綺 KIRITO','ki','#c04070',kiT)}
-      ${bCard('原渥 LA LUEUR','wo','#2d5a9e',woT)}
+      ${bCard('原綺','ki','#c04070',kiT)}
+      ${bCard('原渥','wo','#2d5a9e',woT)}
     </div>
-    <div class="mo-kpi-row">
-      <div class="mo-kpi"><div class="mo-kpi-label">集團月業績</div><div class="mo-kpi-val">${fmtM(tot_rev)}</div><div class="mo-kpi-sub">目標 ${fmtM(tot_tgt)}</div></div>
-      <div class="mo-kpi"><div class="mo-kpi-label">月達成率</div><div class="mo-kpi-val" style="color:${tot_ach!==null&&tot_ach>=1?'#2a7a4a':'#c0392b'}">${achTxt(tot_ach)}</div><div class="mo-kpi-sub">${tot_ach!==null&&tot_ach<1?'落後 '+fmtM(tot_tgt-tot_rev):'已達標'}</div></div>
-      <div class="mo-kpi"><div class="mo-kpi-label">新客數（合計）</div><div class="mo-kpi-val">${fmtN(tot_nn)}</div><div class="mo-kpi-sub">新客客單 ${fmtM(tot_na)}</div></div>
-      <div class="mo-kpi"><div class="mo-kpi-label">舊客數（合計）</div><div class="mo-kpi-val">${fmtN(tot_on)}</div><div class="mo-kpi-sub">舊客客單 ${fmtM(tot_oa)}</div></div>
+    <div class="mo-brand-sec ki">
+      <div class="mo-brand-sec-hd">
+        <div class="mo-brand-sec-dot"></div>
+        <span class="mo-brand-sec-name">原綺</span>
+        <span class="mo-brand-sec-cnt">${kiKeys.length} 間門市</span>
+      </div>
+      <div class="mo-store-grid">${kiKeys.map(sc).join('')}</div>
     </div>
-    <div class="mo-brand-head ki"><span class="mo-brand-head-name ki">原綺 KIRITO</span></div>
-    <div class="mo-store-grid">${kiKeys.map(sc).join('')}</div>
-    <div class="mo-brand-head wo"><span class="mo-brand-head-name wo">原渥 LA LUEUR</span></div>
-    <div class="mo-store-grid">${woKeys.map(sc).join('')}</div>
+    <div class="mo-brand-sec wo">
+      <div class="mo-brand-sec-hd">
+        <div class="mo-brand-sec-dot"></div>
+        <span class="mo-brand-sec-name">原渥</span>
+        <span class="mo-brand-sec-cnt">${woKeys.length} 間門市</span>
+      </div>
+      <div class="mo-store-grid">${woKeys.map(sc).join('')}</div>
+    </div>
   `;
 }
 
@@ -1274,6 +1692,7 @@ function refreshAll(){
   renderTab1();
   renderTab3();
   renderTab4();
+  renderAchMatrix();
 }
 
 // ══════════════════════════════════════════
@@ -1281,16 +1700,33 @@ function refreshAll(){
 // ══════════════════════════════════════════
 const SHEET_ID = '1sdjXTUo1tW9-fLWlUaWnXqNxxdzK573YuUSJcZdWSns';
 
+// Fallback queue: if gviz ignores responseHandler and calls the default handler instead
+const _gvizPending=[];
+(function(){
+  const g=window.google=window.google||{};
+  const v=g.visualization=g.visualization||{};
+  const q=v.Query=v.Query||{};
+  q.setResponse=function(d){
+    const fn=_gvizPending.shift();
+    if(fn) fn(d);
+  };
+})();
+
 function loadGviz(sheetName, opts={}){
   return new Promise((resolve,reject)=>{
     const cb='_gviz_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
-    let timer=setTimeout(()=>{ cleanup(); reject(new Error('timeout')); },15000);
-    function cleanup(){ try{ delete window[cb]; s.remove(); }catch(e){} }
-    window[cb]=(d)=>{ clearTimeout(timer); cleanup(); resolve(d); };
+    let done=false;
+    function settle(fn,v){ if(!done){ done=true; clearTimeout(timer); cleanup(); fn(v); } }
+    let timer=setTimeout(()=>{ settle(reject,new Error('timeout:'+sheetName)); },15000);
+    function cleanup(){
+      try{ delete window[cb]; s.remove(); }catch(e){}
+      const i=_gvizPending.indexOf(resolver); if(i>=0) _gvizPending.splice(i,1);
+    }
+    const resolver=(d)=>settle(resolve,d);
+    window[cb]=resolver;
+    _gvizPending.push(resolver);
     const s=document.createElement('script');
-    s.onerror=()=>{ clearTimeout(timer); cleanup(); reject(new Error('script load error')); };
-    // tqx responseHandler format — works from file:// (no CORS restriction on <script>)
-    // Supports both sheet name and gid
+    s.onerror=()=>settle(reject,new Error('script error:'+sheetName));
     const param=opts.gid?'gid='+opts.gid:'sheet='+encodeURIComponent(sheetName);
     s.src='https://docs.google.com/spreadsheets/d/'+SHEET_ID+
           '/gviz/tq?tqx=out:json;responseHandler:'+cb+'&'+param;
@@ -1440,6 +1876,16 @@ async function loadData(){
       loadGviz('24-26原渥總業績'),
       ..._moNames.map(n=>loadGviz(n).catch(()=>null)),
     ]);
+    // Retry any failed month loads (concurrent requests can get dropped/timed-out)
+    for(let i=0;i<srcGds.length;i++){
+      if(!srcGds[i]){
+        console.log('[retry] loading',_moNames[i]);
+        await new Promise(r=>setTimeout(r,400));
+        srcGds[i]=await loadGviz(_moNames[i]).catch(()=>null);
+        if(srcGds[i]) console.log('[retry ok]',_moNames[i]);
+        else console.warn('[retry failed]',_moNames[i]);
+      }
+    }
     // Update historical + 2026 full-year targets
     const {hist:nh,tgt:nt}=parseYearSheet(yrGd);
     Object.assign(HIST_DATA,nh);
@@ -1464,8 +1910,13 @@ async function loadData(){
       d.achieve_h1=d.target_h1>0?ss.totalRev/d.target_h1:0;
       // Monthly achieve: priority: Sheet 目標 row → DATA.monthly_tgt → H1/6 fallback
       const fallbackMTgt=d.target_h1/6;
+      // Back-calc implied targets from hardcoded achieve×rev (computed BEFORE sync overwrites months)
+      // Priority: explicit monthly_tgt > implied-from-hardcode > sheet tgt > H1/6 fallback
+      const impliedTgt=(d.months||[]).map(m=>
+        (m.rev>0&&m.achieve)?Math.round(m.rev/m.achieve):0
+      );
       d.months=ss.months.map((m,idx)=>{
-        const tgt=m.tgt||(d.monthly_tgt?d.monthly_tgt[idx]:null)||fallbackMTgt;
+        const tgt=(d.monthly_tgt&&d.monthly_tgt[idx])||impliedTgt[idx]||m.tgt||fallbackMTgt;
         return {...m,achieve:m.rev>0&&tgt>0?m.rev/tgt:null,tgt:tgt||null};
       });
     }
