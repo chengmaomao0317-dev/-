@@ -642,7 +642,7 @@ const kpiTrend = {
   wo: { labels:['1月','2月','3月','4月','5月','6月','7月'],
         data:   [121, 126, 249, 182, 160, 2, null],
         prev:   [161, 140, 181, 253, 218, 151, null],
-        target: [220, 160, 200, 180, 180, 200, 200],
+        target: [220, 160, 200, 180, 180, 200, 230],
         rev:    [1330203, 1708771, 3518069, 2859727, 2113528, 21749, null],
         aov:    [10993, 13562, 14129, 15713, 13210, 10875, null],
         spend25:[134530, 161213, 251679, 274369, 243781, 229851, null],
@@ -652,7 +652,7 @@ const kpiTrend = {
   qi: { labels:['1月','2月','3月','4月','5月','6月','7月'],
         data:   [167, 114, 147,  97, 104, 3, null],
         prev:   [ 79,  59,  84, 101, 118,  94, null],
-        target: [130, 110,  90, 100, 100, 120, 120],
+        target: [130, 110,  90, 100, 100, 120, 110],
         rev:    [5219341, 3465578, 4173471, 2534797, 2618201, 54998, null],
         aov:    [31254, 30400, 28391, 26132, 25175, 18333, null],
         spend25:[158597, 290593, 447667, 391339, 301972, 340071, null],
@@ -676,8 +676,8 @@ const GSHEET_TABS = {
 // TODO: 確認 Sheet 內兩品牌的區分方式（欄位名稱 or 區塊位置）後補上過濾邏輯
 // 固定欄位設定（依實際 Sheet 結構）
 const COL_NAME = 0;  // B欄 = 品項名稱
-const COL_TP   = 14; // P欄 = 台北新客
-const COL_TC   = 16; // R欄 = 台中新客
+const COL_TP      = 14; // P欄 = 台北到店（整數）
+const COL_TC      = 16; // R欄 = 台中到店（整數）
 // 廣告成效額外欄位（各媒體廣告成效 tab 用）
 const ADC = {
   TPE1: 1,  // C 台北花費（部分）
@@ -990,8 +990,8 @@ function parseProdFromGviz(json) {
     if (!rawName || typeof rawName !== 'string' || !rawName.trim()) continue;
     // 跳過全體曝光廣告媒體列（品牌/LINE@/口碑/SEO/總計）
     if (MEDIA_NAMES.has(rawName.trim())) continue;
-    const tp = +(cv(COL_TP) || 0);
-    const tc = +(cv(COL_TC) || 0);
+    const tp = Math.round(+(cv(COL_TP) || 0)); // P欄 = 台北到店整數
+    const tc = Math.round(+(cv(COL_TC) || 0)); // R欄 = 台中到店整數
     if (tp === 0 && tc === 0) continue;
     // 去除日期前綴（如「3/20熊貓針」→「熊貓針」）
     let cleaned = rawName.replace(/^\d+\/\d+\s*/, '').trim();
@@ -1024,17 +1024,16 @@ function parseAdsMetricsFromGviz(json, brand) {
   const mediaChannels  = { metaTpe:0, metaTca:0, googleTpe:0, googleTca:0, lineat:0, koubei:0, seo:0 };
   const n = x => +(x ?? 0);
 
-  // Meta/Google 媒體渠道花費：固定 index 讀合計列
-  // wo：合計列固定在 row56 = index 23（B33:AA56 最後一列）
-  // qi：合計列在 row31 = index 24（B7:AA31）；如 B 欄空白 gviz 會跳過，
-  //     initAutoFetch 會另外用 C31:H33 獨立抓並覆蓋此值
+  // Meta/Google 媒體渠道花費：
+  // - wo：合計列讀「最後一列」（gviz 跳過空白列，固定 index 不可靠）
+  // - qi：嘗試讀最後一列，initAutoFetch 會另外用 C31:H33 獨立抓並覆蓋此值
   {
-    const getC = (idx, col) => n(rows[idx]?.c?.[col]?.v);
-    const fixedIdx = (brand === 'qi') ? 24 : 23;
-    mediaChannels.metaTpe   = getC(fixedIdx, ADC.TPE1);
-    mediaChannels.metaTca   = getC(fixedIdx, ADC.TCA1);
-    mediaChannels.googleTpe = getC(fixedIdx, ADC.TPE2);
-    mediaChannels.googleTca = getC(fixedIdx, ADC.TCA2);
+    const lastRow = rows[rows.length - 1];
+    const getC = (row, col) => n(row?.c?.[col]?.v);
+    mediaChannels.metaTpe   = getC(lastRow, ADC.TPE1);
+    mediaChannels.metaTca   = getC(lastRow, ADC.TCA1);
+    mediaChannels.googleTpe = getC(lastRow, ADC.TPE2);
+    mediaChannels.googleTca = getC(lastRow, ADC.TCA2);
   }
 
   for (let ri = 0; ri < rows.length; ri++) {
@@ -1069,8 +1068,8 @@ function parseAdsMetricsFromGviz(json, brand) {
     const inq1 = n(cv(ADC.INQ1)); // E
     const inq2 = n(cv(ADC.INQ2)); // I
     const inq3 = n(cv(ADC.INQ3)); // L
-    const tp   = n(cv(COL_TP));
-    const tc   = n(cv(COL_TC));
+    const tp       = n(cv(COL_TP)); // P欄 = 台北到店整數
+    const tc       = n(cv(COL_TC));
     const rawRate = cv(ADC.RATE);
     const rawRoas = cv(ADC.ROAS);
     const rate = rawRate != null ? +(rawRate * 100).toFixed(1) : 0;
@@ -1095,8 +1094,8 @@ function parseAdsMetricsFromGviz(json, brand) {
       products[adsName].tca2 += tca2;
       products[adsName].inq  += inq1 + inq3;
       products[adsName].inq2 += inq2;
-      products[adsName].tp   += tp;
-      products[adsName].tc   += tc;
+      products[adsName].tp       += tp;
+      products[adsName].tc       += tc;
       if (roas) products[adsName].roas = roas;
       if (rate) products[adsName].rate = rate;
     }
@@ -1105,7 +1104,7 @@ function parseAdsMetricsFromGviz(json, brand) {
   // 補算自操 spend / clients / cpl
   Object.values(products).forEach(r => {
     r.spend   = r.tpe + r.tca; // 自操淨額（不含 Google/SEO 廠商）
-    r.clients = r.tp + r.tc;
+    r.clients = Math.round(r.tp + r.tc); // G欄台北到店 + R欄台中到店
     r.cpl     = (r.clients > 0 && r.spend > 0) ? Math.round(r.spend / r.clients) : 0;
   });
 
@@ -1127,11 +1126,52 @@ const PROD_TO_ADS = { '超玩美/電波/無雙':'電波', '超玩美/人中':'�
 const ADS_TO_PROD = Object.fromEntries(Object.entries(PROD_TO_ADS).map(([k,v])=>[v,k]));
 
 // 每月廣告成效指標快取 { wo: [null,…], qi: [null,…] }
-const adsMonthlyData = { wo: Array(6).fill(null), qi: Array(6).fill(null) };
+const adsMonthlyData = { wo: Array(7).fill(null), qi: Array(7).fill(null) };
+
+// 行銷新客轉換概況分頁資料 { qi: { 品項名: { book, bookRate, stayRate, cancelRate } } }
+const funnelData = { qi: {}, wo: {} };
 
 // 每月新客業績（月份 tab H6=台北, H9=台中），qi 已知欄位；wo 待補
 const adsRevenue = { qi: Array(6).fill(null), wo: Array(6).fill(null) };
 let _currentAdsMi = 0;
+
+// 漏斗品項名（行銷新客轉換概況）→ 廣告成效表品項名 對照
+const ADS_TO_FUNNEL_QI = {
+  '五官/外三點':  '6D五官/外三點',
+  '電波':         '無雙/電波',
+  '超完美人中':   '超玩美電波/人中',
+};
+
+const ADS_TO_FUNNEL_WO = {
+  '體雕不分部位': '體雕/不分部位',
+  '產品/暖宮':    '產品/暖宮/其他',
+};
+
+async function fetchFunnelData() {
+  // gviz 百分比欄位為小數（0.38=38%）；文字 "-" 或空值 → null
+  const toP = v => { if (v==null) return null; const n=typeof v==='number'?v:parseFloat(v); return isNaN(n)?null:Math.round(n<=1?n*100:n); };
+  function parseRows(rows, brand, start) {
+    for (let i = start; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row?.c) continue;
+      const cv = j => row.c[j]?.v;
+      const name = String(cv(0) || '').trim();
+      if (!name || name === '總計') continue;
+      funnelData[brand][name] = {
+        inq:  Math.round(+(cv(1)||0)),
+        book: Math.round(+(cv(2)||0)),
+        stay: Math.round(+(cv(3)||0)),
+        bookRate: toP(cv(4)), stayRate: toP(cv(5)), cancelRate: toP(cv(6)),
+      };
+    }
+  }
+  // 原綺：B3:H22（row 0 = header，row 1+ = data）
+  try { const r = await gvizJSONP('行銷新客轉換概況', 'B3:H22');  parseRows(r?.table?.rows||[], 'qi', 1); }
+  catch(e) { console.warn('原綺漏斗載入失敗:', e.message); }
+  // 原渥：B24:H41（row 0 = 原渥標題，row 1 = header，row 2+ = data）
+  try { const r = await gvizJSONP('行銷新客轉換概況', 'B24:H41'); parseRows(r?.table?.rows||[], 'wo', 2); }
+  catch(e) { console.warn('原渥漏斗載入失敗:', e.message); }
+}
 
 async function initAutoFetch() {
   const badge = document.getElementById('sync-badge');
@@ -1164,6 +1204,13 @@ async function initAutoFetch() {
               if (label === 'LINE@')  { adsData.mediaChannels.lineat  = kVal; }
               else if (label === '口碑') { adsData.mediaChannels.koubei = kVal; }
               else if (label === 'SEO')  { adsData.mediaChannels.seo    = kVal; }
+              // 合計列：覆蓋 Meta/Google 花費（比 parseAdsMetricsFromGviz 的最後一列更準確）
+              else if (['合計','小計','總計','廣告合計','媒體花費合計'].includes(label)) {
+                adsData.mediaChannels.metaTpe   = +(row.c[1]?.v ?? 0); // C 台北 Meta
+                adsData.mediaChannels.metaTca   = +(row.c[2]?.v ?? 0); // D 台中 Meta
+                adsData.mediaChannels.googleTpe = +(row.c[5]?.v ?? 0); // G 台北 Google
+                adsData.mediaChannels.googleTca = +(row.c[6]?.v ?? 0); // H 台中 Google
+              }
             }
           } catch(e) { errors.push(`原渥${mi+1}月媒體花費：${e.message}`); }
         }
@@ -1248,15 +1295,15 @@ async function initAutoFetch() {
     if (v != null) { kpiTrend.wo.rev[5] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原渥6月業績：${e.message}`); }
 
-  // 原渥 7月新客目標：從「年度新客目標」W24 抓
+  // 原渥 7月新客目標：從「年度新客目標」W24 抓（需為合理人數 < 1000，否則 Sheet 欄位已改）
   try {
     const v = await fetchCell('W24:W24');
-    if (v != null && v > 0) { kpiTrend.wo.target[6] = v; anyUpdated = true; }
+    if (v != null && v > 0 && v < 1000) { kpiTrend.wo.target[6] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原渥7月目標：${e.message}`); }
   // 原綺 7月新客目標：從「年度新客目標」J24 抓
   try {
     const v = await fetchCell('J24:J24');
-    if (v != null && v > 0) { kpiTrend.qi.target[6] = v; anyUpdated = true; }
+    if (v != null && v > 0 && v < 1000) { kpiTrend.qi.target[6] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原綺7月目標：${e.message}`); }
   // 去年同期新客數＋花費：從 2025 年度新客目標 Sheet 抓
   // D20:W26 → row0=新客數, row5=廣告花費; qi=cols0-6(D-J), wo=cols13-19(Q-W)
@@ -1309,6 +1356,9 @@ async function initAutoFetch() {
     } catch(e) { errors.push(`${b} 績效：${e.message}`); }
   }
 
+  // 行銷新客轉換概況（目前只有 qi，原渥待補）
+  try { await fetchFunnelData(); } catch(e) { errors.push(`漏斗資料：${e.message}`); }
+
   // 更新圖表資料（在 renderTrendCharts 之前先刷新 Chart.js 圖表）
   refreshKpiCharts();
   if (typeof renderSpendRows === 'function') renderSpendRows();
@@ -1341,7 +1391,7 @@ async function initAutoFetch() {
       if (!ad) continue;
       if (!monthlyProdSpend[b]) monthlyProdSpend[b] = {};
       Object.entries(ad.products).forEach(([name, p]) => {
-        if (!monthlyProdSpend[b][name]) monthlyProdSpend[b][name] = Array(6).fill(null);
+        if (!monthlyProdSpend[b][name]) monthlyProdSpend[b][name] = Array(7).fill(null);
         monthlyProdSpend[b][name][mi] = {
           tpe: p.tpe, tca: p.tca,
           inq: (p.inq||0)+(p.inq2||0),
@@ -2369,13 +2419,14 @@ function syncAdsToMonth(mi) {
         if (!md) continue;
         // 累加 products
         Object.entries(md.products || {}).forEach(([name, p]) => {
-          if (!mergedProds[name]) mergedProds[name] = { name, tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 };
+          if (!mergedProds[name]) mergedProds[name] = { name, tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0, booked:0, bookRate:0 };
           const mp = mergedProds[name];
           mp.tpe  += p.tpe||0;  mp.tca  += p.tca||0;
           mp.tpe2 += p.tpe2||0; mp.tca2 += p.tca2||0;
           mp.inq  += p.inq||0;  mp.inq2 += p.inq2||0;
           mp.tp   += p.tp||0;   mp.tc   += p.tc||0;
           mp.spend += p.spend||0; mp.clients += p.clients||0;
+          mp.booked += p.booked||0;
         });
         // 累加 vendors
         Object.entries(md.factoryVendors || {}).forEach(([name, fv]) => {
@@ -2396,8 +2447,9 @@ function syncAdsToMonth(mi) {
       Object.values(mergedProds).forEach(mp => {
         const totalSpend = mp.tpe + mp.tca + mp.tpe2 + mp.tca2;
         const totalInq = mp.inq + mp.inq2;
-        mp.cpl  = mp.clients > 0 && totalSpend > 0 ? Math.round(totalSpend / mp.clients) : 0;
-        mp.rate = totalInq > 0 && mp.clients > 0 ? +((mp.clients / totalInq) * 100).toFixed(1) : 0;
+        mp.cpl      = mp.clients > 0 && totalSpend > 0 ? Math.round(totalSpend / mp.clients) : 0;
+        mp.rate     = totalInq > 0 && mp.clients > 0 ? +((mp.clients / totalInq) * 100).toFixed(1) : 0;
+        mp.bookRate = totalInq > 0 && mp.booked > 0 ? Math.round(mp.booked / totalInq * 100) : 0;
         // roas 無法加總（需業績資料），留 0
       });
       monthData = { products: mergedProds, factoryVendors: mergedVendors, mediaChannels: mergedMedia };
@@ -2418,7 +2470,7 @@ function syncAdsToMonth(mi) {
       } else {
         const prodName = ADS_TO_PROD[r.name] || r.name;
         const p = prodsData.find(x => x.name === prodName || x.name === r.name);
-        if (p) { r.tp = p.tp; r.tc = p.tc; r.clients = p.tp + p.tc; }
+        if (p) { r.tp = p.tp; r.tc = p.tc; r.clients = Math.round(p.tp + p.tc); } // G台北到店 + R台中到店
       }
     });
 
@@ -2584,8 +2636,25 @@ function buildAdsSummary(b) {
 }
 
 function openProdModal(b, name) {
-  const monthly = (monthlyProdSpend[b]||{})[name] || [];
+  const baseMonthly = (monthlyProdSpend[b]||{})[name] || [];
   const labels = ['1月','2月','3月','4月','5月','6月','7月'];
+
+  // 若此品項屬於 REPORT_GROUPS 群組，將 tp/tc/clients 改為群組所有成員加總
+  const group = (REPORT_GROUPS[b]||[]).find(g => g.members.has(name));
+  const monthly = labels.map((_, mi) => {
+    const base = baseMonthly[mi];
+    if (!base) return null;
+    if (!group) return base;
+    let tp = 0, tc = 0;
+    for (const mName of group.members) {
+      const md = ((monthlyProdSpend[b]||{})[mName] || [])[mi];
+      if (md) { tp += md.tp||0; tc += md.tc||0; }
+    }
+    const clients = tp + tc;
+    const inq = base.inq || 0;
+    const rate = (inq > 0 && clients > 0) ? +((clients/inq)*100).toFixed(1) : base.rate;
+    return { ...base, tp, tc, clients, rate };
+  });
   const tpColor = b==='wo'?'#378ADD':'#D4537E';
   const tcColor = b==='wo'?'#B5D4F4':'#F4C0D1';
   const vals = monthly.map(m => m ? (m.tpe||0)+(m.tca||0) : null);
@@ -2667,7 +2736,7 @@ document.addEventListener('keydown', e => {
 // ── 截圖簡表 ──────────────────────────────────────────────────
 // 分組定義：parent = 顯示名稱, members = 實際品項名稱集合
 const REPORT_GROUPS = {
-  wo: [{ label: '體雕', members: new Set(['體雕不分部位','腹部','馬鞍','手臂','小腿']) }],
+  wo: [{ label: '體雕', members: new Set(['體雕不分部位','腹部','馬鞍','手臂','小腿']), hiddenSubs: new Set(['體雕不分部位']) }],
   qi: []
 };
 
@@ -2685,12 +2754,35 @@ function openReportModal(b) {
   const allRows = adsExt[b].rows || [];
   const hasData = r => !r.isVendor && ((r.inq||0)+(r.inq2||0) > 0 || (r.clients||0) > 0);
 
-  function rateChip(inq, clients) {
-    if (!inq) return '<span style="color:#bbb;">—</span>';
-    const pct = (clients / inq * 100).toFixed(1);
-    const col = pct >= 30 ? '#2D6A1F' : pct >= 15 ? '#855C00' : '#A32D2D';
-    const bg  = pct >= 30 ? '#E6F4DE' : pct >= 15 ? '#FFF3CD' : '#FCEBEB';
-    return `<span style="background:${bg};color:${col};padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600;">${pct}%</span>`;
+  // 是否有漏斗資料
+  const hasFunnel = Object.keys(funnelData[b]).length > 0;
+
+  // 取漏斗資料（廣告品項名 → 漏斗品項名，依品牌選用對照表）
+  function getFunnel(name) {
+    if (!hasFunnel || !name) return null;
+    const map = b === 'qi' ? ADS_TO_FUNNEL_QI : ADS_TO_FUNNEL_WO;
+    return funnelData[b][map[name] || name] || null;
+  }
+
+  // Chip 函式（配色邏輯）
+  function mkChip(p, green) {
+    return `<span style="background:${green?'#EAF3DE':'#FCEBEB'};color:${green?'#2D6A1F':'#A32D2D'};padding:2px 7px;border-radius:10px;font-size:12px;font-weight:600;">${p}%</span>`;
+  }
+  const dash = '<span style="color:#bbb;">—</span>';
+  // 轉換率/預約率：≥20%綠 <20%紅
+  function convChip(pct) {
+    if (pct == null || isNaN(pct) || pct === 0) return dash;
+    const p = Math.round(pct); return mkChip(p, p >= 20);
+  }
+  // 到店率：≥80%綠 <80%紅
+  function stayChip(pct) {
+    if (pct == null || isNaN(pct) || pct === 0) return dash;
+    const p = Math.round(pct); return mkChip(p, p >= 80);
+  }
+  // 取消率：<20%綠 ≥20%紅
+  function cancelChip(pct) {
+    if (pct == null || isNaN(pct)) return dash;
+    const p = Math.round(pct); return mkChip(p, p < 20);
   }
 
   // 建立顯示項目列表（群組優先，其餘按詢問數排序）
@@ -2701,49 +2793,84 @@ function openReportModal(b) {
     if (!members.length) return;
     const gInq = members.reduce((s,r) => s+(r.inq||0)+(r.inq2||0), 0);
     const gCli = members.reduce((s,r) => s+(r.clients||0), 0);
-    const subs = [...members].sort((a,z) => (z.clients||0) - (a.clients||0));
-    displayItems.push({ isGroup: true, label: g.label, inq: gInq, clients: gCli, subs, sortInq: gInq });
+    const subs  = [...members].filter(r => !g.hiddenSubs?.has(r.name)).sort((a,z) => (z.clients||0) - (a.clients||0));
+    // 漏斗群組加總
+    let gFInq=0, gFBook=0, gFStay=0;
+    if (hasFunnel) {
+      for (const r of members) {
+        const f = getFunnel(r.name);
+        if (f) { gFInq += f.inq||0; gFBook += f.book||0; gFStay += f.stay||0; }
+      }
+    }
+    displayItems.push({ isGroup:true, label:g.label, inq:gInq, clients:gCli, subs, sortInq:gInq,
+      fInq:gFInq, fBook:gFBook, fStay:gFStay,
+      fBookRate:   (gFInq>0  ? gFBook/gFInq*100           : null),
+      fStayRate:   (gFBook>0 ? gFStay/gFBook*100          : null),
+      fCancelRate: (gFBook>0 ? (gFBook-gFStay)/gFBook*100 : null) });
   });
 
+  // 原渥有漏斗資料時強制顯示「產品/暖宮」即使廣告無流量
+  const forceShow = (b === 'wo' && hasFunnel) ? new Set(['產品/暖宮']) : new Set();
   allRows
-    .filter(r => !r.isVendor && !groupedNames.has(r.name) && hasData(r))
-    .forEach(r => displayItems.push({ isGroup: false, row: r, inq: (r.inq||0)+(r.inq2||0), clients: r.clients||0, sortInq: (r.inq||0)+(r.inq2||0) }));
+    .filter(r => !r.isVendor && !groupedNames.has(r.name) && (hasData(r) || forceShow.has(r.name)))
+    .forEach(r => displayItems.push({ isGroup:false, row:r, inq:(r.inq||0)+(r.inq2||0), clients:r.clients||0, sortInq:(r.inq||0)+(r.inq2||0) }));
 
   displayItems.sort((a,z) => z.sortInq - a.sortInq);
 
   let totalInq = 0, totalClients = 0;
   displayItems.forEach(item => { totalInq += item.inq; totalClients += item.clients; });
 
-  const cellBase = 'padding:9px 14px;border-bottom:1px solid #f0f0f0;';
-  const subCellBase = 'padding:7px 14px;border-bottom:1px solid #f5f5f5;background:#FAFAFA;';
+  // 漏斗合計（群組用預計算值，單一品項直接加）
+  let totalFBook=0, totalFInq=0, totalFStay=0;
+  if (hasFunnel) {
+    displayItems.forEach(item => {
+      if (item.isGroup) {
+        totalFInq  += item.fInq  || 0;
+        totalFBook += item.fBook || 0;
+        totalFStay += item.fStay || 0;
+      } else {
+        const f = getFunnel(item.row?.name);
+        if (f) { totalFInq += f.inq||0; totalFBook += f.book||0; totalFStay += f.stay||0; }
+      }
+    });
+  }
+
+  const C  = 'padding:8px 10px;border-bottom:1px solid #f0f0f0;';
+  const S  = 'padding:6px 10px;border-bottom:1px solid #f5f5f5;background:#FAFAFA;';
+  const F1 = 'background:#f7f7f5;border-left:1.5px solid #ddd;'; // 轉換效率首欄
+  const FN = 'background:#f7f7f5;'; // 轉換效率後續欄
 
   const rowsHtml = displayItems.map(item => {
     if (item.isGroup) {
-      // 群組父列
       const subRows = item.subs.map(r => {
-        const cli = r.clients||0;
+        const sf = getFunnel(r.name);
         return `<tr>
-          <td style="${subCellBase}font-size:12.5px;color:#888;padding-left:22px;">└ ${r.name}</td>
-          <td style="${subCellBase}text-align:center;font-size:12.5px;color:#aaa;">—</td>
-          <td style="${subCellBase}text-align:center;font-size:12.5px;color:#777;font-weight:500;">${cli||'—'}</td>
-          <td style="${subCellBase}text-align:center;"><span style="font-size:11px;color:#aaa;">—</span></td>
+          <td style="${S}font-size:12px;color:#888;padding-left:20px;">└ ${r.name}</td>
+          <td style="${S}text-align:center;font-size:12px;color:#aaa;">—</td>
+          ${hasFunnel ? `<td style="${S}text-align:center;font-size:12px;color:#777;font-weight:500;">${sf?(sf.book||'0'):'—'}</td>` : ''}
+          <td style="${S}text-align:center;font-size:12px;color:#777;font-weight:500;">${(r.clients||0)||'—'}</td>
+          <td style="${S}text-align:center;">${dash}</td>
+          ${hasFunnel ? `<td style="${S}text-align:center;${F1}">${dash}</td><td style="${S}text-align:center;${FN}">${dash}</td><td style="${S}text-align:center;${FN}">${dash}</td>` : ''}
         </tr>`;
       }).join('');
       return `<tr style="background:#F2F2F5;">
-        <td style="${cellBase}background:#F2F2F5;font-size:13.5px;font-weight:600;color:#333;">${item.label}</td>
-        <td style="${cellBase}background:#F2F2F5;text-align:center;font-size:13.5px;font-weight:600;color:#333;">${item.inq||'—'}</td>
-        <td style="${cellBase}background:#F2F2F5;text-align:center;font-size:13.5px;font-weight:600;color:#333;">${item.clients||'—'}</td>
-        <td style="${cellBase}background:#F2F2F5;text-align:center;">${rateChip(item.inq,item.clients)}</td>
+        <td style="${C}background:#F2F2F5;font-size:13px;font-weight:600;color:#333;">${item.label}</td>
+        <td style="${C}background:#F2F2F5;text-align:center;font-size:13px;font-weight:600;color:#333;">${item.inq||'—'}</td>
+        ${hasFunnel ? `<td style="${C}background:#F2F2F5;text-align:center;font-size:13px;font-weight:600;color:#333;">${item.fBook||'—'}</td>` : ''}
+        <td style="${C}background:#F2F2F5;text-align:center;font-size:13px;font-weight:600;color:#333;">${item.clients||'—'}</td>
+        <td style="${C}background:#F2F2F5;text-align:center;">${convChip(item.inq ? item.clients/item.inq*100 : null)}</td>
+        ${hasFunnel ? `<td style="${C}background:#F2F2F5;text-align:center;${F1}">${convChip(item.fBookRate)}</td><td style="${C}background:#F2F2F5;text-align:center;${FN}">${stayChip(item.fStayRate)}</td><td style="${C}background:#F2F2F5;text-align:center;${FN}">${cancelChip(item.fCancelRate)}</td>` : ''}
       </tr>${subRows}`;
     } else {
       const r = item.row;
-      const inq = item.inq;
-      const cli = item.clients;
+      const f = getFunnel(r.name);
       return `<tr>
-        <td style="${cellBase}font-size:13.5px;color:#222;">${r.name}</td>
-        <td style="${cellBase}text-align:center;font-size:13.5px;font-weight:600;color:#333;">${inq||'—'}</td>
-        <td style="${cellBase}text-align:center;font-size:13.5px;font-weight:600;color:#333;">${cli||'—'}</td>
-        <td style="${cellBase}text-align:center;">${rateChip(inq,cli)}</td>
+        <td style="${C}font-size:13px;color:#222;">${r.name}</td>
+        <td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${item.inq||'—'}</td>
+        ${hasFunnel ? `<td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${f ? (f.book||'0') : dash}</td>` : ''}
+        <td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${item.clients||'—'}</td>
+        <td style="${C}text-align:center;">${convChip(item.inq ? item.clients/item.inq*100 : null)}</td>
+        ${hasFunnel ? `<td style="${C}text-align:center;${F1}">${f ? convChip(f.bookRate) : dash}</td><td style="${C}text-align:center;${FN}">${f ? stayChip(f.stayRate) : dash}</td><td style="${C}text-align:center;${FN}">${f ? cancelChip(f.cancelRate) : dash}</td>` : ''}
       </tr>`;
     }
   }).join('');
@@ -2751,36 +2878,78 @@ function openReportModal(b) {
   const today = new Date();
   const dateStr = `${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
 
+  const totalConvRate = totalInq ? totalClients/totalInq*100 : null;
+  const totalBookRate   = (hasFunnel && totalFInq>0)  ? totalFBook/totalFInq*100           : null;
+  const totalStayRate   = (hasFunnel && totalFBook>0) ? totalFStay/totalFBook*100          : null;
+  const totalCancelRate = (hasFunnel && totalFBook>0) ? (totalFBook-totalFStay)/totalFBook*100 : null;
+
+  const colgroupHtml = hasFunnel
+    ? `<colgroup><col style="width:20%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:11%"></colgroup>`
+    : `<colgroup><col style="width:40%"><col style="width:18%"><col style="width:18%"><col style="width:24%"></colgroup>`;
+
+  const theadHtml = hasFunnel ? `
+    <thead>
+      <tr style="background:#F5F5F7;border-bottom:1px solid #e8e8e8;">
+        <th style="padding:7px 10px;text-align:left;font-size:11px;color:#888;font-weight:600;" rowspan="2">品項</th>
+        <th colspan="4" style="padding:5px 4px;text-align:center;font-size:10px;color:#888;font-weight:600;letter-spacing:.3px;border-bottom:1px solid #e8e8e8;">漏斗數量</th>
+        <th colspan="3" style="padding:5px 4px;text-align:center;font-size:10px;color:#666;font-weight:600;letter-spacing:.3px;background:#f0f0ee;border-left:1.5px solid #ddd;border-bottom:1px solid #e8e8e8;">轉換效率</th>
+      </tr>
+      <tr style="background:#F5F5F7;">
+        <th style="padding:5px 4px;text-align:center;font-size:11px;color:#888;font-weight:600;">詢問</th>
+        <th style="padding:5px 4px;text-align:center;font-size:11px;color:#888;font-weight:600;">預約</th>
+        <th style="padding:5px 4px;text-align:center;font-size:11px;color:#888;font-weight:600;">到店</th>
+        <th style="padding:5px 4px;text-align:center;font-size:11px;color:#888;font-weight:600;">轉換率</th>
+        <th style="padding:5px 4px;text-align:center;font-size:11px;color:#666;font-weight:600;background:#f0f0ee;border-left:1.5px solid #ddd;">預約率</th>
+        <th style="padding:5px 4px;text-align:center;font-size:11px;color:#666;font-weight:600;background:#f0f0ee;">到店率</th>
+        <th style="padding:5px 10px 5px 4px;text-align:center;font-size:11px;color:#666;font-weight:600;background:#f0f0ee;">取消率</th>
+      </tr>
+    </thead>` : `
+    <thead>
+      <tr style="background:#F5F5F7;">
+        <th style="padding:8px 10px;text-align:left;font-size:11px;color:#888;font-weight:600;letter-spacing:.3px;">品項</th>
+        <th style="padding:8px 4px;text-align:center;font-size:11px;color:#888;font-weight:600;letter-spacing:.3px;">詢問數</th>
+        <th style="padding:8px 4px;text-align:center;font-size:11px;color:#888;font-weight:600;letter-spacing:.3px;">到店數</th>
+        <th style="padding:8px 10px 8px 4px;text-align:center;font-size:11px;color:#888;font-weight:600;letter-spacing:.3px;">轉換率</th>
+      </tr>
+    </thead>`;
+
+  const totalRowHtml = hasFunnel ? `
+    <tr style="background:#F7F7F8;">
+      <td style="padding:10px;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">合計</td>
+      <td style="padding:10px 4px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalInq}</td>
+      <td style="padding:10px 4px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalFBook||'—'}</td>
+      <td style="padding:10px 4px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalClients}</td>
+      <td style="padding:10px 4px;text-align:center;border-top:1.5px solid #e0e0e0;">${convChip(totalConvRate)}</td>
+      <td style="padding:10px 4px;text-align:center;border-top:1.5px solid #e0e0e0;background:#f0f0ee;border-left:1.5px solid #ddd;">${convChip(totalBookRate)}</td>
+      <td style="padding:10px 4px;text-align:center;border-top:1.5px solid #e0e0e0;background:#f0f0ee;">${stayChip(totalStayRate)}</td>
+      <td style="padding:10px 10px 10px 4px;text-align:center;border-top:1.5px solid #e0e0e0;background:#f0f0ee;">${cancelChip(totalCancelRate)}</td>
+    </tr>` : `
+    <tr style="background:#F7F7F8;">
+      <td style="padding:10px 10px;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">合計</td>
+      <td style="padding:10px 4px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalInq}</td>
+      <td style="padding:10px 4px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalClients}</td>
+      <td style="padding:10px 10px 10px 4px;text-align:center;border-top:1.5px solid #e0e0e0;">${convChip(totalConvRate)}</td>
+    </tr>`;
+
   const html = `<div id="report-modal-overlay"
     onclick="if(event.target===this)closeReportModal()"
     style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px;">
-    <div id="report-modal-card" style="background:#fff;border-radius:16px;width:360px;max-width:100%;box-shadow:0 12px 48px rgba(0,0,0,0.28);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
-      <div style="background:#1C1C1E;padding:15px 18px;display:flex;align-items:center;gap:10px;">
+    <div id="report-modal-card" style="background:#fff;border-radius:16px;width:${hasFunnel?'660px':'420px'};max-width:100%;box-shadow:0 12px 48px rgba(0,0,0,0.28);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
+      <div style="background:#1C1C1E;padding:14px 18px;display:flex;align-items:center;gap:10px;">
         <span style="background:${brandBg};color:${brandColor};font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;">${brandName}</span>
-        <span style="color:#fff;font-size:15px;font-weight:500;flex:1;">${monthLabel}廣告成效摘要</span>
+        <span style="color:#fff;font-size:14.5px;font-weight:500;flex:1;">${monthLabel}廣告成效摘要</span>
         <button onclick="closeReportModal()" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;">✕</button>
       </div>
-      <table style="width:100%;border-collapse:collapse;">
-        <thead>
-          <tr style="background:#F5F5F7;">
-            <th style="padding:9px 14px;text-align:left;font-size:11.5px;color:#888;font-weight:600;letter-spacing:.4px;">品項</th>
-            <th style="padding:9px 14px;text-align:center;font-size:11.5px;color:#888;font-weight:600;letter-spacing:.4px;">詢問數</th>
-            <th style="padding:9px 14px;text-align:center;font-size:11.5px;color:#888;font-weight:600;letter-spacing:.4px;">到店數</th>
-            <th style="padding:9px 14px;text-align:center;font-size:11.5px;color:#888;font-weight:600;letter-spacing:.4px;">轉換率</th>
-          </tr>
-        </thead>
+      <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
+        ${colgroupHtml}
+        ${theadHtml}
         <tbody>
           ${rowsHtml}
-          <tr style="background:#F7F7F8;">
-            <td style="padding:11px 14px;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">合計</td>
-            <td style="padding:11px 14px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalInq}</td>
-            <td style="padding:11px 14px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalClients}</td>
-            <td style="padding:11px 14px;text-align:center;border-top:1.5px solid #e0e0e0;">${rateChip(totalInq,totalClients)}</td>
-          </tr>
+          ${totalRowHtml}
         </tbody>
       </table>
       <div style="padding:11px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f0f0f0;">
-        <span style="font-size:11px;color:#bbb;">${dateStr} · 資料來源：各媒體廣告成效</span>
+        <span style="font-size:11px;color:#bbb;">${dateStr} · 資料來源：各媒體廣告成效${hasFunnel?' ・ 轉換效率：行銷新客轉換概況':''}</span>
         <button id="copy-report-btn" onclick="copyReportTable()" style="background:#1C1C1E;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;">複製</button>
       </div>
     </div>
