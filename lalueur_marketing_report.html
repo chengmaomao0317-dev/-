@@ -2855,7 +2855,7 @@ function openReportModal(b) {
       }).join('');
       return `<tr style="background:#F2F2F5;">
         <td style="${C}background:#F2F2F5;font-size:13px;font-weight:600;color:#333;">${item.label}</td>
-        <td style="${C}background:#F2F2F5;text-align:center;font-size:13px;font-weight:600;color:#333;">${item.inq||'—'}</td>
+        <td style="${C}background:#F2F2F5;text-align:center;font-size:13px;font-weight:600;color:#333;">${hasFunnel ? (item.fInq||'—') : (item.inq||'—')}</td>
         ${hasFunnel ? `<td style="${C}background:#F2F2F5;text-align:center;font-size:13px;font-weight:600;color:#333;">${item.fBook||'—'}</td>` : ''}
         <td style="${C}background:#F2F2F5;text-align:center;font-size:13px;font-weight:600;color:#333;">${item.clients||'—'}</td>
         <td style="${C}background:#F2F2F5;text-align:center;">${convChip(item.inq ? item.clients/item.inq*100 : null)}</td>
@@ -2866,7 +2866,7 @@ function openReportModal(b) {
       const f = getFunnel(r.name);
       return `<tr>
         <td style="${C}font-size:13px;color:#222;">${r.name}</td>
-        <td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${item.inq||'—'}</td>
+        <td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${hasFunnel ? (f ? (f.inq||'0') : dash) : (item.inq||'—')}</td>
         ${hasFunnel ? `<td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${f ? (f.book||'0') : dash}</td>` : ''}
         <td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${item.clients||'—'}</td>
         <td style="${C}text-align:center;">${convChip(item.inq ? item.clients/item.inq*100 : null)}</td>
@@ -2878,7 +2878,8 @@ function openReportModal(b) {
   const today = new Date();
   const dateStr = `${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
 
-  const totalConvRate = totalInq ? totalClients/totalInq*100 : null;
+  const _convDenom = (hasFunnel && totalFInq) ? totalFInq : totalInq;
+  const totalConvRate = _convDenom ? totalClients/_convDenom*100 : null;
   const totalBookRate   = (hasFunnel && totalFInq>0)  ? totalFBook/totalFInq*100           : null;
   const totalStayRate   = (hasFunnel && totalFBook>0) ? totalFStay/totalFBook*100          : null;
   const totalCancelRate = (hasFunnel && totalFBook>0) ? (totalFBook-totalFStay)/totalFBook*100 : null;
@@ -2916,7 +2917,7 @@ function openReportModal(b) {
   const totalRowHtml = hasFunnel ? `
     <tr style="background:#F7F7F8;">
       <td style="padding:10px;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">合計</td>
-      <td style="padding:10px 4px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalInq}</td>
+      <td style="padding:10px 4px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalFInq||totalInq}</td>
       <td style="padding:10px 4px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalFBook||'—'}</td>
       <td style="padding:10px 4px;text-align:center;font-size:14px;font-weight:700;color:#111;border-top:1.5px solid #e0e0e0;">${totalClients}</td>
       <td style="padding:10px 4px;text-align:center;border-top:1.5px solid #e0e0e0;">${convChip(totalConvRate)}</td>
@@ -2933,8 +2934,8 @@ function openReportModal(b) {
 
   const html = `<div id="report-modal-overlay"
     onclick="if(event.target===this)closeReportModal()"
-    style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px;">
-    <div id="report-modal-card" style="background:#fff;border-radius:16px;width:${hasFunnel?'660px':'420px'};max-width:100%;box-shadow:0 12px 48px rgba(0,0,0,0.28);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
+    style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;overflow-y:auto;padding:24px 16px;">
+    <div id="report-modal-card" style="background:#fff;border-radius:16px;width:${hasFunnel?'660px':'420px'};max-width:100%;margin:0 auto;box-shadow:0 12px 48px rgba(0,0,0,0.28);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
       <div style="background:#1C1C1E;padding:14px 18px;display:flex;align-items:center;gap:10px;">
         <span style="background:${brandBg};color:${brandColor};font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;">${brandName}</span>
         <span style="color:#fff;font-size:14.5px;font-weight:500;flex:1;">${monthLabel}廣告成效摘要</span>
