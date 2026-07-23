@@ -3296,15 +3296,15 @@ function initKpiCharts() {
         const yoyColor = yoyNum == null ? 'var(--text-muted)' : yoyNum >= 0 ? '#27500A' : '#791F1F';
         const yoyBg   = yoyNum == null ? 'transparent' : yoyNum >= 0 ? '#EAF3DE' : '#FCEBEB';
         const yoyStr  = yoyNum == null ? '' : (yoyNum >= 0 ? '+' : '') + yoyNum + '%';
-        return `<div style="flex-shrink:0;min-width:96px;background:var(--surface-2,#fff);border:0.5px solid ${isPending?'var(--border)':'var(--border)'};border-radius:8px;padding:8px 10px;${isPending?'opacity:0.45;border-style:dashed;':''}"
+        return `<div style="flex:1;min-width:0;background:var(--surface-2,#fff);border:0.5px solid var(--border);border-radius:8px;padding:6px 5px;${isPending?'opacity:0.45;border-style:dashed;':''}"
           title="${v26!=null?'花費：$'+Math.round(v26).toLocaleString()+'　去年：$'+(v25!=null?Math.round(v25).toLocaleString():'—'):''}">
-          <div style="font-size:10px;color:var(--text-muted,#888);margin-bottom:5px;font-weight:500;">${lbl}</div>
-          <div style="font-size:12px;font-weight:500;color:var(--text-primary,#222);line-height:1.2;margin-bottom:3px;">${fmt(v26)}</div>
-          <div style="font-size:11px;color:var(--text-secondary,#888);line-height:1.2;margin-bottom:5px;">${fmt(v25)}</div>
-          ${yoyStr ? `<span style="font-size:10px;font-weight:500;color:${yoyColor};background:${yoyBg};border-radius:4px;padding:1px 5px;">${yoyStr}</span>` : ''}
+          <div style="font-size:9px;color:var(--text-muted,#888);margin-bottom:4px;font-weight:500;">${lbl}</div>
+          <div style="font-size:11px;font-weight:500;color:var(--text-primary,#222);line-height:1.2;margin-bottom:2px;word-break:break-all;">${fmt(v26)}</div>
+          <div style="font-size:10px;color:var(--text-secondary,#888);line-height:1.2;margin-bottom:4px;word-break:break-all;">${fmt(v25)}</div>
+          ${yoyStr ? `<span style="font-size:9px;font-weight:500;color:${yoyColor};background:${yoyBg};border-radius:4px;padding:1px 4px;">${yoyStr}</span>` : ''}
         </div>`;
       });
-      el.style.cssText = 'display:flex;align-items:stretch;gap:6px;margin-top:6px;border-top:0.5px solid var(--border,rgba(0,0,0,0.08));padding-top:8px;overflow-x:auto;padding-bottom:4px;';
+      el.style.cssText = 'display:flex;align-items:stretch;gap:4px;margin-top:6px;border-top:0.5px solid var(--border,rgba(0,0,0,0.08));padding-top:8px;padding-bottom:4px;';
       el.innerHTML = `
         <div style="display:flex;align-items:center;flex-shrink:0;margin-right:4px;">
           <div style="background:#111;border-radius:4px;width:20px;align-self:stretch;display:flex;align-items:center;justify-content:center;min-height:72px;">
@@ -3371,7 +3371,7 @@ function initKpiCharts() {
 initKpiCharts();
 
 // ── 年度預算使用狀況 ──────────────────────────────────────────
-const BUDGET = { wo: 2500000, qi: 3500000 };
+const BUDGET = { wo: 3000000, qi: 4200000 };
 function renderBudgetCard() {
   const el = document.getElementById('budget-card');
   if (!el) return;
