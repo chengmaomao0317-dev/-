@@ -1009,6 +1009,12 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 {"date": "2026-07-08", "month": "2026-07", "activity": "夏日限定$17400", "act_price": 17400, "client_type": "舊客", "client_name": "劉巧婷", "subtotal": 14298, "ext_revenue": 0, "store": "東門店", "period": "20260623-20260731"},
 // 忠孝 7/17
 {"date": "2026-07-17", "month": "2026-07", "activity": "夏日限定$17400", "act_price": 17400, "client_type": "舊客", "client_name": "徐苡捷", "subtotal": 17400, "ext_revenue": 0, "store": "忠孝店", "period": "20260623-20260731"},
+// 忠孝 7/22
+{"date": "2026-07-22", "month": "2026-07", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "舊客", "client_name": "詹迺葳", "subtotal": 35000, "ext_revenue": 19500, "store": "忠孝店", "period": "20260623-20260731"},
+// 東門 7/22
+{"date": "2026-07-22", "month": "2026-07", "activity": "夏日限定$17400", "act_price": 17400, "client_type": "舊客", "client_name": "郭貞蘭", "subtotal": 17400, "ext_revenue": 0, "store": "東門店", "period": "20260623-20260731"},
+// 板橋 7/22
+{"date": "2026-07-22", "month": "2026-07", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "新客", "client_name": "黃夙君", "subtotal": 46898, "ext_revenue": 31398, "store": "板橋店", "period": "20260623-20260731"},
 // 大安 7/17
 {"date": "2026-07-17", "month": "2026-07", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "舊客", "client_name": "陳若瑋", "subtotal": 16499, "ext_revenue": 999, "store": "大安店", "period": "20260623-20260731"},
 // 站前 7/15
@@ -1064,6 +1070,10 @@ const GS=[
   {k:'s',ic:'☀️',lb:'夏日限定課程',acts:[
     {k:'夏日限定$15500', lb:'體雕4堂＋肩4堂＋P4*1盒 $15,500',  p:15500, pr:'2026/06/23－2026/07/31'},
     {k:'夏日限定$17400', lb:'體雕4堂＋胸4堂＋P4*1盒 $17,400',  p:17400, pr:'2026/06/23－2026/07/31'},
+  ]},
+  {k:'tg',ic:'📸',lb:'截圖送禮物',acts:[
+    {k:'截圖送禮物',lb:'截圖送禮物',pl:'門市',p:0,pr:'2026/07/08起',nc:'不限',
+     ds:'憑Threads預約並於體驗後購買課程或產品贈保濕面膜一片'},
   ]},
 ];
 
@@ -1196,9 +1206,14 @@ const OL_DATA=[
      {lb:'亮白波波專區（P4／珍波野60粒款）任兩件折100',units:0},
    ]
   },
-  {k:'pb',ic:'🎁',lb:'產品加碼',pr:'2026/07/08起',
+  {k:'pb',ic:'🎁',lb:'產品加碼',pr:'2026/07/08－2026/08/31',
    items:[
      {lb:'全產品滿$3,999 贈慕夜森林沐浴露（可累贈）',units:0},
+   ]
+  },
+  {k:'fm',ic:'🧴',lb:'夏日面膜季',pr:'2026/07/22起',
+   items:[
+     {lb:'面膜任選買三贈一',units:0},
    ]
   },
 ];
@@ -1225,20 +1240,26 @@ const PROD_RAW=[
   {"date": "2026-05-29", "month": "2026-05", "sheet": "115529 SPA VIP 忠孝", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "陳宜玫", "subtotal": 3999.0, "ext_revenue": 0.0, "text": "購極萃暫任選4盒3999 linepay付清", "store": "忠孝店", "period": "20260514-20260630"},
   {"date": "2026-06-04", "month": "2026-06", "sheet": "115604 SPA VIP 忠孝", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "莊蕙如", "subtotal": 3999.0, "ext_revenue": 0.0, "text": "購極萃暫任選4盒3999(P4美白粉*2盒+膠原蛋白*2盒)贈森林沐浴露1瓶+小提袋1個 全取完 linepay付清", "store": "忠孝店", "period": "20260514-20260630"},
   {"date": "2026-06-06", "month": "2026-06", "sheet": "115606 SPA VIP 忠孝", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "陳儀芳", "subtotal": 3999.0, "ext_revenue": 0.0, "text": "購極萃暫任選4盒3999(P4美白粉4盒全取完+小提袋1個已取) linepay付清", "store": "忠孝店", "period": "20260514-20260630"},
-  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 4740, "ext_revenue": 741, "store": "忠孝店", "period": "20260708-20261231"},
-  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 3999, "ext_revenue": 0, "store": "忠孝店", "period": "20260708-20261231"},
-  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 3999, "ext_revenue": 0, "store": "忠孝店", "period": "20260708-20261231"},
-  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 3999, "ext_revenue": 0, "store": "忠孝店", "period": "20260708-20261231"},
-  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 3999, "ext_revenue": 0, "store": "忠孝店", "period": "20260708-20261231"},
+  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 4740, "ext_revenue": 741, "store": "忠孝店", "period": "20260708-20260831"},
+  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 3999, "ext_revenue": 0, "store": "忠孝店", "period": "20260708-20260831"},
+  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 3999, "ext_revenue": 0, "store": "忠孝店", "period": "20260708-20260831"},
+  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 3999, "ext_revenue": 0, "store": "忠孝店", "period": "20260708-20260831"},
+  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳蕙涵", "subtotal": 3999, "ext_revenue": 0, "store": "忠孝店", "period": "20260708-20260831"},
   {"date": "2026-06-03", "month": "2026-06", "sheet": "115603 SPA VIP 站前", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "陳采彤", "subtotal": 27198.0, "ext_revenue": 23199.0, "text": "(2026限時優惠)童顏V臉8000發6000+(2026競賽)無針水光1堂999+購小香肩6堂贈2堂14400+極萃4盒3999 VVIP9折仲/9期", "store": "站前店", "period": "20260514-20260630"},
   // 站前 7/14
-  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "方美慈", "subtotal": 4000, "ext_revenue": 1, "store": "站前店", "period": "20260708-20261231"},
+  {"date": "2026-07-14", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "方美慈", "subtotal": 4000, "ext_revenue": 1, "store": "站前店", "period": "20260708-20260831"},
   // 忠孝 7/15
-  {"date": "2026-07-15", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "李皓韻", "subtotal": 7000, "ext_revenue": 3001, "store": "忠孝店", "period": "20260708-20261231"},
+  {"date": "2026-07-15", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "李皓韻", "subtotal": 7000, "ext_revenue": 3001, "store": "忠孝店", "period": "20260708-20260831"},
   // 站前 7/17
-  {"date": "2026-07-17", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "吳蕙仔", "subtotal": 4000, "ext_revenue": 1, "store": "站前店", "period": "20260708-20261231"},
+  {"date": "2026-07-17", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "吳蕙仔", "subtotal": 4000, "ext_revenue": 1, "store": "站前店", "period": "20260708-20260831"},
   // 東門 7/21
-  {"date": "2026-07-21", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "尹暐婷", "subtotal": 7000, "ext_revenue": 3001, "store": "東門店", "period": "20260708-20261231"},
+  {"date": "2026-07-21", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "尹暐婷", "subtotal": 7000, "ext_revenue": 3001, "store": "東門店", "period": "20260708-20260831"},
+  // 板橋 7/22
+  {"date": "2026-07-22", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "新客", "client_name": "陳芊妤", "subtotal": 8440, "ext_revenue": 4441, "store": "板橋店", "period": "20260708-20260831"},
+  // 台中 7/22
+  {"date": "2026-07-22", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "蒲帝辰", "subtotal": 4002, "ext_revenue": 3, "store": "台中店", "period": "20260708-20260831"},
+  {"date": "2026-07-22", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "蒲帝辰", "subtotal": 3999, "ext_revenue": 0, "store": "台中店", "period": "20260708-20260831"},
+  {"date": "2026-07-22", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "蒲帝辰", "subtotal": 3999, "ext_revenue": 0, "store": "台中店", "period": "20260708-20260831"},
   {"date": "2026-06-06", "month": "2026-06", "sheet": "115606 SPA VIP 站前", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "邱詩育", "subtotal": 4999.0, "ext_revenue": 1000.0, "text": "(夏定決心)購極萃暫任選4盒(P4美白粉)3999+購D1日錠1盒+N1夜錠1盒1000", "store": "站前店", "period": "20260514-20260630"},
   {"date": "2026-06-08", "month": "2026-06", "sheet": "115608 SPA VIP 站前", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "呂紹嘉", "subtotal": 3999.0, "ext_revenue": 0.0, "text": "(夏定決心)購極萃暫任選4盒(P4美白粉)3999 三組共11997 刷卡付清", "store": "站前店", "period": "20260514-20260630"},
   {"date": "2026-06-08", "month": "2026-06", "sheet": "115608 SPA VIP 站前", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "呂紹嘉", "subtotal": 3999.0, "ext_revenue": 0.0, "text": "(夏定決心)購極萃暫任選4盒(P4美白粉)3999 三組共11997 刷卡付清", "store": "站前店", "period": "20260514-20260630"},
@@ -1275,8 +1296,11 @@ const GS_PROD=[
   {k:'px',ic:'✦',lb:'母親節加碼-極萃皙',pr:'2026/05/14－2026/06/30',acts:[
     {k:'極萃皙$3999', lb:'極萃皙任選4樣$3,999 贈帆布袋+沐浴露', p:3999, pr:'2026/05/14－2026/06/30'},
   ]},
-  {k:'pb',ic:'🎁',lb:'產品加碼',pr:'2026/07/08起',acts:[
-    {k:'產品加碼', lb:'全產品滿$3,999 贈慕夜森林沐浴露（可累贈）', p:3999, pr:'2026/07/08起'},
+  {k:'pb',ic:'🎁',lb:'產品加碼',pr:'2026/07/08－2026/08/31',acts:[
+    {k:'產品加碼', lb:'全產品滿$3,999 贈慕夜森林沐浴露（可累贈）', p:3999, pr:'2026/07/08－2026/08/31'},
+  ]},
+  {k:'fm',ic:'🧴',lb:'夏日面膜季',pr:'2026/07/22起',acts:[
+    {k:'夏日面膜季', lb:'面膜任選買三贈一', p:0, pr:'2026/07/22起'},
   ]},
 ];
 
@@ -2364,6 +2388,12 @@ const TIMELINE=[
    d:'8,000發$6,000（限購一次）／ 12,000+6,000發$24,000贈P4*1＋面膜 ／ 24,000+18,000發$48,000贈P4*2＋防曬霜30ml'},
   {b:'原渥',a:'夏日限定',s:'2026-06-23',e:'2026-07-31',c:'#f97316',gid:'gb-s',
    d:'體雕4堂＋肩4堂＋P4*1盒 $15,500 ／ 體雕4堂＋胸4堂＋P4*1盒 $17,400'},
+  {b:'原渥',a:'截圖送禮物',s:'2026-07-08',e:'2026-12-31',c:'#0284c7',gid:'gb-tg',
+   d:'憑Threads預約並於體驗後購買課程或產品贈保濕面膜一片'},
+  {b:'原渥',a:'新客來店禮',s:'2026-07-21',e:'2026-12-31',c:'#f97316',gid:null,
+   d:'保濕面膜*2片＋HAN透明化妝包（新客限定）'},
+  {b:'原渥',a:'舊客來店禮',s:'2026-07-22',e:'2026-07-31',c:'#f59e0b',gid:null,
+   d:'保濕面膜*2片（舊客限定）'},
   // ── 產品 ─────────────────────────────────────────────────────────────────
   {b:'產品',a:'女神節-產品',s:'2026-03-01',e:'2026-03-31',c:'#10b981',gid:'gb-pd-hist-gs_prod',actKey:'極萃皙任選6盒',
    d:'極萃皙任選6盒 $6,666 ／ 產品加購-面膜$800 ／ 產品加購-纖萃加購$990'},
@@ -2373,15 +2403,19 @@ const TIMELINE=[
    d:'極萃皙P4：5盒$4,999 ／ 10贈2 $9,999 ／ 㮀HAN任選5樣$3,999 ／ 玻色因膠原精華12入$3,999'},
   {b:'產品',a:'母親節加碼極萃皙',s:'2026-05-14',e:'2026-06-30',c:'#059669',gid:'gb-pd-px',
    d:'極萃全系列任選4樣 $3,999，贈帆布袋＋沐浴露'},
-  {b:'產品',a:'產品加碼',s:'2026-07-08',e:'2026-12-31',c:'#10b981',gid:'gb-pd-pb',
+  {b:'產品',a:'產品加碼',s:'2026-07-08',e:'2026-08-31',c:'#10b981',gid:'gb-pd-pb',
    d:'全產品滿$3,999 贈慕夜森林沐浴露（可累贈）'},
+  {b:'產品',a:'夏日面膜季',s:'2026-07-22',e:'2026-12-31',c:'#34d399',gid:'gb-pd-fm',
+   d:'面膜任選買三贈一'},
   // ── 線上通路 ──────────────────────────────────────────────────────────────
   {b:'線上通路',a:'618活動',s:'2026-06-12',e:'2026-06-20',c:'#059669',gid:'gb-ol618',
    d:'618活動'},
   {b:'線上通路',a:'七月夏日優惠',s:'2026-07-01',e:'2026-07-31',c:'#059669',gid:'gb-olsummer',
    d:'七月夏日優惠'},
-  {b:'線上通路',a:'產品加碼',s:'2026-07-08',e:'2026-12-31',c:'#059669',gid:'gb-pb',
+  {b:'線上通路',a:'產品加碼',s:'2026-07-08',e:'2026-08-31',c:'#059669',gid:'gb-pb',
    d:'全產品滿$3,999 贈慕夜森林沐浴露（可累贈）'},
+  {b:'線上通路',a:'夏日面膜季',s:'2026-07-22',e:'2026-12-31',c:'#10b981',gid:'gb-fm',
+   d:'面膜任選買三贈一'},
 ];
 
 // ─── Tab switching ────────────────────────────────────────────────────────────
