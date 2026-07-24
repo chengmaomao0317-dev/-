@@ -233,8 +233,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC','Micr
 .gbf-btn[data-brand="原綺"].active{background:#ec4899;color:#fff}
 .gbf-btn[data-brand="原渥"]{border-color:#2563eb;color:#2563eb}
 .gbf-btn[data-brand="原渥"].active{background:#2563eb;color:#fff}
-.gbf-btn[data-brand="產品"]{border-color:#059669;color:#059669}
-.gbf-btn[data-brand="產品"].active{background:#059669;color:#fff}
+.gbf-btn[data-brand="門市產品"]{border-color:#059669;color:#059669}
+.gbf-btn[data-brand="門市產品"].active{background:#059669;color:#fff}
+.gbf-btn[data-brand="線上通路"]{border-color:#6366f1;color:#6366f1}
+.gbf-btn[data-brand="線上通路"].active{background:#6366f1;color:#fff}
 .gantt-jump-btn:hover{background:#dbeafe;border-color:#93c5fd}
 .act-period-btn{font-size:12px;font-weight:700;padding:5px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#1a1a1a,#374151);color:#fff;cursor:pointer;white-space:nowrap;transition:all .15s;line-height:1.6;box-shadow:0 1px 6px rgba(0,0,0,.3)}
 .act-period-btn:hover{background:linear-gradient(135deg,#000,#1a1a1a);box-shadow:0 2px 10px rgba(0,0,0,.4);transform:translateY(-1px)}
@@ -1026,6 +1028,8 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 {"date": "2026-07-18", "month": "2026-07", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "新客", "client_name": "廖佳螢", "subtotal": 15724, "ext_revenue": 224, "store": "台中店", "period": "20260623-20260731"},
 // 台中 7/21
 {"date": "2026-07-21", "month": "2026-07", "activity": "夏日限定$17400", "act_price": 17400, "client_type": "新客", "client_name": "Waranya", "subtotal": 19698, "ext_revenue": 2298, "store": "台中店", "period": "20260623-20260731"},
+// 台中 7/23
+{"date": "2026-07-23", "month": "2026-07", "activity": "夏日限定$17400", "act_price": 17400, "client_type": "舊客", "client_name": "黃婚涵", "subtotal": 17400, "ext_revenue": 0, "store": "台中店", "period": "20260623-20260731"},
 ];
 
 // ─── Store config ───────────────────────────────────────────────────────
@@ -1256,10 +1260,8 @@ const PROD_RAW=[
   {"date": "2026-07-21", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "尹暐婷", "subtotal": 7000, "ext_revenue": 3001, "store": "東門店", "period": "20260708-20260831"},
   // 板橋 7/22
   {"date": "2026-07-22", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "新客", "client_name": "陳芊妤", "subtotal": 8440, "ext_revenue": 4441, "store": "板橋店", "period": "20260708-20260831"},
-  // 台中 7/22
-  {"date": "2026-07-22", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "蒲帝辰", "subtotal": 4002, "ext_revenue": 3, "store": "台中店", "period": "20260708-20260831"},
-  {"date": "2026-07-22", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "蒲帝辰", "subtotal": 3999, "ext_revenue": 0, "store": "台中店", "period": "20260708-20260831"},
-  {"date": "2026-07-22", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "蒲帝辰", "subtotal": 3999, "ext_revenue": 0, "store": "台中店", "period": "20260708-20260831"},
+  // 站前 7/23
+  {"date": "2026-07-23", "month": "2026-07", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "顏敏樺", "subtotal": 5120, "ext_revenue": 1121, "store": "站前店", "period": "20260708-20260831"},
   {"date": "2026-06-06", "month": "2026-06", "sheet": "115606 SPA VIP 站前", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "邱詩育", "subtotal": 4999.0, "ext_revenue": 1000.0, "text": "(夏定決心)購極萃暫任選4盒(P4美白粉)3999+購D1日錠1盒+N1夜錠1盒1000", "store": "站前店", "period": "20260514-20260630"},
   {"date": "2026-06-08", "month": "2026-06", "sheet": "115608 SPA VIP 站前", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "呂紹嘉", "subtotal": 3999.0, "ext_revenue": 0.0, "text": "(夏定決心)購極萃暫任選4盒(P4美白粉)3999 三組共11997 刷卡付清", "store": "站前店", "period": "20260514-20260630"},
   {"date": "2026-06-08", "month": "2026-06", "sheet": "115608 SPA VIP 站前", "activity": "極萃皙$3999", "act_price": 3999, "client_type": "舊客", "client_name": "呂紹嘉", "subtotal": 3999.0, "ext_revenue": 0.0, "text": "(夏定決心)購極萃暫任選4盒(P4美白粉)3999 三組共11997 刷卡付清", "store": "站前店", "period": "20260514-20260630"},
@@ -1945,7 +1947,7 @@ function _buildActFilter(){
     grpOL.appendChild(o);
   });
   // 產品
-  const grpPD=mkGrp('產品');
+  const grpPD=mkGrp('門市產品');
   const seenPD=new Set();
   [...GS_HIST_PROD,...GS_PROD].forEach(g=>{
     if(seenPD.has(g.lb))return;
@@ -2316,9 +2318,9 @@ YQS.forEach(s=>{
   SP.appendChild(p);
 })();
 
-// 產品
+// 門市產品
 (()=>{
-  const p=document.createElement('span');p.className='pill store';p.textContent='產品';
+  const p=document.createElement('span');p.className='pill store';p.textContent='門市產品';
   p.dataset.store='產品門市';
   p.style.cssText=BRAND_STYLES['產品門市'].off;
   p.onclick=()=>setStore('產品門市');
@@ -2395,17 +2397,17 @@ const TIMELINE=[
   {b:'原渥',a:'舊客來店禮',s:'2026-07-22',e:'2026-07-31',c:'#f59e0b',gid:null,
    d:'保濕面膜*2片（舊客限定）'},
   // ── 產品 ─────────────────────────────────────────────────────────────────
-  {b:'產品',a:'女神節-產品',s:'2026-03-01',e:'2026-03-31',c:'#10b981',gid:'gb-pd-hist-gs_prod',actKey:'極萃皙任選6盒',
+  {b:'門市產品',a:'女神節-產品',s:'2026-03-01',e:'2026-03-31',c:'#10b981',gid:'gb-pd-hist-gs_prod',actKey:'極萃皙任選6盒',
    d:'極萃皙任選6盒 $6,666 ／ 產品加購-面膜$800 ／ 產品加購-纖萃加購$990'},
-  {b:'產品',a:'全新價目/VIP制度',s:'2026-04-01',e:'2026-12-31',c:'#94a3b8',gid:null,
+  {b:'門市產品',a:'全新價目/VIP制度',s:'2026-04-01',e:'2026-12-31',c:'#94a3b8',gid:null,
    d:'2026/4/1 起全面更新價目'},
-  {b:'產品',a:'母親節方案',s:'2026-04-15',e:'2026-05-20',c:'#10b981',gid:'gb-pd-hist-mn_prod',actKey:'極萃皙P4',
+  {b:'門市產品',a:'母親節方案',s:'2026-04-15',e:'2026-05-20',c:'#10b981',gid:'gb-pd-hist-mn_prod',actKey:'極萃皙P4',
    d:'極萃皙P4：5盒$4,999 ／ 10贈2 $9,999 ／ 㮀HAN任選5樣$3,999 ／ 玻色因膠原精華12入$3,999'},
-  {b:'產品',a:'母親節加碼極萃皙',s:'2026-05-14',e:'2026-06-30',c:'#059669',gid:'gb-pd-px',
+  {b:'門市產品',a:'母親節加碼極萃皙',s:'2026-05-14',e:'2026-06-30',c:'#059669',gid:'gb-pd-px',
    d:'極萃全系列任選4樣 $3,999，贈帆布袋＋沐浴露'},
-  {b:'產品',a:'產品加碼',s:'2026-07-08',e:'2026-08-31',c:'#10b981',gid:'gb-pd-pb',
+  {b:'門市產品',a:'產品加碼',s:'2026-07-08',e:'2026-08-31',c:'#10b981',gid:'gb-pd-pb',
    d:'全產品滿$3,999 贈慕夜森林沐浴露（可累贈）'},
-  {b:'產品',a:'夏日面膜季',s:'2026-07-22',e:'2026-12-31',c:'#34d399',gid:'gb-pd-fm',
+  {b:'門市產品',a:'夏日面膜季',s:'2026-07-22',e:'2026-12-31',c:'#34d399',gid:'gb-pd-fm',
    d:'面膜任選買三贈一'},
   // ── 線上通路 ──────────────────────────────────────────────────────────────
   {b:'線上通路',a:'618活動',s:'2026-06-12',e:'2026-06-20',c:'#059669',gid:'gb-ol618',
@@ -2434,7 +2436,7 @@ function switchTab(tab){
 const GS_CSV_URL='https://docs.google.com/spreadsheets/d/1_Yo9nLhdpCbQlmcEN-uorLJnLL9vV_foOIQaI9lROkg/export?format=csv&gid=1644518075';
 const LS_KEY='gantt_cache_v4';  // bump version to clear stale cache
 const LS_DATE_KEY='gantt_cache_date_v4';
-const BRAND_DEFAULT_COLOR={'原綺':'#ec4899','原渥':'#3b82f6','產品':'#10b981','線上通路':'#059669'};
+const BRAND_DEFAULT_COLOR={'原綺':'#ec4899','原渥':'#3b82f6','門市產品':'#10b981','線上通路':'#059669'};
 function _parseGanttCSV(csv){
   // ── RFC-4180 compliant CSV parser: handles \r\n, multi-line quoted fields ──
   function parseCsvToRows(text){
@@ -2610,9 +2612,9 @@ const _GID_OVERRIDES=[
   ['原渥','母親節',                 {gid:'gb-rh-mn',actKey:'母親節'}],
   ['原渥','母親節無針水光加碼',     {gid:'gb-w',    actKey:'母親節無針水光加碼'}],
   ['原渥','母親節童顏加碼',         {gid:'gb-t',    actKey:'母親節童顏V臉加碼'}],
-  ['產品','女神節',                 {gid:'gb-pd-hist-gs_prod',actKey:'極萃皙任選6盒'}],
-  ['產品','母親節',                 {gid:'gb-pd-hist-mn_prod',actKey:'極萃皙P4'}],
-  ['產品','母親節加碼',             {gid:'gb-pd-px',actKey:'母親節加碼極萃皙'}],
+  ['門市產品','女神節',                 {gid:'gb-pd-hist-gs_prod',actKey:'極萃皙任選6盒'}],
+  ['門市產品','母親節',                 {gid:'gb-pd-hist-mn_prod',actKey:'極萃皙P4'}],
+  ['門市產品','母親節加碼',             {gid:'gb-pd-px',actKey:'母親節加碼極萃皙'}],
 ];
 
 // Normalize: strip spaces, full-width parens, brackets, lowercased
@@ -2690,7 +2692,8 @@ function buildTimeline(){
   const BRAND_CFG={
     '原綺':{pill:'#ec4899',hdr:'linear-gradient(135deg,#fdf2f8,#fce7f3)',border:'#f9a8d4',nameBg:'#fdf2f8'},
     '原渥':{pill:'#2563eb',hdr:'linear-gradient(135deg,#eff6ff,#dbeafe)',border:'#93c5fd',nameBg:'#eff6ff'},
-    '產品':{pill:'#059669',hdr:'linear-gradient(135deg,#f0fdf4,#dcfce7)',border:'#6ee7b7',nameBg:'#f0fdf4'},
+    '門市產品':{pill:'#059669',hdr:'linear-gradient(135deg,#f0fdf4,#dcfce7)',border:'#6ee7b7',nameBg:'#f0fdf4'},
+    '線上通路':{pill:'#6366f1',hdr:'linear-gradient(135deg,#f5f3ff,#ede9fe)',border:'#c4b5fd',nameBg:'#f5f3ff'},
   };
 
   // ── today line ──────────────────────────────────────────────────────────────
@@ -2802,7 +2805,8 @@ function buildTimeline(){
     +'<button class="gbf-btn active" data-brand="all" onclick="_filterTimeline(\'all\')">全部活動</button>'
     +'<button class="gbf-btn" data-brand="原綺" onclick="_filterTimeline(\'原綺\')">原綺</button>'
     +'<button class="gbf-btn" data-brand="原渥" onclick="_filterTimeline(\'原渥\')">原渥</button>'
-    +'<button class="gbf-btn" data-brand="產品" onclick="_filterTimeline(\'產品\')">產品</button>'
+    +'<button class="gbf-btn" data-brand="門市產品" onclick="_filterTimeline(\'門市產品\')">門市產品</button>'
+    +'<button class="gbf-btn" data-brand="線上通路" onclick="_filterTimeline(\'線上通路\')">線上通路</button>'
     +'</div>'
     +'<div class="gantt-legend">'+legendHtml+'</div>'
     +'<div class="gantt-outer"><div class="gantt-inner">'
