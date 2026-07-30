@@ -1,0 +1,2500 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>MAO</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MAO">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' fill='%23000'/%3E%3Ctext x='50%25' y='60%25' font-size='60' fill='white' text-anchor='middle' font-family='sans-serif' font-weight='700'%3EMAO%3C/text%3E%3C/svg%3E">
+<style>
+:root{color-scheme:light;--hdr-h:76px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-serif;background:#f5f4f0;color:#1a1a18;font-size:14px;line-height:1.5;}
+
+.site-header{background:#000;border-bottom:1px solid #1a1a1a;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.5);}
+.header-inner{display:flex;align-items:center;gap:18px;padding:9px 32px;max-width:1480px;margin:0 auto;}
+.header-title{font-size:16px;font-weight:700;color:#e5e7eb;letter-spacing:.3px;}
+.header-bar-wrap{background:#000;border-bottom:1px solid #222;}
+.header-bar{display:flex;align-items:center;padding:6px 32px;gap:10px;max-width:1480px;margin:0 auto;flex-wrap:wrap;}
+.month-select{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85);border:.5px solid rgba(255,255,255,.15);border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;}
+.month-select option{background:#111;}
+.nav-btn{background:rgba(255,255,255,.07);color:#fff;border:none;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;}
+.nav-btn:hover{background:rgba(255,255,255,.15);}
+.hdr-btn{font-size:12px;padding:5px 12px;border-radius:6px;border:.5px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.75);cursor:pointer;font-weight:500;}
+.hdr-btn:hover{background:rgba(255,255,255,.1);}
+.tab-bar{display:flex;gap:4px;margin-left:6px;}
+.tab-btn{background:transparent;border:none;color:rgba(255,255,255,.5);font-size:12.5px;font-weight:600;letter-spacing:.06em;padding:6px 14px;border-radius:6px;cursor:pointer;}
+.tab-btn:hover{color:#fff;}
+.tab-btn.active{background:rgba(255,255,255,.12);color:#fff;}
+.scope-toggle{display:flex;gap:2px;background:rgba(255,255,255,.08);padding:3px;border-radius:8px;}
+.scope-btn{padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);cursor:pointer;border:none;background:transparent;}
+.scope-btn:hover{color:#fff;}
+.scope-btn.active{background:#fff;color:#1a1a18;}
+.scope-pick{display:flex;gap:6px;}
+.scope-pick-btn{font-size:11px;font-weight:600;padding:5px 14px;border-radius:99px;cursor:pointer;border:1.5px solid rgba(0,0,0,.12);background:#f5f4f0;color:#9a9990;}
+.scope-pick-btn.active{background:#1a1a18;color:#fff;border-color:#1a1a18;}
+
+.dash{max-width:1480px;margin:0 auto;padding:20px 32px 60px;}
+.section{margin-bottom:22px;}
+.sec-title{font-size:13px;font-weight:600;color:#111;letter-spacing:.07em;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.card{background:#fff;border:.5px solid rgba(0,0,0,.1);border-radius:12px;padding:14px 16px;}
+
+/* calendar */
+.cal-frame{background:#fff;border:.5px solid rgba(0,0,0,.1);border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.cal-sticky-head{position:sticky;top:var(--hdr-h);z-index:20;background:#fff;}
+.cal-sec-title{margin-bottom:9px;}
+.cal-wd-row{background:#1a1a18;border-radius:8px;display:grid;grid-template-columns:repeat(7,1fr);padding:6px 0;margin-bottom:8px;}
+.proj-sec-title{position:sticky;top:var(--hdr-h);z-index:20;background:#f5f4f0;padding:2px 0 8px;margin-top:-2px;}
+.cal-wd{font-size:11px;color:#c9c8c2;text-align:center;padding:4px 0;font-weight:600;}
+.cal-wd-sat{color:#e0847d;}
+.cal-wd-sun{color:#e0847d;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-cell{background:#fcfbfa;border:.5px solid rgba(0,0,0,.12);border-radius:8px;min-height:96px;min-width:0;padding:6px 7px;display:flex;flex-direction:column;gap:3px;transition:box-shadow .1s,border-color .1s;overflow:hidden;}
+.cal-cell.outside{background:#f5f4f0;opacity:.45;}
+.cal-cell.weekend{background:#faf7f3;}
+.cal-cell.holiday{background:#FCEEEE;border-color:rgba(163,45,45,.18);}
+.cal-cell.today{background:#EAF4FF;border:2px solid #185FA5;padding:5px 6px;}
+.cal-cell.dragover{border-color:#378ADD;box-shadow:0 0 0 2px rgba(55,138,221,.25) inset;}
+.cal-date-row{display:flex;align-items:center;justify-content:space-between;}
+.cal-date{font-size:11px;color:#888780;font-weight:600;}
+.cal-date.sat{color:#c0392b;}
+.cal-date.sun{color:#c0392b;}
+.cal-date.today{color:#185FA5 !important;}
+.cal-add-btn{background:none;border:none;color:#c9c8c2;font-size:13px;font-weight:700;cursor:pointer;line-height:1;padding:0 2px;}
+.cal-add-btn:hover{color:#185FA5;}
+.cal-holiday-label{font-size:9px;color:#A32D2D;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cal-makeup-label{font-size:9px;color:#6b6b66;font-weight:700;background:#eceae5;border-radius:3px;padding:0 4px;display:inline-block;width:fit-content;}
+.cal-items{display:flex;flex-direction:column;gap:3px;overflow-y:auto;max-height:140px;}
+.cal-chip{display:flex;align-items:center;gap:4px;font-size:10.5px;padding:2px 5px;border-radius:5px;background:#f5f4f0;line-height:1.3;}
+.cal-chip.standalone .txt{color:#fff;}
+.cal-chip.standalone .rm{color:rgba(255,255,255,.65);}
+.cal-chip.standalone .rm:hover{color:#fff;}
+.cal-chip.done{opacity:.5;}
+.cal-chip.done .txt{text-decoration:line-through;}
+.cal-chip input[type=checkbox]{flex-shrink:0;}
+.cal-chip .txt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cal-chip-txtcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.cal-chip-txtcol .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cal-chip-collab{font-size:8.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.7;}
+.cal-chip.standalone .cal-chip-collab{color:rgba(255,255,255,.8);}
+.cal-chip .rm{cursor:pointer;color:#b0afa9;font-size:11px;flex-shrink:0;}
+.cal-chip .rm:hover{color:#A32D2D;}
+
+/* categories/projects */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
+.main-grid{display:flex;gap:20px;align-items:stretch;}
+.cal-section{flex:1;min-width:0;}
+.proj-section{flex:0 0 360px;min-width:0;padding-right:6px;}
+@media(max-width:1200px){
+  .proj-section{flex-basis:320px;}
+}
+@media(max-width:1100px){
+  .main-grid{flex-direction:column;}
+  .proj-section{flex-basis:auto;padding-right:0;}
+}
+.cat-card{background:#fff;border:.5px solid rgba(0,0,0,.1);border-radius:12px;padding:14px 14px 12px;}
+.cat-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:9px;border-bottom:.5px solid rgba(0,0,0,.08);}
+.cat-hdr-l{display:flex;align-items:center;gap:8px;min-width:0;}
+.cat-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;cursor:pointer;}
+.cat-del{background:none;border:none;color:#c9c8c2;cursor:pointer;font-size:13px;}
+.cat-del:hover{color:#A32D2D;}
+.proj-blk{border:.5px solid rgba(0,0,0,.07);border-radius:9px;margin-bottom:8px;overflow:hidden;transition:box-shadow .1s;}
+.proj-blk.drop-before{box-shadow:0 -2px 0 #378ADD;}
+.proj-blk.drop-after{box-shadow:0 2px 0 #378ADD;}
+.proj-drag-handle{cursor:grab;color:#c9c8c2;font-size:11px;flex-shrink:0;user-select:none;}
+.proj-drag-handle:active{cursor:grabbing;}
+.cat-card.cat-dragover{background:#f0f6fc;}
+.cat-card{transition:box-shadow .1s;}
+.cat-card.cat-drop-before{box-shadow:0 -3px 0 #378ADD;}
+.cat-card.cat-drop-after{box-shadow:0 3px 0 #378ADD;}
+.cat-drag-handle{cursor:grab;color:#c9c8c2;font-size:12px;flex-shrink:0;user-select:none;margin-right:2px;}
+.cat-drag-handle:active{cursor:grabbing;}
+.proj-hdr{display:flex;align-items:center;gap:6px;padding:8px 10px;background:#faf9f7;cursor:pointer;}
+.proj-name-col{flex:1;min-width:0;cursor:pointer;}
+.proj-name{font-size:12.5px;font-weight:600;color:#1a1a18;}
+.proj-desc{font-size:10px;color:#9a9990;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;}
+.proj-count{font-size:10px;color:#888780;background:#eeede9;padding:1px 7px;border-radius:99px;}
+.proj-deadline{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;cursor:pointer;flex-shrink:0;}
+.proj-deadline-over{background:#FCEBEB;color:#A32D2D;}
+.proj-deadline-soon{background:#FFF3D6;color:#9A6B00;}
+.proj-deadline-normal{background:#eeede9;color:#5f5e5a;font-weight:600;}
+.proj-deadline-empty{background:none;color:#c9c8c2;font-weight:500;font-size:10.5px;padding:0;}
+.proj-deadline-empty:hover{color:#185FA5;}
+.proj-chev{font-size:16px;color:#888780;transition:transform .15s,background .1s;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;flex-shrink:0;}
+.proj-chev:hover{background:#eceae5;color:#1a1a18;}
+.proj-chev.open{transform:rotate(180deg);}
+.cat-chev{font-size:16px;color:#888780;transition:transform .15s,background .1s;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;cursor:pointer;flex-shrink:0;}
+.cat-chev:hover{background:#eceae5;color:#1a1a18;}
+.cat-chev.open{transform:rotate(180deg);}
+.cat-body{display:none;}
+.cat-body.open{display:block;}
+.proj-del{background:none;border:none;color:#c9c8c2;cursor:pointer;font-size:12px;}
+.proj-del:hover{color:#A32D2D;}
+.proj-body{padding:6px 10px 10px;display:none;}
+.proj-body.open{display:block;}
+.item-row{display:flex;align-items:center;gap:6px;padding:5px 2px;border-bottom:.5px solid rgba(0,0,0,.05);}
+.item-row:last-child{border-bottom:none;}
+.item-row.done .item-txt{text-decoration:line-through;color:#b0afa9;}
+.item-handle{cursor:grab;color:#c9c8c2;font-size:12px;flex-shrink:0;user-select:none;}
+.item-handle:active{cursor:grabbing;}
+.item-textcol{flex:1;min-width:0;cursor:pointer;padding:2px 4px;border-radius:4px;}
+.item-textcol:hover{background:#f5f4f0;}
+.item-txt{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.item-note{font-size:10.5px;color:#b0afa9;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.item-sched{font-size:9.5px;color:#185FA5;background:#E6F1FB;padding:1px 6px;border-radius:99px;white-space:nowrap;display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.item-sched .x{cursor:pointer;}
+.item-del{background:none;border:none;color:#c9c8c2;cursor:pointer;font-size:12px;flex-shrink:0;}
+.item-del:hover{color:#A32D2D;}
+.add-item-btn{width:100%;background:#f5f4f0;color:#888780;margin-top:4px;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:11.5px;font-weight:500;text-align:left;}
+.add-item-btn:hover{background:#ececea;color:#1a1a18;}
+.add-proj-btn{width:100%;background:#f5f4f0;color:#888780;margin-top:2px;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:11.5px;font-weight:500;}
+.add-proj-btn:hover{background:#ececea;color:#1a1a18;}
+.add-cat-btn{background:#fff;color:#1a1a18;border:1px dashed rgba(0,0,0,.2);border-radius:6px;padding:4px 12px;cursor:pointer;font-size:11.5px;font-weight:500;}
+.add-cat-btn:hover{background:#f5f4f0;}
+.item-collab{font-size:9.5px;font-weight:600;padding:1px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
+.collab-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:.5px solid rgba(0,0,0,.08);border-radius:8px;background:#faf9f7;transition:box-shadow .1s;}
+.collab-row.drop-before{box-shadow:0 -2px 0 #378ADD;}
+.collab-row.drop-after{box-shadow:0 2px 0 #378ADD;}
+.collab-drag{cursor:grab;color:#c9c8c2;font-size:12px;flex-shrink:0;}
+.collab-drag:active{cursor:grabbing;}
+.collab-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+.collab-name{flex:1;font-size:12.5px;font-weight:600;color:#1a1a18;cursor:pointer;}
+.collab-name:hover{text-decoration:underline;}
+.collab-del{background:none;border:none;color:#c9c8c2;cursor:pointer;font-size:12px;flex-shrink:0;}
+.collab-del:hover{color:#A32D2D;}
+
+/* meeting page */
+.meeting-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+.meeting-filter-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.meeting-chip{font-size:11px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;border:1.5px solid rgba(0,0,0,.12);background:#f5f4f0;color:#9a9990;user-select:none;}
+.meeting-chip.active{border-color:currentColor;}
+.meeting-chip-manage{display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 8px;border-radius:99px;border:1.5px solid rgba(0,0,0,.12);background:#f5f4f0;color:#9a9990;user-select:none;transition:box-shadow .1s;}
+.meeting-chip-manage.active{border-color:currentColor;}
+.meeting-chip-manage.drop-before{box-shadow:-3px 0 0 #378ADD;}
+.meeting-chip-manage.drop-after{box-shadow:3px 0 0 #378ADD;}
+.meeting-chip-drag{cursor:grab;font-size:10px;opacity:.55;}
+.meeting-chip-drag:active{cursor:grabbing;}
+.meeting-chip-label{font-size:11px;font-weight:600;cursor:pointer;}
+.meeting-chip-del{cursor:pointer;font-size:10px;opacity:.45;}
+.meeting-chip-del:hover{opacity:1;}
+.meeting-chip-all{font-size:11px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;border:1.5px solid rgba(0,0,0,.12);background:#f5f4f0;color:#9a9990;user-select:none;}
+.meeting-chip-all.active{background:#1a1a18;color:#fff;border-color:#1a1a18;}
+.meeting-chip-add{font-size:11px;font-weight:600;padding:4px 11px;border-radius:99px;cursor:pointer;border:1px dashed rgba(0,0,0,.25);background:#fff;color:#888780;}
+.meeting-chip-add:hover{background:#f5f4f0;color:#1a1a18;}
+.meeting-filter-hint{font-size:10px;color:#b0afa9;margin-bottom:14px;}
+#meetingList{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:start;}
+.meeting-month-card{background:#fff;border:.5px solid rgba(0,0,0,.1);border-radius:12px;overflow:hidden;}
+.meeting-month-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;cursor:pointer;background:#faf9f7;}
+.meeting-month-hdr-l{display:flex;align-items:center;gap:7px;min-width:0;}
+.meeting-month-chev{font-size:15px;color:#9a9990;transition:transform .15s,background .1s;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;flex-shrink:0;}
+.meeting-month-chev:hover{background:#eceae5;color:#1a1a18;}
+.meeting-month-chev.open{transform:rotate(90deg);}
+.meeting-month-label{font-size:13px;font-weight:700;color:#1a1a18;}
+.meeting-month-count{font-size:10px;color:#888780;background:#eeede9;padding:2px 7px;border-radius:99px;flex-shrink:0;}
+.meeting-month-body{display:none;}
+.meeting-month-body.open{display:block;padding:4px 12px 12px;}
+.meeting-date-group{margin-bottom:14px;}
+.meeting-date-group:last-child{margin-bottom:0;}
+.meeting-date-hdr{font-size:11.5px;font-weight:700;color:#1a1a18;margin:9px 0 7px;padding-bottom:5px;border-bottom:1px solid rgba(0,0,0,.1);}
+.meeting-card{background:#fcfbfa;border:.5px solid rgba(0,0,0,.08);border-radius:10px;padding:10px 12px;margin-bottom:6px;}
+.meeting-card:last-child{margin-bottom:0;}
+.meeting-card-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;}
+.meeting-card-hdr-l{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap;}
+.meeting-chev{font-size:15px;color:#9a9990;transition:transform .15s,background .1s;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;flex-shrink:0;cursor:pointer;}
+.meeting-chev:hover{background:#eceae5;color:#1a1a18;}
+.meeting-chev.open{transform:rotate(90deg);}
+.meeting-title{font-size:13px;font-weight:600;color:#1a1a18;}
+.meeting-tag{font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px;}
+.meeting-actions{display:flex;gap:8px;color:#c9c8c2;font-size:12px;flex-shrink:0;}
+.meeting-actions span{cursor:pointer;}
+.meeting-actions span:hover{color:#1a1a18;}
+.meeting-body{font-size:12px;color:#6b6b66;line-height:1.5;margin-top:8px;padding-top:8px;border-top:.5px solid rgba(0,0,0,.06);display:none;white-space:pre-wrap;}
+.meeting-body.open{display:block;}
+.meeting-empty{font-size:12.5px;color:#b0afa9;padding:20px 0;text-align:center;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;}
+.modal-box{background:#fff;border-radius:14px;width:360px;max-width:90vw;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+.modal-hdr{background:#1a1a18;color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;}
+.modal-close{background:none;border:none;color:#fff;opacity:.6;font-size:15px;cursor:pointer;line-height:1;}
+.modal-close:hover{opacity:1;}
+.modal-body{padding:16px;display:flex;flex-direction:column;gap:10px;}
+.modal-label{font-size:11px;color:#888780;font-weight:600;}
+.modal-input, .modal-textarea{width:100%;font-size:13px;border:.5px solid rgba(0,0,0,.15);border-radius:8px;padding:8px 10px;outline:none;font-family:inherit;}
+.modal-input:focus, .modal-textarea:focus{border-color:#378ADD;}
+.modal-textarea{resize:vertical;min-height:64px;}
+.modal-ftr{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:.5px solid rgba(0,0,0,.08);}
+.modal-btn-cancel{background:#f5f4f0;color:#5f5e5a;border:none;border-radius:6px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-weight:500;}
+.modal-btn-save{background:#111;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-weight:500;}
+.modal-btn-cancel:hover{background:#ececea;}
+.modal-btn-save:hover{background:#333;}
+.color-swatch-row{display:flex;gap:8px;flex-wrap:wrap;}
+.color-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);}
+.color-swatch.selected{border-color:#1a1a18;}
+
+:root{--note-w:420px;}
+.page-wrap{transition:margin-right .25s ease;margin-right:0;}
+.page-wrap.note-open{margin-right:var(--note-w);}
+.note-panel{position:fixed;top:0;right:0;height:100vh;width:var(--note-w);background:#fff;border-left:.5px solid rgba(0,0,0,.12);box-shadow:-2px 0 8px rgba(0,0,0,.08);transform:translateX(calc(var(--note-w) - 28px));transition:transform .25s ease;display:flex;z-index:150;}
+.note-panel.open{transform:translateX(0);}
+.note-tab{width:28px;flex-shrink:0;background:#1a1a18;color:#c9c8c2;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;writing-mode:vertical-rl;font-size:12px;font-weight:700;letter-spacing:3px;user-select:none;}
+.note-tab:hover{color:#fff;}
+.note-body{flex:1;padding:14px;display:flex;flex-direction:column;min-width:0;}
+.note-title{font-size:12px;font-weight:600;color:#1a1a18;margin-bottom:8px;letter-spacing:.05em;}
+.note-textarea{flex:1;resize:none;border:.5px solid rgba(0,0,0,.12);border-radius:8px;padding:10px;font-size:12.5px;font-family:inherit;outline:none;min-height:200px;}
+.note-textarea:focus{border-color:#378ADD;}
+@media(max-width:768px){
+  :root{--note-w:260px;}
+}
+
+.site-footer{text-align:center;padding:18px 0 22px;font-size:11px;font-weight:500;color:#b0b8c1;background:#f5f7fa;border-top:1px solid #e8edf2;letter-spacing:1.5px;margin-top:20px;}
+
+.sync-status{font-size:11px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:5px;padding:0 4px;white-space:nowrap;}
+.sync-overlay{position:fixed;inset:0;background:#f5f4f0;z-index:20000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+.sync-overlay-text{font-size:13px;color:#5f5e5a;font-weight:500;}
+.sync-spinner{width:28px;height:28px;border-radius:50%;border:3px solid rgba(0,0,0,.1);border-top-color:#1a1a18;animation:sync-spin 0.8s linear infinite;}
+@keyframes sync-spin{to{transform:rotate(360deg);}}
+
+@media(max-width:768px){
+ .header-inner{padding:10px 16px;}
+ .header-bar{padding:8px 16px;}
+ .dash{padding:14px 16px;}
+ .cal-grid{gap:4px;}
+ .cal-cell{min-height:76px;padding:4px 5px;}
+ .cat-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="sync-overlay" id="syncOverlay">
+  <div class="sync-spinner"></div>
+  <div class="sync-overlay-text" id="syncOverlayText">連線雲端資料中…</div>
+</div>
+
+<div id="pageWrap" class="page-wrap">
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-title">📋 MAO</div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tabCalBtn" onclick="switchTab('calendar')">📅 CALENDAR</button>
+      <button class="tab-btn" id="tabMeetingBtn" onclick="switchTab('meeting')">📝 MEETINGS</button>
+    </div>
+  </div>
+  <div class="header-bar-wrap"><div class="header-bar">
+    <span id="calNavControls" style="display:flex;align-items:center;gap:10px;">
+      <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+      <select class="month-select" id="monthSel" onchange="onMonthSelect(this.value)"></select>
+      <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+      <button class="hdr-btn" onclick="goToday()">TODAY</button>
+    </span>
+    <span class="scope-toggle" id="scopeToggleWrap">
+      <button class="scope-btn active" id="scopeAllBtn" onclick="setScope('all')">ALL</button>
+      <button class="scope-btn" id="scopeWorkBtn" onclick="setScope('work')">WORK</button>
+      <button class="scope-btn" id="scopePersonalBtn" onclick="setScope('personal')">PERSONAL</button>
+    </span>
+    <div style="flex:1;"></div>
+    <span class="sync-status" id="syncStatus">☁️ 連線中…</span>
+    <button class="hdr-btn" onclick="exportData()">匯出備份</button>
+    <button class="hdr-btn" onclick="document.getElementById('importFile').click()">匯入備份</button>
+    <input type="file" id="importFile" accept="application/json" style="display:none">
+  </div></div>
+</header>
+
+<div class="dash">
+
+  <div class="main-grid" id="calendarPage">
+    <div class="section cal-section">
+      <div class="cal-frame">
+        <div class="cal-sticky-head">
+          <div class="sec-title cal-sec-title">📅 CALENDAR</div>
+          <div class="cal-wd-row">
+            <div class="cal-wd">一</div><div class="cal-wd">二</div><div class="cal-wd">三</div><div class="cal-wd">四</div><div class="cal-wd">五</div><div class="cal-wd cal-wd-sat">六</div><div class="cal-wd cal-wd-sun">日</div>
+          </div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+    </div>
+
+    <div class="section proj-section">
+      <div class="sec-title proj-sec-title">🗂 PROJECTS<span style="display:flex;gap:6px;"><button class="add-cat-btn" id="manageCollabBtn">👥 人員</button><button class="add-cat-btn" id="addCatBtn">+ 新增分類</button></span></div>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+  </div>
+
+  <div id="meetingPage" style="display:none;">
+    <div class="section">
+      <div class="meeting-toolbar">
+        <div class="meeting-filter-row" id="meetingFilterRow"></div>
+        <button class="add-cat-btn" id="addMeetingBtn">+ 新增會議記錄</button>
+      </div>
+      <div class="meeting-filter-hint">點擊標籤可切換篩選，都不勾＝顯示全部</div>
+      <div id="meetingList"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">Created by MAO</footer>
+</div>
+
+<div class="note-panel" id="notePanel">
+  <div class="note-tab" id="noteTab">NOTE</div>
+  <div class="note-body">
+    <div class="note-title">NOTE</div>
+    <textarea class="note-textarea" id="noteTextarea" placeholder="隨手記點什麼…"></textarea>
+  </div>
+</div>
+
+<div class="modal-overlay" id="itemModalOverlay" style="display:none;">
+  <div class="modal-box" id="itemModalBox">
+    <div class="modal-hdr">
+      <span id="itemModalTitle">新增細項</span>
+      <button class="modal-close" id="itemModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">細項名稱</div>
+        <input type="text" id="itemModalName" class="modal-input" placeholder="輸入細項名稱">
+      </div>
+      <div>
+        <div class="modal-label">協同人員（可複選）</div>
+        <div class="meeting-filter-row" id="itemModalCollabRow"></div>
+      </div>
+      <div>
+        <div class="modal-label">備註</div>
+        <textarea id="itemModalNote" class="modal-textarea" placeholder="輸入備註（選填）"></textarea>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="itemModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="itemModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="projectModalOverlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="projectModalTitle">新增專案</span>
+      <button class="modal-close" id="projectModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">專案名稱</div>
+        <input type="text" id="projectModalName" class="modal-input" placeholder="輸入專案名稱">
+      </div>
+      <div>
+        <div class="modal-label">說明</div>
+        <textarea id="projectModalDesc" class="modal-textarea" placeholder="輸入專案說明（選填）"></textarea>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="projectModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="projectModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="quickEventModalOverlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="quickEventModalTitle">新增當天行程</span>
+      <button class="modal-close" id="quickEventModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">行程內容</div>
+        <input type="text" id="quickEventModalName" class="modal-input" placeholder="輸入行程內容，例如出國旅遊">
+      </div>
+      <div id="quickEventRangeRow">
+        <div class="modal-label">日期區間</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="quickEventStartDateLabel" style="font-size:12.5px;color:#1a1a18;background:#f5f4f0;padding:8px 10px;border-radius:8px;white-space:nowrap;"></span>
+          <span style="font-size:12px;color:#888780;">到</span>
+          <input type="date" id="quickEventEndDate" class="modal-input">
+        </div>
+        <div style="font-size:10.5px;color:#b0afa9;margin-top:4px;">選填，設定結束日期可一次建立整段期間的行程（例如出國連續好幾天）</div>
+      </div>
+      <div>
+        <div class="modal-label">範圍</div>
+        <div class="scope-pick" id="quickEventScopePick">
+          <span class="scope-pick-btn" data-scope="work">工作</span>
+          <span class="scope-pick-btn" data-scope="personal">個人</span>
+        </div>
+      </div>
+      <div>
+        <div class="modal-label">與會人員（可複選）</div>
+        <div class="meeting-filter-row" id="quickEventCollabRow"></div>
+      </div>
+      <div>
+        <div class="modal-label">說明備註</div>
+        <textarea id="quickEventModalNote" class="modal-textarea" placeholder="輸入說明備註（選填）"></textarea>
+      </div>
+      <div>
+        <div class="modal-label">顏色</div>
+        <div class="color-swatch-row" id="quickEventColorRow"></div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="quickEventModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="quickEventModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="categoryModalOverlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="categoryModalTitle">新增分類</span>
+      <button class="modal-close" id="categoryModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">分類名稱</div>
+        <input type="text" id="categoryModalName" class="modal-input" placeholder="輸入分類名稱">
+      </div>
+      <div id="categoryScopeRow">
+        <div class="modal-label">範圍</div>
+        <div class="scope-pick" id="categoryScopePick">
+          <span class="scope-pick-btn" data-scope="work">工作</span>
+          <span class="scope-pick-btn" data-scope="personal">個人</span>
+        </div>
+      </div>
+      <div>
+        <div class="modal-label">顏色</div>
+        <div class="color-swatch-row" id="categoryColorRow"></div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="categoryModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="categoryModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="meetingModalOverlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="meetingModalTitle">新增會議記錄</span>
+      <button class="modal-close" id="meetingModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">日期</div>
+        <input type="date" id="meetingModalDate" class="modal-input">
+      </div>
+      <div>
+        <div class="modal-label">類別（可複選）</div>
+        <div class="meeting-filter-row" id="meetingModalCatRow"></div>
+      </div>
+      <div>
+        <div class="modal-label">標題</div>
+        <input type="text" id="meetingModalName" class="modal-input" placeholder="輸入會議標題">
+      </div>
+      <div>
+        <div class="modal-label">內容 / 記錄</div>
+        <textarea id="meetingModalContent" class="modal-textarea" placeholder="輸入會議內容、結論、待辦事項…"></textarea>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="meetingModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="meetingModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="collaboratorModalOverlay" style="display:none;z-index:10000;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span>👥 人員名單</span>
+      <button class="modal-close" id="collaboratorModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="collaboratorManageList" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <button class="add-proj-btn" id="addCollaboratorBtn">+ 新增人員</button>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-save" id="collaboratorModalDoneBtn">完成</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ── Firebase 雲端同步（即時同步用，讀寫失敗會自動 fallback 回本機資料）─────────────────────────────
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC8XhEcB0K6QpHudDFgrfZXCanB1CnjNHk",
+  authDomain: "mao-dashboard.firebaseapp.com",
+  projectId: "mao-dashboard",
+  storageBucket: "mao-dashboard.firebasestorage.app",
+  messagingSenderId: "584431983160",
+  appId: "1:584431983160:web:2a8aab9eaa5c75935b64cd"
+};
+
+try{
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const docRef = doc(db, "dashboard", "data");
+  window.__fb = { docRef, setDoc, onSnapshot };
+}catch(e){
+  console.warn('Firebase 初始化失敗，將只用本機資料', e);
+}
+window.__fbReady = true;
+window.dispatchEvent(new Event('fbready'));
+</script>
+
+<script>
+// ── 常數與工具 ─────────────────────────────
+const STORAGE_KEY = 'workDashboard_v1';
+const COLORS = [
+  {bg:'#E6F1FB', text:'#185FA5'}, // 藍
+  {bg:'#E3F3E0', text:'#2F6B1F'}, // 綠
+  {bg:'#FBEAF0', text:'#993556'}, // 粉
+  {bg:'#FFF3D6', text:'#9A6B00'}, // 黃
+  {bg:'#F3E8FB', text:'#6B3FA0'}, // 紫
+  {bg:'#E9E9E6', text:'#5f5e5a'}, // 灰
+  {bg:'#FCEBEB', text:'#A32D2D'}, // 紅
+  {bg:'#DFF3EE', text:'#0F6E56'}, // 藍綠
+  {bg:'#FDEAD9', text:'#B5501C'}, // 橘
+  {bg:'#E6E9FB', text:'#33399B'}, // 靛藍
+  {bg:'#F1E7DD', text:'#7A5230'}, // 棕
+  {bg:'#DEF3FB', text:'#0E7490'}, // 天藍
+];
+
+// 會議記錄分類的預設清單（僅在第一次建立資料 / 舊資料補欄位時使用，之後使用者可自由新增/刪除/排序）
+const DEFAULT_MEETING_CATEGORIES = [
+  {id:'mkt',     name:'行銷部',   color:0},
+  {id:'cs',      name:'客服部',   color:1},
+  {id:'mgmt',    name:'主管會議', color:5},
+  {id:'betsy',   name:'Betsy',    color:2},
+  {id:'yuanwo',  name:'原渥',     color:4},
+  {id:'yuanqi',  name:'原綺',     color:7},
+  {id:'hr1on1',  name:'員工面談', color:8},
+];
+function getMeetingCat(catId){
+  return STATE.meetingCategories.find(c => c.id === catId) || null;
+}
+
+// 協同人員的預設清單（僅在第一次建立資料 / 舊資料補欄位時使用，之後使用者可自由新增/刪除/排序）
+const DEFAULT_COLLABORATORS = [
+  {id:'alice',  name:'Alice',  color:0},
+  {id:'ariel',  name:'Ariel',  color:1},
+  {id:'youi',   name:'Youi',   color:2},
+  {id:'tracy',  name:'Tracy',  color:4},
+  {id:'nicole', name:'Nicole', color:7},
+  {id:'siling', name:'思菱',   color:9},
+];
+function getCollaborator(collabId){
+  return STATE.collaborators.find(c => c.id === collabId) || null;
+}
+
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function pad2(n){ return String(n).padStart(2,'0'); }
+function dateStr(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
+function todayStr(){ const t=new Date(); return dateStr(t.getFullYear(), t.getMonth(), t.getDate()); }
+
+// ── 台灣國定假日／補假（依行政院人事行政總處 2025-2027 年辦公日曆表）─────────
+// 涵蓋範圍：2025~2027（含跨2028元旦連假），之後年份可依同樣方式擴充
+const HOLIDAYS = {};
+function addHolidayRange(startISO, endISO, label){
+  let d = new Date(startISO + 'T00:00:00');
+  const end = new Date(endISO + 'T00:00:00');
+  while(d <= end){
+    HOLIDAYS[dateStr(d.getFullYear(), d.getMonth(), d.getDate())] = label;
+    d.setDate(d.getDate() + 1);
+  }
+}
+// 2025（114年）
+addHolidayRange('2025-01-01','2025-01-01','元旦');
+addHolidayRange('2025-01-25','2025-02-02','春節');
+addHolidayRange('2025-02-28','2025-03-02','和平紀念日');
+addHolidayRange('2025-04-03','2025-04-06','兒童節/清明節');
+addHolidayRange('2025-05-01','2025-05-01','勞動節');
+addHolidayRange('2025-05-30','2025-06-01','端午節');
+addHolidayRange('2025-09-27','2025-09-29','教師節');
+addHolidayRange('2025-10-04','2025-10-06','中秋節');
+addHolidayRange('2025-10-10','2025-10-12','國慶日');
+addHolidayRange('2025-10-24','2025-10-26','光復節');
+addHolidayRange('2025-12-25','2025-12-25','行憲紀念日');
+// 2026（115年）
+addHolidayRange('2026-01-01','2026-01-01','元旦');
+addHolidayRange('2026-02-14','2026-02-22','春節');
+addHolidayRange('2026-02-27','2026-03-01','和平紀念日');
+addHolidayRange('2026-04-03','2026-04-06','兒童節/清明節');
+addHolidayRange('2026-05-01','2026-05-03','勞動節');
+addHolidayRange('2026-06-19','2026-06-21','端午節');
+addHolidayRange('2026-09-25','2026-09-28','中秋節/教師節');
+addHolidayRange('2026-10-09','2026-10-11','國慶日');
+addHolidayRange('2026-10-24','2026-10-26','光復節');
+addHolidayRange('2026-12-25','2026-12-27','行憲紀念日');
+// 2027（116年）
+addHolidayRange('2027-01-01','2027-01-03','元旦');
+addHolidayRange('2027-02-04','2027-02-10','春節');
+addHolidayRange('2027-02-27','2027-03-01','和平紀念日');
+addHolidayRange('2027-04-03','2027-04-06','兒童節/清明節');
+addHolidayRange('2027-04-30','2027-05-02','勞動節');
+addHolidayRange('2027-06-09','2027-06-09','端午節');
+addHolidayRange('2027-09-15','2027-09-15','中秋節');
+addHolidayRange('2027-09-28','2027-09-28','教師節');
+addHolidayRange('2027-10-09','2027-10-11','國慶日');
+addHolidayRange('2027-10-23','2027-10-25','光復節');
+addHolidayRange('2027-12-24','2027-12-26','行憲紀念日');
+addHolidayRange('2027-12-31','2028-01-02','元旦'); // 跨年連假
+
+// 補班日（原本是週六，但因彈性放假被排入上班）
+const MAKEUP_WORKDAYS = {
+  '2025-02-08': '春節補班',
+};
+
+function defaultState(){
+  // 大分類（4 個）
+  const catMarketing = {id:uid(), name:'行銷',     color:0, scope:'work'};
+  const catData      = {id:uid(), name:'數據分析', color:1, scope:'work'};
+  const catHR        = {id:uid(), name:'部門人事', color:2, scope:'work'};
+  const catPersonal  = {id:uid(), name:'個人',     color:3, scope:'personal'};
+
+  const t = new Date();
+  const demoDate1 = dateStr(t.getFullYear(), t.getMonth(), Math.min(t.getDate()+2, 27));
+  const demoDate2 = dateStr(t.getFullYear(), t.getMonth(), Math.min(t.getDate()+5, 27));
+
+  return {
+    categories: [catMarketing, catData, catHR, catPersonal],
+    // 專案＝子分類，掛在各大分類底下；細項則掛在每個專案底下
+    projects: [
+      {
+        id: uid(), categoryId: catMarketing.id, name: 'A專案（範例）', desc:'配合618檔期，主推新客戶引流方案，預算上限8萬', collapsed:false, deadline: demoDate1,
+        items: [
+          {id:uid(), text:'撰寫文案',   done:false, date:null},
+          {id:uid(), text:'設計素材',   done:false, date:demoDate1, note:'用品牌色系，週三前給設計師初稿'},
+          {id:uid(), text:'投放廣告',   done:true,  date:null},
+        ]
+      },
+      {
+        id: uid(), categoryId: catMarketing.id, name: 'B專案（範例）', collapsed:true,
+        items: [
+          {id:uid(), text:'競品調查', done:false, date:null},
+          {id:uid(), text:'成效報告', done:false, date:demoDate2},
+        ]
+      },
+      {
+        id: uid(), categoryId: catPersonal.id, name: '個人成長', collapsed:false,
+        items: [
+          {id:uid(), text:'閱讀一本書', done:false, date:null},
+        ]
+      },
+    ],
+    // 不隸屬任何專案的「當天行程」，直接從月曆新增（例如約會）
+    quickEvents: [
+      {id:uid(), text:'牙醫約診', done:false, date:demoDate1, color:3, scope:'personal', collaboratorIds:[]},
+    ],
+    // 會議記錄（範例）
+    meetings: [
+      {id:uid(), date:todayStr(), catIds:['mkt','betsy'], title:'七月社群成效檢討', content:'討論 IG 互動率下滑原因，8月起改用短影音為主，Betsy 負責腳本初稿。', collapsed:true},
+    ],
+    meetingCategories: DEFAULT_MEETING_CATEGORIES.map(c => ({...c})), // 使用者可自由新增/刪除/拖曳排序
+    meetingFilter: [], // 勾選中的會議類別 id，空陣列＝顯示全部（＝「全部」）
+    meetingMonthCollapsed: {}, // {'YYYY-MM': true/false}，key 不存在時預設為收合
+    collaborators: DEFAULT_COLLABORATORS.map(c => ({...c})), // 協同人員名單，使用者可自由新增/刪除/拖曳排序
+    currentYear: t.getFullYear(),
+    currentMonth: t.getMonth(), // 0-indexed，自動抓今天所在月份
+    currentScope: 'all', // 'all' | 'work' | 'personal'，行事曆／專案清單的顯示範圍
+    scratchNote: '', // 右側 NOTE 面板的臨時筆記內容
+  };
+}
+
+let STATE = null;
+
+// 把任何一份可能不完整/舊版本的資料，補齊成目前版本需要的完整結構
+function normalizeState(s){
+  const def = defaultState();
+  if(!s || !Array.isArray(s.categories) || !Array.isArray(s.projects)){
+    s = def;
+  }
+  if(typeof s.currentYear !== 'number') s.currentYear = def.currentYear;
+  if(typeof s.currentMonth !== 'number') s.currentMonth = def.currentMonth;
+  if(!Array.isArray(s.quickEvents)) s.quickEvents = [];
+  if(!Array.isArray(s.meetings)) s.meetings = [];
+  if(!Array.isArray(s.meetingCategories)) s.meetingCategories = DEFAULT_MEETING_CATEGORIES.map(c => ({...c}));
+  if(!Array.isArray(s.meetingFilter)) s.meetingFilter = [];
+  if(!s.meetingMonthCollapsed || typeof s.meetingMonthCollapsed !== 'object') s.meetingMonthCollapsed = {};
+  if(!Array.isArray(s.collaborators)) s.collaborators = DEFAULT_COLLABORATORS.map(c => ({...c}));
+  s.projects.forEach(p => {
+    if(typeof p.desc !== 'string') p.desc = '';
+    p.items.forEach(it => {
+      if(!Array.isArray(it.collaboratorIds)){
+        it.collaboratorIds = it.collaboratorId ? [it.collaboratorId] : [];
+      }
+      delete it.collaboratorId;
+    });
+  });
+  if(typeof s.scratchNote !== 'string') s.scratchNote = '';
+  if(typeof s.currentScope !== 'string') s.currentScope = 'all';
+  s.categories.forEach(c => { if(typeof c.scope !== 'string') c.scope = /個人/.test(c.name) ? 'personal' : 'work'; });
+  s.quickEvents.forEach(e => {
+    if(typeof e.scope !== 'string') e.scope = 'personal';
+    if(!Array.isArray(e.collaboratorIds)) e.collaboratorIds = [];
+    if(typeof e.note !== 'string') e.note = '';
+  });
+  return s;
+}
+
+// 本機備用資料（雲端連不上時的 fallback）
+function loadState(){
+  let s = null;
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) s = JSON.parse(raw);
+  }catch(e){ s = null; }
+  STATE = normalizeState(s);
+}
+
+let saveTimer = null;
+let lastPushedCloudJson = null;
+function saveState(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    const json = JSON.stringify(STATE);
+    try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){}
+    if(window.__fb){
+      lastPushedCloudJson = json;
+      window.__fb.setDoc(window.__fb.docRef, {data: json, updatedAt: Date.now()})
+        .then(() => setSyncStatus('ok'))
+        .catch(() => setSyncStatus('error'));
+    }
+  }, 150);
+}
+
+function allItems(){
+  const out = [];
+  STATE.projects.forEach(p=>{ p.items.forEach(it=>out.push({item:it, project:p})); });
+  return out;
+}
+function findItem(itemId){
+  for(const p of STATE.projects){
+    const it = p.items.find(i=>i.id===itemId);
+    if(it) return {item:it, project:p};
+  }
+  return null;
+}
+// 某一天所有要顯示的項目：專案細項（project 不為 null）＋ 直接在月曆新增的行程（project 為 null）
+function scheduledForDate(ds){
+  const out = allItems().filter(x => x.item.date === ds);
+  STATE.quickEvents.filter(e => e.date === ds).forEach(e => out.push({item:e, project:null}));
+  return out;
+}
+let quickEventDate = null;
+let quickEventEditId = null;
+let quickEventSelectedColor = 3;
+let quickEventSelectedScope = 'personal';
+let quickEventSelectedCollabs = [];
+
+function openQuickEventModal(ds, existing){
+  quickEventDate = ds;
+  quickEventEditId = existing ? existing.id : null;
+  document.getElementById('quickEventModalTitle').textContent = existing ? '編輯當天行程' : '新增當天行程';
+  document.getElementById('quickEventModalName').value = existing ? existing.text : '';
+  document.getElementById('quickEventModalNote').value = existing ? (existing.note || '') : '';
+  quickEventSelectedColor = existing && typeof existing.color === 'number' ? existing.color : 3;
+  renderQuickEventColorSwatches();
+  quickEventSelectedScope = existing && typeof existing.scope === 'string'
+    ? existing.scope
+    : (STATE.currentScope !== 'all' ? STATE.currentScope : 'personal');
+  renderQuickEventScopePicker();
+  quickEventSelectedCollabs = existing ? [...(existing.collaboratorIds || [])] : [];
+  renderQuickEventCollabChips();
+
+  const rangeRow = document.getElementById('quickEventRangeRow');
+  const endInput = document.getElementById('quickEventEndDate');
+  if(existing){
+    rangeRow.style.display = 'none';
+  }else{
+    rangeRow.style.display = '';
+    document.getElementById('quickEventStartDateLabel').textContent = ds.slice(5).replace('-', '/');
+    endInput.min = ds;
+    endInput.value = '';
+  }
+
+  document.getElementById('quickEventModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('quickEventModalName').focus(), 0);
+}
+
+function renderQuickEventColorSwatches(){
+  const row = document.getElementById('quickEventColorRow');
+  row.innerHTML = '';
+  COLORS.forEach((c, idx) => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (idx === quickEventSelectedColor ? ' selected' : '');
+    sw.style.background = c.bg;
+    sw.title = c.bg;
+    sw.onclick = () => { quickEventSelectedColor = idx; renderQuickEventColorSwatches(); };
+    row.appendChild(sw);
+  });
+}
+
+function closeQuickEventModal(){
+  document.getElementById('quickEventModalOverlay').style.display = 'none';
+  quickEventDate = null; quickEventEditId = null;
+}
+
+function renderQuickEventScopePicker(){
+  document.querySelectorAll('#quickEventScopePick .scope-pick-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.scope === quickEventSelectedScope);
+    btn.onclick = () => { quickEventSelectedScope = btn.dataset.scope; renderQuickEventScopePicker(); };
+  });
+}
+
+function renderQuickEventCollabChips(){
+  const row = document.getElementById('quickEventCollabRow');
+  row.innerHTML = '';
+  STATE.collaborators.forEach(person => {
+    const active = quickEventSelectedCollabs.includes(person.id);
+    const color = COLORS[person.color % COLORS.length];
+    const chip = document.createElement('span');
+    chip.className = 'meeting-chip' + (active ? ' active' : '');
+    if(active){ chip.style.background = color.bg; chip.style.color = color.text; }
+    chip.textContent = (active ? '✓ ' : '') + person.name;
+    chip.onclick = () => {
+      const idx = quickEventSelectedCollabs.indexOf(person.id);
+      if(idx === -1) quickEventSelectedCollabs.push(person.id);
+      else quickEventSelectedCollabs.splice(idx, 1);
+      renderQuickEventCollabChips();
+    };
+    row.appendChild(chip);
+  });
+  if(STATE.collaborators.length === 0){
+    const hint = document.createElement('span');
+    hint.style.fontSize = '11px'; hint.style.color = '#b0afa9';
+    hint.textContent = '目前沒有人員，可到「👥 人員」新增';
+    row.appendChild(hint);
+  }
+}
+
+function saveQuickEventModal(){
+  const text = document.getElementById('quickEventModalName').value.trim();
+  const note = document.getElementById('quickEventModalNote').value.trim();
+  if(!text){ alert('請輸入行程內容'); return; }
+  const collaboratorIds = [...quickEventSelectedCollabs];
+  if(quickEventEditId){
+    const ev = STATE.quickEvents.find(e => e.id === quickEventEditId);
+    if(ev){ ev.text = text; ev.color = quickEventSelectedColor; ev.scope = quickEventSelectedScope; ev.collaboratorIds = collaboratorIds; ev.note = note; }
+  }else{
+    const startVal = quickEventDate;
+    const endVal = document.getElementById('quickEventEndDate').value;
+    const endValid = endVal && endVal >= startVal;
+    const endDate = endValid ? endVal : startVal;
+    let d = new Date(startVal + 'T00:00:00');
+    const end = new Date(endDate + 'T00:00:00');
+    while(d <= end){
+      const ds2 = dateStr(d.getFullYear(), d.getMonth(), d.getDate());
+      STATE.quickEvents.push({id:uid(), text, done:false, date:ds2, color:quickEventSelectedColor, scope:quickEventSelectedScope, collaboratorIds, note});
+      d.setDate(d.getDate() + 1);
+    }
+  }
+  saveState();
+  closeQuickEventModal();
+  renderAll();
+}
+
+// ── 月曆 ─────────────────────────────
+function renderMonthSelect(){
+  const sel = document.getElementById('monthSel');
+  sel.innerHTML = '';
+  const y = STATE.currentYear;
+  for(let yy=y-1; yy<=y+1; yy++){
+    for(let mm=0; mm<12; mm++){
+      const opt = document.createElement('option');
+      opt.value = `${yy}-${mm}`;
+      opt.textContent = `${yy}/${pad2(mm+1)}`;
+      if(yy===STATE.currentYear && mm===STATE.currentMonth) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  }
+}
+
+function onMonthSelect(val){
+  const [y,m] = val.split('-').map(Number);
+  STATE.currentYear = y; STATE.currentMonth = m;
+  saveState(); renderCalendar(); renderMonthSelect();
+}
+
+function changeMonth(delta){
+  let m = STATE.currentMonth + delta;
+  let y = STATE.currentYear;
+  if(m < 0){ m = 11; y--; }
+  if(m > 11){ m = 0; y++; }
+  STATE.currentMonth = m; STATE.currentYear = y;
+  saveState(); renderMonthSelect(); renderCalendar();
+}
+
+function goToday(){
+  const t = new Date();
+  STATE.currentYear = t.getFullYear();
+  STATE.currentMonth = t.getMonth();
+  saveState(); renderMonthSelect(); renderCalendar();
+}
+
+function renderCalendar(){
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  const y = STATE.currentYear, m = STATE.currentMonth;
+  // getDay(): 日0 一1 二2 三3 四4 五5 六6 → 轉成「一到日」排序：一0 二1 三2 四3 五4 六5 日6
+  const firstDow = (new Date(y, m, 1).getDay() + 6) % 7;
+  const daysInThisMonth = new Date(y, m+1, 0).getDate();
+  const daysInPrevMonth = new Date(y, m, 0).getDate();
+  const totalCells = Math.ceil((firstDow + daysInThisMonth) / 7) * 7;
+  const today = todayStr();
+
+  for(let i=0; i<totalCells; i++){
+    const dayNum = i - firstDow + 1;
+    let cellY = y, cellM = m, cellD = dayNum, outside = false;
+    if(dayNum < 1){
+      cellM = m - 1; cellY = y;
+      if(cellM < 0){ cellM = 11; cellY = y - 1; }
+      cellD = daysInPrevMonth + dayNum; outside = true;
+    }else if(dayNum > daysInThisMonth){
+      cellM = m + 1; cellY = y;
+      if(cellM > 11){ cellM = 0; cellY = y + 1; }
+      cellD = dayNum - daysInThisMonth; outside = true;
+    }
+    const ds = dateStr(cellY, cellM, cellD);
+    const wd = new Date(cellY, cellM, cellD).getDay(); // 0=日 6=六
+    const isSat = wd === 6, isSun = wd === 0;
+    const makeupName = MAKEUP_WORKDAYS[ds];
+    const isWeekend = (isSat || isSun) && !makeupName; // 補班日視同上班日，不算週末
+    const holidayName = HOLIDAYS[ds];
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell'
+      + (outside ? ' outside' : '')
+      + (isWeekend ? ' weekend' : '')
+      + (holidayName ? ' holiday' : '')
+      + (ds === today ? ' today' : '');
+    cell.dataset.date = ds;
+
+    const dateRow = document.createElement('div');
+    dateRow.className = 'cal-date-row';
+    const dateEl = document.createElement('span');
+    dateEl.className = 'cal-date'
+      + (isSat ? ' sat' : '') + (isSun ? ' sun' : '')
+      + (ds === today ? ' today' : '');
+    dateEl.textContent = cellD;
+    dateRow.appendChild(dateEl);
+    if(!outside){
+      const addBtn = document.createElement('button');
+      addBtn.className = 'cal-add-btn';
+      addBtn.textContent = '+';
+      addBtn.title = '新增當天行程（例如約會）';
+      addBtn.onclick = (e) => { e.stopPropagation(); openQuickEventModal(ds, null); };
+      dateRow.appendChild(addBtn);
+    }
+    cell.appendChild(dateRow);
+
+    if(holidayName){
+      const hLabel = document.createElement('div');
+      hLabel.className = 'cal-holiday-label';
+      hLabel.textContent = holidayName;
+      hLabel.title = holidayName + '（國定假日）';
+      cell.appendChild(hLabel);
+    }else if(makeupName){
+      const mLabel = document.createElement('div');
+      mLabel.className = 'cal-makeup-label';
+      mLabel.textContent = '補班';
+      mLabel.title = makeupName;
+      cell.appendChild(mLabel);
+    }
+
+    const itemsWrap = document.createElement('div');
+    itemsWrap.className = 'cal-items';
+    scheduledForDate(ds).forEach(({item, project}) => {
+      const itemScope = project ? getCategoryScope(project.categoryId) : (item.scope || 'personal');
+      if(STATE.currentScope !== 'all' && itemScope !== STATE.currentScope) return;
+      itemsWrap.appendChild(buildCalChip(item, project));
+    });
+    cell.appendChild(itemsWrap);
+
+    if(!outside){
+      cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('dragover'); });
+      cell.addEventListener('dragleave', () => cell.classList.remove('dragover'));
+      cell.addEventListener('drop', e => {
+        e.preventDefault();
+        cell.classList.remove('dragover');
+        const itemId = e.dataTransfer.getData('text/plain');
+        const found = findItem(itemId);
+        if(found){
+          found.item.date = ds; saveState(); renderAll();
+        }else{
+          const qe = STATE.quickEvents.find(ev => ev.id === itemId);
+          if(qe){ qe.date = ds; saveState(); renderAll(); }
+        }
+      });
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function getCategoryColor(catId){
+  const cat = STATE.categories.find(c => c.id === catId);
+  return COLORS[(cat ? cat.color : COLORS.length - 1) % COLORS.length];
+}
+
+function getCategoryScope(catId){
+  const cat = STATE.categories.find(c => c.id === catId);
+  return cat ? (cat.scope || 'work') : 'work';
+}
+
+function buildCalChip(item, project){
+  // project 為 null 代表這是直接在月曆新增的行程（不隸屬任何專案）
+  const chip = document.createElement('div');
+  chip.className = 'cal-chip' + (item.done ? ' done' : '') + (project ? '' : ' standalone');
+
+  const colorObj = project
+    ? getCategoryColor(project.categoryId)
+    : COLORS[(typeof item.color === 'number' ? item.color : 3) % COLORS.length];
+  chip.style.background = project ? colorObj.bg : colorObj.text;
+
+  if(!project){
+    chip.draggable = true;
+    chip.style.cursor = 'grab';
+    chip.title = '拖曳可移到其他日期';
+    chip.ondragstart = (e) => {
+      e.dataTransfer.setData('text/plain', item.id);
+      e.dataTransfer.effectAllowed = 'move';
+    };
+  }
+
+  if(project){
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = !!item.done;
+    cb.onchange = () => { item.done = cb.checked; saveState(); renderAll(); };
+    chip.appendChild(cb);
+  }
+
+  const txt = document.createElement('span');
+  txt.className = 'txt';
+  txt.textContent = item.text;
+  const collabs = (item.collaboratorIds || []).map(getCollaborator).filter(Boolean);
+  const collabNames = collabs.map(c => c.name).join('、');
+  const noteSuffix = item.note && item.note.trim() ? `\n備註：${item.note}` : '';
+  const collabSuffix = collabNames ? `\n協同人員：${collabNames}` : '';
+  txt.title = (project ? `${project.name}｜${item.text}` : `當天行程｜${item.text}（點擊可編輯）`) + noteSuffix + collabSuffix;
+  if(!project){
+    txt.style.cursor = 'pointer';
+    txt.onclick = (e) => { e.stopPropagation(); openQuickEventModal(item.date, item); };
+  }
+
+  if(collabNames){
+    const txtCol = document.createElement('div');
+    txtCol.className = 'cal-chip-txtcol';
+    txtCol.appendChild(txt);
+    const collabLine = document.createElement('div');
+    collabLine.className = 'cal-chip-collab';
+    collabLine.textContent = collabNames;
+    txtCol.appendChild(collabLine);
+    chip.appendChild(txtCol);
+  }else{
+    chip.appendChild(txt);
+  }
+
+  const rm = document.createElement('span');
+  rm.className = 'rm';
+  rm.textContent = '✕';
+  if(project){
+    rm.title = '取消排定（不會刪除細項）';
+    rm.onclick = () => { item.date = null; saveState(); renderAll(); };
+  }else{
+    rm.title = '刪除這筆行程';
+    rm.onclick = () => {
+      STATE.quickEvents = STATE.quickEvents.filter(e => e.id !== item.id);
+      saveState(); renderAll();
+    };
+  }
+  chip.appendChild(rm);
+
+  return chip;
+}
+
+// ── 分類 / 專案 / 細項 ─────────────────────────────
+function renderCategories(){
+  const wrap = document.getElementById('catGrid');
+  wrap.innerHTML = '';
+
+  STATE.categories.forEach(cat => {
+    if(STATE.currentScope !== 'all' && (cat.scope || 'work') !== STATE.currentScope) return;
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    card.dataset.catId = cat.id;
+    const color = COLORS[cat.color % COLORS.length];
+
+    card.addEventListener('dragover', e => {
+      if(e.dataTransfer.types.includes('application/x-category-id')){
+        e.preventDefault();
+        const rect = card.getBoundingClientRect();
+        const before = (e.clientY - rect.top) < rect.height / 2;
+        card.classList.toggle('cat-drop-before', before);
+        card.classList.toggle('cat-drop-after', !before);
+      }else if(e.dataTransfer.types.includes('application/x-project-id')){
+        e.preventDefault();
+        card.classList.add('cat-dragover');
+      }
+    });
+    card.addEventListener('dragleave', () => {
+      card.classList.remove('cat-dragover', 'cat-drop-before', 'cat-drop-after');
+    });
+    card.addEventListener('drop', e => {
+      if(e.dataTransfer.types.includes('application/x-category-id')){
+        e.preventDefault();
+        const rect = card.getBoundingClientRect();
+        const before = (e.clientY - rect.top) < rect.height / 2;
+        card.classList.remove('cat-drop-before', 'cat-drop-after');
+        const draggedId = e.dataTransfer.getData('application/x-category-id');
+        if(draggedId && draggedId !== cat.id) reorderCategory(draggedId, cat.id, before);
+      }
+    });
+
+    const hdr = document.createElement('div');
+    hdr.className = 'cat-hdr';
+
+    const hdrLeft = document.createElement('div');
+    hdrLeft.className = 'cat-hdr-l';
+
+    const catDragHandle = document.createElement('span');
+    catDragHandle.className = 'cat-drag-handle';
+    catDragHandle.textContent = '⠿';
+    catDragHandle.title = '拖曳可調整分類順序';
+    catDragHandle.draggable = true;
+    catDragHandle.ondragstart = (e) => {
+      e.dataTransfer.setData('application/x-category-id', cat.id);
+      e.dataTransfer.effectAllowed = 'move';
+    };
+    hdrLeft.appendChild(catDragHandle);
+
+    const chev = document.createElement('span');
+    chev.className = 'cat-chev' + (cat.collapsed ? '' : ' open');
+    chev.textContent = '▾';
+    hdrLeft.appendChild(chev);
+
+    const tag = document.createElement('span');
+    tag.className = 'cat-tag';
+    tag.style.background = color.bg; tag.style.color = color.text;
+    tag.textContent = cat.name;
+    tag.title = '點擊編輯名稱與顏色';
+    tag.onclick = () => openCategoryModal(cat);
+    hdrLeft.appendChild(tag);
+
+    hdr.appendChild(hdrLeft);
+
+    const del = document.createElement('button');
+    del.className = 'cat-del'; del.textContent = '✕';
+    del.title = '刪除分類（含底下所有專案）';
+    del.onclick = () => {
+      if(confirm(`確定刪除分類「${cat.name}」？底下的專案與細項都會一併刪除。`)){
+        STATE.projects = STATE.projects.filter(p => p.categoryId !== cat.id);
+        STATE.categories = STATE.categories.filter(c => c.id !== cat.id);
+        saveState(); renderAll();
+      }
+    };
+    hdr.appendChild(del);
+
+    hdr.onclick = (e) => {
+      if(e.target === tag || e.target === del || e.target === catDragHandle) return;
+      cat.collapsed = !cat.collapsed;
+      saveState(); renderAll();
+    };
+    hdr.style.cursor = 'pointer';
+
+    card.appendChild(hdr);
+
+    card.addEventListener('drop', e => {
+      if(!e.dataTransfer.types.includes('application/x-project-id')) return;
+      e.preventDefault();
+      card.classList.remove('cat-dragover');
+      const draggedId = e.dataTransfer.getData('application/x-project-id');
+      if(draggedId) moveProjectToCategory(draggedId, cat.id);
+    });
+
+    const catBody = document.createElement('div');
+    catBody.className = 'cat-body' + (cat.collapsed ? '' : ' open');
+
+    STATE.projects.filter(p => p.categoryId === cat.id).forEach(proj => {
+      catBody.appendChild(buildProjectBlock(proj));
+    });
+
+    const addProjBtn = document.createElement('button');
+    addProjBtn.className = 'add-proj-btn';
+    addProjBtn.textContent = '+ 新增專案';
+    addProjBtn.onclick = () => openProjectModal('add', cat, null);
+    catBody.appendChild(addProjBtn);
+
+    card.appendChild(catBody);
+
+    wrap.appendChild(card);
+  });
+}
+
+function buildDeadlineBadge(proj){
+  if(!proj.deadline){
+    const add = document.createElement('span');
+    add.className = 'proj-deadline proj-deadline-empty';
+    add.textContent = '+ 設定期限';
+    add.title = '設定專案期限';
+    add.onclick = (e) => { e.stopPropagation(); setProjectDeadline(proj, add); };
+    return add;
+  }
+  const d = new Date(proj.deadline + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diffDays = Math.round((d - today) / 86400000);
+  const mmdd = proj.deadline.slice(5).replace('-','/');
+  const badge = document.createElement('span');
+  badge.title = '點擊修改或清除期限';
+  badge.onclick = (e) => { e.stopPropagation(); setProjectDeadline(proj, badge); };
+  if(diffDays < 0){
+    badge.className = 'proj-deadline proj-deadline-over';
+    badge.textContent = `已逾期 ${mmdd}`;
+  }else if(diffDays <= 3){
+    badge.className = 'proj-deadline proj-deadline-soon';
+    badge.textContent = diffDays === 0 ? '今天到期' : `還有${diffDays}天・${mmdd}`;
+  }else{
+    badge.className = 'proj-deadline proj-deadline-normal';
+    badge.textContent = `${mmdd} 截止`;
+  }
+  return badge;
+}
+
+let deadlinePickerTarget = null;
+function getDeadlinePickerInput(){
+  let input = document.getElementById('deadlinePickerInput');
+  if(!input){
+    input = document.createElement('input');
+    input.type = 'date';
+    input.id = 'deadlinePickerInput';
+    input.style.position = 'fixed';
+    input.style.opacity = '0';
+    input.style.pointerEvents = 'none';
+    input.style.width = '1px';
+    input.style.height = '1px';
+    document.body.appendChild(input);
+    input.addEventListener('change', () => {
+      if(deadlinePickerTarget){
+        deadlinePickerTarget.deadline = input.value || null;
+        saveState(); renderAll();
+      }
+    });
+  }
+  return input;
+}
+
+function setProjectDeadline(proj, anchorEl){
+  deadlinePickerTarget = proj;
+  const input = getDeadlinePickerInput();
+  if(anchorEl && anchorEl.getBoundingClientRect){
+    const r = anchorEl.getBoundingClientRect();
+    input.style.left = r.left + 'px';
+    input.style.top = r.bottom + 'px';
+  }
+  input.value = proj.deadline || '';
+  if(typeof input.showPicker === 'function'){
+    try{ input.showPicker(); }catch(e){ input.focus(); input.click(); }
+  }else{
+    input.focus();
+    input.click();
+  }
+}
+
+function reorderCategory(draggedId, targetId, insertBefore){
+  const draggedIdx = STATE.categories.findIndex(c => c.id === draggedId);
+  if(draggedIdx === -1) return;
+  const dragged = STATE.categories.splice(draggedIdx, 1)[0];
+  const targetIdx = STATE.categories.findIndex(c => c.id === targetId);
+  if(targetIdx === -1){
+    STATE.categories.push(dragged);
+  }else{
+    const insertAt = insertBefore ? targetIdx : targetIdx + 1;
+    STATE.categories.splice(insertAt, 0, dragged);
+  }
+  saveState();
+  renderAll();
+}
+
+function reorderProject(draggedId, targetId, insertBefore){
+  const draggedIdx = STATE.projects.findIndex(p => p.id === draggedId);
+  if(draggedIdx === -1) return;
+  const dragged = STATE.projects.splice(draggedIdx, 1)[0];
+  const targetIdx = STATE.projects.findIndex(p => p.id === targetId);
+  if(targetIdx === -1){
+    STATE.projects.push(dragged);
+  }else{
+    dragged.categoryId = STATE.projects[targetIdx].categoryId;
+    const insertAt = insertBefore ? targetIdx : targetIdx + 1;
+    STATE.projects.splice(insertAt, 0, dragged);
+  }
+  saveState();
+  renderAll();
+}
+
+function moveProjectToCategory(draggedId, categoryId){
+  const draggedIdx = STATE.projects.findIndex(p => p.id === draggedId);
+  if(draggedIdx === -1) return;
+  const dragged = STATE.projects.splice(draggedIdx, 1)[0];
+  dragged.categoryId = categoryId;
+  STATE.projects.push(dragged);
+  saveState();
+  renderAll();
+}
+
+function buildProjectBlock(proj){
+  const blk = document.createElement('div');
+  blk.className = 'proj-blk';
+  blk.dataset.projId = proj.id;
+
+  blk.addEventListener('dragover', e => {
+    if(!e.dataTransfer.types.includes('application/x-project-id')) return;
+    e.preventDefault();
+    const rect = blk.getBoundingClientRect();
+    const before = (e.clientY - rect.top) < rect.height / 2;
+    blk.classList.toggle('drop-before', before);
+    blk.classList.toggle('drop-after', !before);
+  });
+  blk.addEventListener('dragleave', () => {
+    blk.classList.remove('drop-before', 'drop-after');
+  });
+  blk.addEventListener('drop', e => {
+    if(!e.dataTransfer.types.includes('application/x-project-id')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = blk.getBoundingClientRect();
+    const before = (e.clientY - rect.top) < rect.height / 2;
+    blk.classList.remove('drop-before', 'drop-after');
+    const draggedId = e.dataTransfer.getData('application/x-project-id');
+    if(draggedId && draggedId !== proj.id){
+      reorderProject(draggedId, proj.id, before);
+    }
+  });
+
+  const hdr = document.createElement('div');
+  hdr.className = 'proj-hdr';
+
+  const dragHandle = document.createElement('span');
+  dragHandle.className = 'proj-drag-handle';
+  dragHandle.textContent = '⠿';
+  dragHandle.title = '拖曳可調整順序或移到其他分類';
+  dragHandle.draggable = true;
+  dragHandle.ondragstart = (e) => {
+    e.dataTransfer.setData('application/x-project-id', proj.id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+  hdr.appendChild(dragHandle);
+
+  const chev = document.createElement('span');
+  chev.className = 'proj-chev' + (proj.collapsed ? '' : ' open');
+  chev.textContent = '▾';
+  hdr.appendChild(chev);
+
+  const nameCol = document.createElement('div');
+  nameCol.className = 'proj-name-col';
+  nameCol.title = proj.desc && proj.desc.trim() ? `${proj.name}\n${proj.desc}` : '點擊編輯專案名稱與說明';
+
+  const name = document.createElement('div');
+  name.className = 'proj-name';
+  name.textContent = proj.name;
+  nameCol.appendChild(name);
+
+  if(proj.desc && proj.desc.trim()){
+    const desc = document.createElement('div');
+    desc.className = 'proj-desc';
+    desc.textContent = proj.desc;
+    nameCol.appendChild(desc);
+  }
+
+  hdr.appendChild(nameCol);
+
+  hdr.appendChild(buildDeadlineBadge(proj));
+
+  const count = document.createElement('span');
+  count.className = 'proj-count';
+  count.textContent = `${proj.items.filter(i=>i.done).length}/${proj.items.length}`;
+  hdr.appendChild(count);
+
+  const del = document.createElement('button');
+  del.className = 'proj-del'; del.textContent = '✕';
+  del.title = '刪除專案';
+  del.onclick = (e) => {
+    e.stopPropagation();
+    if(confirm(`確定刪除專案「${proj.name}」？`)){
+      STATE.projects = STATE.projects.filter(p => p.id !== proj.id);
+      saveState(); renderAll();
+    }
+  };
+  hdr.appendChild(del);
+
+  nameCol.onclick = (e) => {
+    e.stopPropagation();
+    openProjectModal('edit', null, proj);
+  };
+
+  hdr.onclick = (e) => {
+    if(e.target === del || nameCol.contains(e.target)) return;
+    proj.collapsed = !proj.collapsed;
+    saveState(); renderAll();
+  };
+
+  blk.appendChild(hdr);
+
+  const body = document.createElement('div');
+  body.className = 'proj-body' + (proj.collapsed ? '' : ' open');
+
+  proj.items.forEach(item => { body.appendChild(buildItemRow(item, proj)); });
+
+  const addItemBtn = document.createElement('button');
+  addItemBtn.className = 'add-item-btn';
+  addItemBtn.textContent = '+ 新增細項';
+  addItemBtn.onclick = () => openItemModal('add', proj, null);
+  body.appendChild(addItemBtn);
+
+  blk.appendChild(body);
+  return blk;
+}
+
+function buildItemRow(item, proj){
+  const row = document.createElement('div');
+  row.className = 'item-row' + (item.done ? ' done' : '');
+
+  const handle = document.createElement('span');
+  handle.className = 'item-handle';
+  handle.textContent = '⠿';
+  handle.title = '拖曳到月曆排定執行日';
+  handle.draggable = true;
+  handle.ondragstart = (e) => {
+    e.dataTransfer.setData('text/plain', item.id);
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+  row.appendChild(handle);
+
+  const cb = document.createElement('input');
+  cb.type = 'checkbox'; cb.checked = !!item.done;
+  cb.onchange = () => { item.done = cb.checked; saveState(); renderAll(); };
+  row.appendChild(cb);
+
+  const textCol = document.createElement('div');
+  textCol.className = 'item-textcol';
+  textCol.title = '點擊編輯細項與備註';
+  textCol.onclick = () => openItemModal('edit', proj, item);
+
+  const nameEl = document.createElement('div');
+  nameEl.className = 'item-txt';
+  nameEl.textContent = item.text;
+  textCol.appendChild(nameEl);
+
+  if(item.note && item.note.trim()){
+    const noteEl = document.createElement('div');
+    noteEl.className = 'item-note';
+    noteEl.textContent = item.note;
+    textCol.appendChild(noteEl);
+  }
+  row.appendChild(textCol);
+
+  (item.collaboratorIds || []).forEach(collabId => {
+    const collab = getCollaborator(collabId);
+    if(!collab) return;
+    const color = COLORS[collab.color % COLORS.length];
+    const collabTag = document.createElement('span');
+    collabTag.className = 'item-collab';
+    collabTag.style.background = color.bg; collabTag.style.color = color.text;
+    collabTag.textContent = collab.name;
+    row.appendChild(collabTag);
+  });
+
+  if(item.date){
+    const sched = document.createElement('span');
+    sched.className = 'item-sched';
+    const label = document.createElement('span');
+    label.textContent = '📌 ' + item.date.slice(5).replace('-','/');
+    sched.appendChild(label);
+    const x = document.createElement('span');
+    x.className = 'x'; x.textContent = '✕';
+    x.onclick = (e) => { e.stopPropagation(); item.date = null; saveState(); renderAll(); };
+    sched.appendChild(x);
+    row.appendChild(sched);
+  }
+
+  const del = document.createElement('button');
+  del.className = 'item-del'; del.textContent = '✕';
+  del.onclick = () => {
+    proj.items = proj.items.filter(i => i.id !== item.id);
+    saveState(); renderAll();
+  };
+  row.appendChild(del);
+
+  return row;
+}
+
+let categoryEditId = null;
+let categorySelectedColor = 0;
+let categoryModalKind = 'project'; // 'project' | 'meeting'
+let categorySelectedScope = 'work';
+
+function openCategoryModal(cat, kind){
+  categoryModalKind = kind || 'project';
+  const isMeeting = categoryModalKind === 'meeting';
+  const list = isMeeting ? STATE.meetingCategories : STATE.categories;
+  categoryEditId = cat ? cat.id : null;
+  document.getElementById('categoryModalTitle').textContent = cat
+    ? (isMeeting ? '編輯會議類別' : '編輯分類')
+    : (isMeeting ? '新增會議類別' : '新增分類');
+  document.getElementById('categoryModalName').value = cat ? cat.name : '';
+  categorySelectedColor = cat ? cat.color % COLORS.length : (list.length % COLORS.length);
+  renderCategoryColorSwatches();
+
+  document.getElementById('categoryScopeRow').style.display = isMeeting ? 'none' : '';
+  if(!isMeeting){
+    categorySelectedScope = cat
+      ? (cat.scope || 'work')
+      : (STATE.currentScope !== 'all' ? STATE.currentScope : 'work');
+    renderCategoryScopePicker();
+  }
+
+  document.getElementById('categoryModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('categoryModalName').focus(), 0);
+}
+
+function renderCategoryScopePicker(){
+  document.querySelectorAll('#categoryScopePick .scope-pick-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.scope === categorySelectedScope);
+    btn.onclick = () => { categorySelectedScope = btn.dataset.scope; renderCategoryScopePicker(); };
+  });
+}
+
+function renderCategoryColorSwatches(){
+  const row = document.getElementById('categoryColorRow');
+  row.innerHTML = '';
+  COLORS.forEach((c, idx) => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (idx === categorySelectedColor ? ' selected' : '');
+    sw.style.background = c.bg;
+    sw.title = c.bg;
+    sw.onclick = () => { categorySelectedColor = idx; renderCategoryColorSwatches(); };
+    row.appendChild(sw);
+  });
+}
+
+function closeCategoryModal(){
+  document.getElementById('categoryModalOverlay').style.display = 'none';
+  categoryEditId = null;
+}
+
+function saveCategoryModal(){
+  const name = document.getElementById('categoryModalName').value.trim();
+  if(!name){ alert('請輸入分類名稱'); return; }
+  const isMeeting = categoryModalKind === 'meeting';
+  const list = isMeeting ? STATE.meetingCategories : STATE.categories;
+  if(categoryEditId){
+    const cat = list.find(c => c.id === categoryEditId);
+    if(cat){
+      cat.name = name; cat.color = categorySelectedColor;
+      if(!isMeeting) cat.scope = categorySelectedScope;
+    }
+  }else{
+    const newCat = {id:uid(), name, color:categorySelectedColor};
+    if(!isMeeting) newCat.scope = categorySelectedScope;
+    list.push(newCat);
+  }
+  saveState();
+  closeCategoryModal();
+  renderAll();
+}
+
+function addCategory(){
+  openCategoryModal(null, 'project');
+}
+
+// ── 專案新增／編輯彈出視窗 ─────────────────────────────
+let projectModalMode = null; // 'add' | 'edit'
+let projectModalCat = null;
+let projectModalProj = null;
+
+function openProjectModal(mode, cat, proj){
+  projectModalMode = mode; projectModalCat = cat; projectModalProj = proj;
+  document.getElementById('projectModalTitle').textContent = mode === 'add' ? '新增專案' : '編輯專案';
+  document.getElementById('projectModalName').value = proj ? proj.name : '';
+  document.getElementById('projectModalDesc').value = proj ? (proj.desc || '') : '';
+  document.getElementById('projectModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('projectModalName').focus(), 0);
+}
+
+function closeProjectModal(){
+  document.getElementById('projectModalOverlay').style.display = 'none';
+  projectModalMode = null; projectModalCat = null; projectModalProj = null;
+}
+
+function saveProjectModal(){
+  const name = document.getElementById('projectModalName').value.trim();
+  const desc = document.getElementById('projectModalDesc').value.trim();
+  if(!name){ alert('請輸入專案名稱'); return; }
+  if(projectModalMode === 'add' && projectModalCat){
+    STATE.projects.push({id:uid(), categoryId:projectModalCat.id, name, desc, collapsed:false, items:[]});
+  }else if(projectModalMode === 'edit' && projectModalProj){
+    projectModalProj.name = name;
+    projectModalProj.desc = desc;
+  }
+  saveState();
+  closeProjectModal();
+  renderAll();
+}
+
+// ── 協同人員管理 ─────────────────────────────
+function reorderCollaborator(draggedId, targetId, insertBefore){
+  const draggedIdx = STATE.collaborators.findIndex(c => c.id === draggedId);
+  if(draggedIdx === -1) return;
+  const dragged = STATE.collaborators.splice(draggedIdx, 1)[0];
+  const targetIdx = STATE.collaborators.findIndex(c => c.id === targetId);
+  if(targetIdx === -1){
+    STATE.collaborators.push(dragged);
+  }else{
+    const insertAt = insertBefore ? targetIdx : targetIdx + 1;
+    STATE.collaborators.splice(insertAt, 0, dragged);
+  }
+  saveState();
+  renderCollaboratorManageList();
+  renderAll();
+}
+
+function deleteCollaborator(person){
+  if(!confirm(`確定刪除人員「${person.name}」？相關細項的協同人員標記也會一併清除。`)) return;
+  STATE.collaborators = STATE.collaborators.filter(c => c.id !== person.id);
+  STATE.projects.forEach(p => {
+    p.items.forEach(it => { it.collaboratorIds = (it.collaboratorIds || []).filter(id => id !== person.id); });
+  });
+  STATE.quickEvents.forEach(ev => { ev.collaboratorIds = (ev.collaboratorIds || []).filter(id => id !== person.id); });
+  saveState();
+  renderCollaboratorManageList();
+  renderAll();
+}
+
+function addCollaboratorPrompt(){
+  const name = prompt('人員姓名');
+  if(name && name.trim()){
+    STATE.collaborators.push({id:uid(), name:name.trim(), color:STATE.collaborators.length % COLORS.length});
+    saveState();
+    renderCollaboratorManageList();
+    renderAll();
+  }
+}
+
+function renameCollaboratorPrompt(person){
+  const name = prompt('人員姓名', person.name);
+  if(name && name.trim()){
+    person.name = name.trim();
+    saveState();
+    renderCollaboratorManageList();
+    renderAll();
+  }
+}
+
+function renderCollaboratorManageList(){
+  const wrap = document.getElementById('collaboratorManageList');
+  wrap.innerHTML = '';
+  STATE.collaborators.forEach(person => {
+    const color = COLORS[person.color % COLORS.length];
+    const row = document.createElement('div');
+    row.className = 'collab-row';
+
+    row.addEventListener('dragover', e => {
+      if(!e.dataTransfer.types.includes('application/x-collab-id')) return;
+      e.preventDefault();
+      const rect = row.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height / 2;
+      row.classList.toggle('drop-before', before);
+      row.classList.toggle('drop-after', !before);
+    });
+    row.addEventListener('dragleave', () => {
+      row.classList.remove('drop-before', 'drop-after');
+    });
+    row.addEventListener('drop', e => {
+      if(!e.dataTransfer.types.includes('application/x-collab-id')) return;
+      e.preventDefault();
+      const rect = row.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height / 2;
+      row.classList.remove('drop-before', 'drop-after');
+      const draggedId = e.dataTransfer.getData('application/x-collab-id');
+      if(draggedId && draggedId !== person.id) reorderCollaborator(draggedId, person.id, before);
+    });
+
+    const drag = document.createElement('span');
+    drag.className = 'collab-drag';
+    drag.textContent = '⠿';
+    drag.title = '拖曳可調整順序';
+    drag.draggable = true;
+    drag.ondragstart = (e) => {
+      e.dataTransfer.setData('application/x-collab-id', person.id);
+      e.dataTransfer.effectAllowed = 'move';
+    };
+    row.appendChild(drag);
+
+    const dot = document.createElement('span');
+    dot.className = 'collab-dot';
+    dot.style.background = color.text;
+    row.appendChild(dot);
+
+    const name = document.createElement('span');
+    name.className = 'collab-name';
+    name.textContent = person.name;
+    name.title = '點擊重新命名';
+    name.onclick = () => renameCollaboratorPrompt(person);
+    row.appendChild(name);
+
+    const del = document.createElement('button');
+    del.className = 'collab-del';
+    del.textContent = '✕';
+    del.title = '刪除這位人員';
+    del.onclick = () => deleteCollaborator(person);
+    row.appendChild(del);
+
+    wrap.appendChild(row);
+  });
+}
+
+function openCollaboratorModal(){
+  renderCollaboratorManageList();
+  document.getElementById('collaboratorModalOverlay').style.display = 'flex';
+}
+
+function closeCollaboratorModal(){
+  document.getElementById('collaboratorModalOverlay').style.display = 'none';
+}
+
+// ── 匯出 / 匯入 ─────────────────────────────
+function exportData(){
+  const blob = new Blob([JSON.stringify(STATE, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `work-dashboard-backup-${todayStr()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function importData(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      if(data && Array.isArray(data.categories) && Array.isArray(data.projects)){
+        STATE = normalizeState(data);
+        saveState();
+        renderMonthSelect();
+        renderAll();
+        document.getElementById('scopeAllBtn').classList.toggle('active', STATE.currentScope === 'all');
+        document.getElementById('scopeWorkBtn').classList.toggle('active', STATE.currentScope === 'work');
+        document.getElementById('scopePersonalBtn').classList.toggle('active', STATE.currentScope === 'personal');
+        if(noteTextareaEl) noteTextareaEl.value = STATE.scratchNote;
+        alert('匯入成功！');
+      }else{
+        alert('檔案格式不正確');
+      }
+    }catch(e){ alert('讀取失敗：' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+function renderAll(){
+  renderCalendar();
+  renderCategories();
+  renderMeetingFilters();
+  renderMeetingList();
+}
+
+// ── 分頁切換 ─────────────────────────────
+function switchTab(tab){
+  const isCal = tab === 'calendar';
+  document.getElementById('calendarPage').style.display = isCal ? 'flex' : 'none';
+  document.getElementById('meetingPage').style.display = isCal ? 'none' : 'block';
+  document.getElementById('calNavControls').style.display = isCal ? 'flex' : 'none';
+  document.getElementById('scopeToggleWrap').style.display = isCal ? 'flex' : 'none';
+  document.getElementById('tabCalBtn').classList.toggle('active', isCal);
+  document.getElementById('tabMeetingBtn').classList.toggle('active', !isCal);
+}
+
+// ── 工作／個人範圍切換 ─────────────────────────────
+function setScope(scope){
+  STATE.currentScope = scope;
+  saveState();
+  document.getElementById('scopeAllBtn').classList.toggle('active', scope === 'all');
+  document.getElementById('scopeWorkBtn').classList.toggle('active', scope === 'work');
+  document.getElementById('scopePersonalBtn').classList.toggle('active', scope === 'personal');
+  renderCalendar();
+  renderCategories();
+}
+
+// ── 會議記錄 ─────────────────────────────
+function reorderMeetingCategory(draggedId, targetId, insertBefore){
+  const draggedIdx = STATE.meetingCategories.findIndex(c => c.id === draggedId);
+  if(draggedIdx === -1) return;
+  const dragged = STATE.meetingCategories.splice(draggedIdx, 1)[0];
+  const targetIdx = STATE.meetingCategories.findIndex(c => c.id === targetId);
+  if(targetIdx === -1){
+    STATE.meetingCategories.push(dragged);
+  }else{
+    const insertAt = insertBefore ? targetIdx : targetIdx + 1;
+    STATE.meetingCategories.splice(insertAt, 0, dragged);
+  }
+  saveState();
+  renderMeetingFilters();
+  renderMeetingList();
+}
+
+function deleteMeetingCategory(cat){
+  if(!confirm(`確定刪除類別「${cat.name}」？相關會議記錄上的這個標籤也會一併移除。`)) return;
+  STATE.meetingCategories = STATE.meetingCategories.filter(c => c.id !== cat.id);
+  STATE.meetings.forEach(m => { m.catIds = (m.catIds || []).filter(id => id !== cat.id); });
+  STATE.meetingFilter = STATE.meetingFilter.filter(id => id !== cat.id);
+  saveState();
+  renderMeetingFilters();
+  renderMeetingList();
+}
+
+function renderMeetingFilters(){
+  const row = document.getElementById('meetingFilterRow');
+  if(!row) return;
+  row.innerHTML = '';
+
+  const allChip = document.createElement('span');
+  allChip.className = 'meeting-chip-all' + (STATE.meetingFilter.length === 0 ? ' active' : '');
+  allChip.textContent = '全部';
+  allChip.title = '顯示全部會議記錄';
+  allChip.onclick = () => {
+    STATE.meetingFilter = [];
+    saveState();
+    renderMeetingFilters();
+    renderMeetingList();
+  };
+  row.appendChild(allChip);
+
+  STATE.meetingCategories.forEach(cat => {
+    const active = STATE.meetingFilter.includes(cat.id);
+    const color = COLORS[cat.color % COLORS.length];
+    const chip = document.createElement('div');
+    chip.className = 'meeting-chip-manage' + (active ? ' active' : '');
+    if(active){ chip.style.background = color.bg; chip.style.color = color.text; }
+
+    chip.addEventListener('dragover', e => {
+      if(!e.dataTransfer.types.includes('application/x-meeting-cat-id')) return;
+      e.preventDefault();
+      const rect = chip.getBoundingClientRect();
+      const before = (e.clientX - rect.left) < rect.width / 2;
+      chip.classList.toggle('drop-before', before);
+      chip.classList.toggle('drop-after', !before);
+    });
+    chip.addEventListener('dragleave', () => {
+      chip.classList.remove('drop-before', 'drop-after');
+    });
+    chip.addEventListener('drop', e => {
+      if(!e.dataTransfer.types.includes('application/x-meeting-cat-id')) return;
+      e.preventDefault();
+      const rect = chip.getBoundingClientRect();
+      const before = (e.clientX - rect.left) < rect.width / 2;
+      chip.classList.remove('drop-before', 'drop-after');
+      const draggedId = e.dataTransfer.getData('application/x-meeting-cat-id');
+      if(draggedId && draggedId !== cat.id) reorderMeetingCategory(draggedId, cat.id, before);
+    });
+
+    const drag = document.createElement('span');
+    drag.className = 'meeting-chip-drag';
+    drag.textContent = '⠿';
+    drag.title = '拖曳可調整順序';
+    drag.draggable = true;
+    drag.ondragstart = (e) => {
+      e.dataTransfer.setData('application/x-meeting-cat-id', cat.id);
+      e.dataTransfer.effectAllowed = 'move';
+    };
+    chip.appendChild(drag);
+
+    const label = document.createElement('span');
+    label.className = 'meeting-chip-label';
+    label.textContent = (active ? '✓ ' : '') + cat.name;
+    label.onclick = () => {
+      const idx = STATE.meetingFilter.indexOf(cat.id);
+      if(idx === -1) STATE.meetingFilter.push(cat.id);
+      else STATE.meetingFilter.splice(idx, 1);
+      saveState();
+      renderMeetingFilters();
+      renderMeetingList();
+    };
+    chip.appendChild(label);
+
+    const del = document.createElement('span');
+    del.className = 'meeting-chip-del';
+    del.textContent = '✕';
+    del.title = '刪除這個類別';
+    del.onclick = () => deleteMeetingCategory(cat);
+    chip.appendChild(del);
+
+    row.appendChild(chip);
+  });
+
+  const addBtn = document.createElement('span');
+  addBtn.className = 'meeting-chip-add';
+  addBtn.textContent = '+ 新增類別';
+  addBtn.onclick = () => openCategoryModal(null, 'meeting');
+  row.appendChild(addBtn);
+}
+
+function renderMeetingList(){
+  const wrap = document.getElementById('meetingList');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+
+  const filter = STATE.meetingFilter;
+  const filtered = STATE.meetings.filter(m => {
+    if(filter.length === 0) return true;
+    return (m.catIds || []).some(id => filter.includes(id));
+  });
+
+  if(STATE.meetings.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'meeting-empty';
+    empty.textContent = '還沒有任何會議記錄，點右上角「+ 新增會議記錄」開始記錄。';
+    wrap.appendChild(empty);
+    return;
+  }
+  if(filtered.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'meeting-empty';
+    empty.textContent = '沒有符合篩選條件的會議記錄。';
+    wrap.appendChild(empty);
+    return;
+  }
+
+  const monthKeys = [...new Set(filtered.map(m => m.date.slice(0,7)))].sort((a,b) => b < a ? -1 : 1);
+  monthKeys.forEach(mk => {
+    wrap.appendChild(buildMeetingMonthCard(mk, filtered.filter(m => m.date.slice(0,7) === mk)));
+  });
+}
+
+function buildMeetingMonthCard(monthKey, monthMeetings){
+  const [y, mm] = monthKey.split('-');
+  const isOpen = STATE.meetingMonthCollapsed[monthKey] === false; // 未紀錄過的月份預設收合
+
+  const card = document.createElement('div');
+  card.className = 'meeting-month-card';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'meeting-month-hdr';
+  hdr.style.borderBottom = isOpen ? '.5px solid rgba(0,0,0,.08)' : 'none';
+
+  const left = document.createElement('div');
+  left.className = 'meeting-month-hdr-l';
+  const chev = document.createElement('span');
+  chev.className = 'meeting-month-chev' + (isOpen ? ' open' : '');
+  chev.textContent = '▸';
+  left.appendChild(chev);
+  const label = document.createElement('span');
+  label.className = 'meeting-month-label';
+  label.textContent = `${y}年${Number(mm)}月`;
+  left.appendChild(label);
+  hdr.appendChild(left);
+
+  const count = document.createElement('span');
+  count.className = 'meeting-month-count';
+  count.textContent = `${monthMeetings.length} 筆`;
+  hdr.appendChild(count);
+
+  hdr.onclick = () => {
+    STATE.meetingMonthCollapsed[monthKey] = isOpen; // 目前是開的 → 收起來；目前收合 → 打開(存 false)
+    saveState();
+    renderMeetingList();
+  };
+  card.appendChild(hdr);
+
+  const body = document.createElement('div');
+  body.className = 'meeting-month-body' + (isOpen ? ' open' : '');
+  if(isOpen){
+    const dateSet = [...new Set(monthMeetings.map(m => m.date))].sort((a,b) => b < a ? -1 : 1);
+    dateSet.forEach(ds => {
+      const group = document.createElement('div');
+      group.className = 'meeting-date-group';
+      const dHdr = document.createElement('div');
+      dHdr.className = 'meeting-date-hdr';
+      const d = new Date(ds + 'T00:00:00');
+      const wdNames = ['日','一','二','三','四','五','六'];
+      dHdr.textContent = `${ds.slice(5).replace('-','/')}（${wdNames[d.getDay()]}）`;
+      group.appendChild(dHdr);
+      monthMeetings.filter(m => m.date === ds).forEach(m => group.appendChild(buildMeetingCard(m)));
+      body.appendChild(group);
+    });
+  }
+  card.appendChild(body);
+
+  return card;
+}
+
+function buildMeetingCard(m){
+  const card = document.createElement('div');
+  card.className = 'meeting-card';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'meeting-card-hdr';
+
+  const left = document.createElement('div');
+  left.className = 'meeting-card-hdr-l';
+
+  const chev = document.createElement('span');
+  chev.className = 'meeting-chev' + (m.collapsed ? '' : ' open');
+  chev.textContent = '▸';
+  left.appendChild(chev);
+
+  const title = document.createElement('span');
+  title.className = 'meeting-title';
+  title.textContent = m.title;
+  left.appendChild(title);
+
+  (m.catIds || []).forEach(catId => {
+    const cat = getMeetingCat(catId);
+    if(!cat) return;
+    const color = COLORS[cat.color % COLORS.length];
+    const tag = document.createElement('span');
+    tag.className = 'meeting-tag';
+    tag.style.background = color.bg; tag.style.color = color.text;
+    tag.textContent = cat.name;
+    left.appendChild(tag);
+  });
+  hdr.appendChild(left);
+
+  const actions = document.createElement('div');
+  actions.className = 'meeting-actions';
+  const editBtn = document.createElement('span');
+  editBtn.textContent = '✎';
+  editBtn.title = '編輯';
+  editBtn.onclick = (e) => { e.stopPropagation(); openMeetingModal('edit', m); };
+  actions.appendChild(editBtn);
+  const delBtn = document.createElement('span');
+  delBtn.textContent = '✕';
+  delBtn.title = '刪除';
+  delBtn.onclick = (e) => {
+    e.stopPropagation();
+    if(confirm(`確定刪除會議記錄「${m.title}」？`)){
+      STATE.meetings = STATE.meetings.filter(x => x.id !== m.id);
+      saveState(); renderMeetingList();
+    }
+  };
+  actions.appendChild(delBtn);
+  hdr.appendChild(actions);
+
+  hdr.onclick = () => {
+    m.collapsed = !m.collapsed;
+    saveState(); renderMeetingList();
+  };
+  card.appendChild(hdr);
+
+  const body = document.createElement('div');
+  body.className = 'meeting-body' + (m.collapsed ? '' : ' open');
+  body.textContent = m.content || '';
+  card.appendChild(body);
+
+  return card;
+}
+
+let meetingModalMode = null; // 'add' | 'edit'
+let meetingModalEditId = null;
+let meetingModalSelectedCats = [];
+
+function openMeetingModal(mode, meeting){
+  meetingModalMode = mode;
+  meetingModalEditId = meeting ? meeting.id : null;
+  meetingModalSelectedCats = meeting ? [...(meeting.catIds || [])] : [];
+  document.getElementById('meetingModalTitle').textContent = mode === 'add' ? '新增會議記錄' : '編輯會議記錄';
+  document.getElementById('meetingModalDate').value = meeting ? meeting.date : todayStr();
+  document.getElementById('meetingModalName').value = meeting ? meeting.title : '';
+  document.getElementById('meetingModalContent').value = meeting ? (meeting.content || '') : '';
+  renderMeetingModalCatChips();
+  document.getElementById('meetingModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('meetingModalName').focus(), 0);
+}
+
+function renderMeetingModalCatChips(){
+  const row = document.getElementById('meetingModalCatRow');
+  row.innerHTML = '';
+  STATE.meetingCategories.forEach(cat => {
+    const active = meetingModalSelectedCats.includes(cat.id);
+    const color = COLORS[cat.color % COLORS.length];
+    const chip = document.createElement('span');
+    chip.className = 'meeting-chip' + (active ? ' active' : '');
+    if(active){ chip.style.background = color.bg; chip.style.color = color.text; }
+    chip.textContent = (active ? '✓ ' : '') + cat.name;
+    chip.onclick = () => {
+      const idx = meetingModalSelectedCats.indexOf(cat.id);
+      if(idx === -1) meetingModalSelectedCats.push(cat.id);
+      else meetingModalSelectedCats.splice(idx, 1);
+      renderMeetingModalCatChips();
+    };
+    row.appendChild(chip);
+  });
+}
+
+function closeMeetingModal(){
+  document.getElementById('meetingModalOverlay').style.display = 'none';
+  meetingModalMode = null; meetingModalEditId = null;
+}
+
+function saveMeetingModal(){
+  const date = document.getElementById('meetingModalDate').value;
+  const title = document.getElementById('meetingModalName').value.trim();
+  const content = document.getElementById('meetingModalContent').value.trim();
+  if(!date){ alert('請選擇日期'); return; }
+  if(!title){ alert('請輸入會議標題'); return; }
+  if(meetingModalMode === 'add'){
+    STATE.meetings.push({id:uid(), date, catIds:[...meetingModalSelectedCats], title, content, collapsed:true});
+  }else if(meetingModalMode === 'edit' && meetingModalEditId){
+    const m = STATE.meetings.find(x => x.id === meetingModalEditId);
+    if(m){ m.date = date; m.catIds = [...meetingModalSelectedCats]; m.title = title; m.content = content; }
+  }
+  saveState();
+  closeMeetingModal();
+  renderMeetingList();
+}
+
+// ── 細項新增／編輯彈出視窗 ─────────────────────────────
+let modalMode = null; // 'add' | 'edit'
+let modalProj = null;
+let modalItem = null;
+
+let itemModalSelectedCollabs = [];
+
+function renderItemModalCollabChips(){
+  const row = document.getElementById('itemModalCollabRow');
+  row.innerHTML = '';
+  STATE.collaborators.forEach(person => {
+    const active = itemModalSelectedCollabs.includes(person.id);
+    const color = COLORS[person.color % COLORS.length];
+    const chip = document.createElement('span');
+    chip.className = 'meeting-chip' + (active ? ' active' : '');
+    if(active){ chip.style.background = color.bg; chip.style.color = color.text; }
+    chip.textContent = (active ? '✓ ' : '') + person.name;
+    chip.onclick = () => {
+      const idx = itemModalSelectedCollabs.indexOf(person.id);
+      if(idx === -1) itemModalSelectedCollabs.push(person.id);
+      else itemModalSelectedCollabs.splice(idx, 1);
+      renderItemModalCollabChips();
+    };
+    row.appendChild(chip);
+  });
+  if(STATE.collaborators.length === 0){
+    const hint = document.createElement('span');
+    hint.style.fontSize = '11px'; hint.style.color = '#b0afa9';
+    hint.textContent = '目前沒有人員，可到「👥 人員」新增';
+    row.appendChild(hint);
+  }
+}
+
+function openItemModal(mode, proj, item){
+  modalMode = mode; modalProj = proj; modalItem = item;
+  document.getElementById('itemModalTitle').textContent = mode === 'add' ? '新增細項' : '編輯細項';
+  document.getElementById('itemModalName').value = item ? item.text : '';
+  document.getElementById('itemModalNote').value = item ? (item.note || '') : '';
+  itemModalSelectedCollabs = item ? [...(item.collaboratorIds || [])] : [];
+  renderItemModalCollabChips();
+  document.getElementById('itemModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('itemModalName').focus(), 0);
+}
+
+function closeItemModal(){
+  document.getElementById('itemModalOverlay').style.display = 'none';
+  modalMode = null; modalProj = null; modalItem = null;
+}
+
+function saveItemModal(){
+  const name = document.getElementById('itemModalName').value.trim();
+  const note = document.getElementById('itemModalNote').value.trim();
+  const collaboratorIds = [...itemModalSelectedCollabs];
+  if(!name){ alert('請輸入細項名稱'); return; }
+  if(modalMode === 'add' && modalProj){
+    modalProj.items.push({id:uid(), text:name, note:note, done:false, date:null, collaboratorIds});
+  }else if(modalMode === 'edit' && modalItem){
+    modalItem.text = name;
+    modalItem.note = note;
+    modalItem.collaboratorIds = collaboratorIds;
+  }
+  saveState();
+  closeItemModal();
+  renderAll();
+}
+
+// ── 手機觸控拖曳支援（模擬滑鼠 Drag & Drop，重用同一套 dragover/drop 判斷邏輯）─────────────────────────────
+function clearTouchDragIndicators(){
+  const sel = '.cal-cell.dragover, .cat-card.cat-dragover, .cat-card.cat-drop-before, .cat-card.cat-drop-after, '
+    + '.proj-blk.drop-before, .proj-blk.drop-after, .meeting-chip-manage.drop-before, .meeting-chip-manage.drop-after, '
+    + '.collab-row.drop-before, .collab-row.drop-after';
+  document.querySelectorAll(sel).forEach(el => {
+    el.classList.remove('dragover','cat-dragover','cat-drop-before','cat-drop-after','drop-before','drop-after');
+  });
+}
+
+function makeTouchDndEvent(type, dt, clientX, clientY){
+  const evt = new Event(type, {bubbles:true, cancelable:true});
+  Object.defineProperty(evt, 'dataTransfer', {value:dt, configurable:true});
+  Object.defineProperty(evt, 'clientX', {value:clientX, configurable:true});
+  Object.defineProperty(evt, 'clientY', {value:clientY, configurable:true});
+  return evt;
+}
+
+function setupTouchDragPolyfill(){
+  if(typeof DataTransfer === 'undefined') return; // 不支援的舊瀏覽器就略過，滑鼠拖曳仍正常運作
+
+  let drag = null; // {handle, dt, ghost}
+
+  function makeGhost(sourceEl, x, y){
+    const rect = sourceEl.getBoundingClientRect();
+    const ghost = sourceEl.cloneNode(true);
+    ghost.style.position = 'fixed';
+    ghost.style.left = (x - rect.width/2) + 'px';
+    ghost.style.top = (y - rect.height/2) + 'px';
+    ghost.style.width = rect.width + 'px';
+    ghost.style.zIndex = '99999';
+    ghost.style.opacity = '0.85';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.transform = 'scale(1.06)';
+    ghost.style.boxShadow = '0 4px 14px rgba(0,0,0,.25)';
+    document.body.appendChild(ghost);
+    return ghost;
+  }
+
+  document.addEventListener('touchstart', (e) => {
+    const handle = e.target.closest('[draggable="true"]');
+    if(!handle) return;
+    const touch = e.touches[0];
+    const dt = new DataTransfer();
+    if(typeof handle.ondragstart === 'function'){
+      handle.ondragstart({dataTransfer:dt, preventDefault(){}, stopPropagation(){}});
+    }
+    drag = {handle, dt, ghost: makeGhost(handle, touch.clientX, touch.clientY)};
+  }, {passive:true});
+
+  document.addEventListener('touchmove', (e) => {
+    if(!drag) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    drag.ghost.style.left = (touch.clientX - drag.ghost.offsetWidth/2) + 'px';
+    drag.ghost.style.top = (touch.clientY - drag.ghost.offsetHeight/2) + 'px';
+
+    drag.ghost.style.display = 'none';
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    drag.ghost.style.display = '';
+
+    clearTouchDragIndicators();
+    if(target) target.dispatchEvent(makeTouchDndEvent('dragover', drag.dt, touch.clientX, touch.clientY));
+  }, {passive:false});
+
+  document.addEventListener('touchend', (e) => {
+    if(!drag) return;
+    const touch = e.changedTouches[0];
+    drag.ghost.style.display = 'none';
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    if(target) target.dispatchEvent(makeTouchDndEvent('drop', drag.dt, touch.clientX, touch.clientY));
+    clearTouchDragIndicators();
+    drag.ghost.remove();
+    drag = null;
+  });
+
+  document.addEventListener('touchcancel', () => {
+    if(!drag) return;
+    clearTouchDragIndicators();
+    drag.ghost.remove();
+    drag = null;
+  });
+}
+
+// ── 初始化 ─────────────────────────────
+document.getElementById('addCatBtn').onclick = addCategory;
+document.getElementById('importFile').onchange = function(){ importData(this.files[0]); };
+document.getElementById('itemModalCloseBtn').onclick = closeItemModal;
+document.getElementById('itemModalCancelBtn').onclick = closeItemModal;
+document.getElementById('itemModalSaveBtn').onclick = saveItemModal;
+document.getElementById('itemModalOverlay').onclick = (e) => {
+  if(e.target.id === 'itemModalOverlay') closeItemModal();
+};
+document.getElementById('itemModalName').onkeydown = (e) => {
+  if(e.key === 'Enter'){ e.preventDefault(); saveItemModal(); }
+};
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && document.getElementById('itemModalOverlay').style.display !== 'none'){
+    closeItemModal();
+  }
+  if(e.key === 'Escape' && document.getElementById('quickEventModalOverlay').style.display !== 'none'){
+    closeQuickEventModal();
+  }
+  if(e.key === 'Escape' && document.getElementById('categoryModalOverlay').style.display !== 'none'){
+    closeCategoryModal();
+  }
+  if(e.key === 'Escape' && document.getElementById('meetingModalOverlay').style.display !== 'none'){
+    closeMeetingModal();
+  }
+  if(e.key === 'Escape' && document.getElementById('collaboratorModalOverlay').style.display !== 'none'){
+    closeCollaboratorModal();
+  }
+  if(e.key === 'Escape' && document.getElementById('projectModalOverlay').style.display !== 'none'){
+    closeProjectModal();
+  }
+});
+
+document.getElementById('projectModalCloseBtn').onclick = closeProjectModal;
+document.getElementById('projectModalCancelBtn').onclick = closeProjectModal;
+document.getElementById('projectModalSaveBtn').onclick = saveProjectModal;
+document.getElementById('projectModalOverlay').onclick = (e) => {
+  if(e.target.id === 'projectModalOverlay') closeProjectModal();
+};
+document.getElementById('projectModalName').onkeydown = (e) => {
+  if(e.key === 'Enter'){ e.preventDefault(); saveProjectModal(); }
+};
+
+document.getElementById('manageCollabBtn').onclick = openCollaboratorModal;
+document.getElementById('collaboratorModalCloseBtn').onclick = closeCollaboratorModal;
+document.getElementById('collaboratorModalDoneBtn').onclick = closeCollaboratorModal;
+document.getElementById('addCollaboratorBtn').onclick = addCollaboratorPrompt;
+document.getElementById('collaboratorModalOverlay').onclick = (e) => {
+  if(e.target.id === 'collaboratorModalOverlay') closeCollaboratorModal();
+};
+
+document.getElementById('addMeetingBtn').onclick = () => openMeetingModal('add', null);
+document.getElementById('meetingModalCloseBtn').onclick = closeMeetingModal;
+document.getElementById('meetingModalCancelBtn').onclick = closeMeetingModal;
+document.getElementById('meetingModalSaveBtn').onclick = saveMeetingModal;
+document.getElementById('meetingModalOverlay').onclick = (e) => {
+  if(e.target.id === 'meetingModalOverlay') closeMeetingModal();
+};
+document.getElementById('meetingModalName').onkeydown = (e) => {
+  if(e.key === 'Enter'){ e.preventDefault(); saveMeetingModal(); }
+};
+
+document.getElementById('quickEventModalCloseBtn').onclick = closeQuickEventModal;
+document.getElementById('quickEventModalCancelBtn').onclick = closeQuickEventModal;
+document.getElementById('quickEventModalSaveBtn').onclick = saveQuickEventModal;
+document.getElementById('quickEventModalOverlay').onclick = (e) => {
+  if(e.target.id === 'quickEventModalOverlay') closeQuickEventModal();
+};
+document.getElementById('quickEventModalName').onkeydown = (e) => {
+  if(e.key === 'Enter'){ e.preventDefault(); saveQuickEventModal(); }
+};
+
+document.getElementById('categoryModalCloseBtn').onclick = closeCategoryModal;
+document.getElementById('categoryModalCancelBtn').onclick = closeCategoryModal;
+document.getElementById('categoryModalSaveBtn').onclick = saveCategoryModal;
+document.getElementById('categoryModalOverlay').onclick = (e) => {
+  if(e.target.id === 'categoryModalOverlay') closeCategoryModal();
+};
+document.getElementById('categoryModalName').onkeydown = (e) => {
+  if(e.key === 'Enter'){ e.preventDefault(); saveCategoryModal(); }
+};
+
+const noteTextareaEl = document.getElementById('noteTextarea');
+document.getElementById('noteTab').onclick = () => {
+  document.getElementById('notePanel').classList.toggle('open');
+  document.getElementById('pageWrap').classList.toggle('note-open');
+};
+noteTextareaEl.oninput = () => {
+  STATE.scratchNote = noteTextareaEl.value;
+  saveState();
+};
+
+// ── 開機流程：先等 Firebase 準備好，優先用雲端資料，連不上才退回本機備份 ─────────────────────────────
+function setSyncStatus(kind){
+  const el = document.getElementById('syncStatus');
+  if(!el) return;
+  if(kind === 'ok') el.textContent = '☁️ 已同步';
+  else if(kind === 'error') el.textContent = '⚠️ 離線（本機資料）';
+  else el.textContent = '☁️ 連線中…';
+}
+
+function hideSyncOverlay(){
+  const overlay = document.getElementById('syncOverlay');
+  if(overlay) overlay.remove();
+}
+
+function afterStateReady(){
+  renderMonthSelect();
+  renderAll();
+  document.getElementById('scopeAllBtn').classList.toggle('active', STATE.currentScope === 'all');
+  document.getElementById('scopeWorkBtn').classList.toggle('active', STATE.currentScope === 'work');
+  document.getElementById('scopePersonalBtn').classList.toggle('active', STATE.currentScope === 'personal');
+  noteTextareaEl.value = STATE.scratchNote || '';
+  hideSyncOverlay();
+}
+
+function bootWithLocalOnly(){
+  loadState();
+  setSyncStatus('error');
+  afterStateReady();
+}
+
+function bootApp(){
+  if(!window.__fb){
+    // Firebase 沒設定成功（例如金鑰有誤或網路擋掉），改用本機資料
+    bootWithLocalOnly();
+    return;
+  }
+
+  let bootstrapped = false;
+  const safetyTimer = setTimeout(() => {
+    if(!bootstrapped){ bootstrapped = true; bootWithLocalOnly(); }
+  }, 8000);
+
+  window.__fb.onSnapshot(window.__fb.docRef, (snap) => {
+    if(snap.metadata && snap.metadata.hasPendingWrites) return; // 自己剛寫入的，不用重跑一次
+
+    if(!snap.exists()){
+      // 雲端第一次使用，還沒有資料：把目前（預設）資料寫一份上去
+      loadState();
+      const json = JSON.stringify(STATE);
+      lastPushedCloudJson = json;
+      window.__fb.setDoc(window.__fb.docRef, {data: json, updatedAt: Date.now()}).catch(() => {});
+      clearTimeout(safetyTimer);
+      if(!bootstrapped){ bootstrapped = true; setSyncStatus('ok'); afterStateReady(); }
+      return;
+    }
+
+    const json = snap.data().data;
+    if(json === lastPushedCloudJson){
+      clearTimeout(safetyTimer);
+      if(!bootstrapped){ bootstrapped = true; setSyncStatus('ok'); afterStateReady(); }
+      return;
+    }
+    try{
+      STATE = normalizeState(JSON.parse(json));
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); }catch(e){}
+    }catch(e){
+      console.warn('雲端資料解析失敗，改用本機資料', e);
+      loadState();
+    }
+    setSyncStatus('ok');
+    clearTimeout(safetyTimer);
+    bootstrapped = true;
+    afterStateReady();
+  }, (err) => {
+    console.warn('雲端連線失敗，改用本機資料', err);
+    clearTimeout(safetyTimer);
+    if(!bootstrapped){ bootstrapped = true; bootWithLocalOnly(); }
+  });
+}
+
+if(window.__fbReady){ bootApp(); }
+else{ window.addEventListener('fbready', bootApp); }
+
+function updateHeaderHeightVar(){
+  const headerEl = document.querySelector('.site-header');
+  if(headerEl){
+    document.documentElement.style.setProperty('--hdr-h', headerEl.offsetHeight + 'px');
+  }
+}
+updateHeaderHeightVar();
+window.addEventListener('resize', updateHeaderHeightVar);
+setupTouchDragPolyfill();
+</script>
+</body>
+</html>
