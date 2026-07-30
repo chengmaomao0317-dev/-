@@ -325,6 +325,7 @@ tr:last-child td { border-bottom: none; }
     <button class="filter-btn" id="tab-perf-btn" onclick="switchTab('perf')">新舊客績效總覽</button>
     <div style="flex:1;"></div>
     <span id="sync-badge" style="font-size:11px;color:#888780;margin-right:4px;"></span>
+    <button id="sync-btn" onclick="manualSync()" style="font-size:11px;padding:3px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;display:flex;align-items:center;gap:4px;margin-right:8px;" title="重新同步 Google Sheet 資料">⟳ 同步</button>
     <div style="display:flex;align-items:center;gap:8px;border-left:1px solid rgba(255,255,255,0.1);padding-left:14px;">
       <span class="filter-label">月份</span>
       <select class="month-select" id="monthSel" onchange="onMonthChange(this.value)">
@@ -1413,6 +1414,16 @@ async function initAutoFetch() {
       badge.style.color = anyUpdated ? '#2d7f3f' : '#888780';
     }
   }
+  const btn = document.getElementById('sync-btn');
+  if (btn) { btn.disabled = false; btn.textContent = '⟳ 同步'; btn.style.opacity = '1'; }
+}
+
+async function manualSync() {
+  if (window._syncing) return;
+  window._syncing = true;
+  const btn = document.getElementById('sync-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '同步中…'; btn.style.opacity = '0.6'; }
+  try { await initAutoFetch(); } finally { window._syncing = false; }
 }
 
 function renderMonthlyFunnel() {
@@ -1459,8 +1470,8 @@ function renderMonthlyFunnel() {
       const rateOk = rate != null ? (rate >= rateTarget) : null;
 
       const barPct = spend ? Math.round(spend / maxSpend * 100) : 0;
-      const fmtV   = v => v != null ? '$' + v.toLocaleString() : '—';
-      const fmtK   = v => v != null ? '$' + v.toLocaleString() : '—';
+      const fmtV   = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
+      const fmtK   = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
       const cls    = (v, c) => v != null ? c : 'muted';
       const rateCls = rateOk == null ? 'muted' : (rateOk ? 'rate-good' : 'rate-bad');
 
