@@ -345,12 +345,12 @@ const history={
   渥:{
     2024:{p:[206,172,176,207,212,174,168,238,260,226,207,244],n:[116,90,103,125,123,95,69,139,133,98,117,160]},
     2025:{p:[492,443,560,321,329,291,293,305,340,174,176,244],n:[148,123,155,249,205,145,186,160,225,158,121,153]},
-    2026:{p:[239,228,418,457,272,null,null,null,null,null,null,null],n:[124,159,254,320,225,null,null,null,null,null,null,null]},
+    2026:{p:[239,228,418,457,272,346,287,null,null,null,null,null],n:[124,159,254,320,225,211,167,null,null,null,null,null]},
   },
   綺:{
     2024:{p:[110,128,134,106,135,89,82,100,104,87,119,87],n:[49,66,61,54,51,37,35,50,51,43,58,42]},
     2025:{p:[131,126,151,137,195,169,152,146,99,179,202,194],n:[61,57,77,106,136,107,73,87,69,98,137,125]},
-    2026:{p:[260,155,218,177,167,null,null,null,null,null,null,null],n:[156,105,127,101,98,null,null,null,null,null,null,null]},
+    2026:{p:[260,155,218,177,167,159,148,null,null,null,null,null],n:[156,105,127,101,98,102,89,null,null,null,null,null]},
   },
 };
 
@@ -867,7 +867,7 @@ function renderTrend(){
 const staffCount={
   2024:[2,2,2,2,2,2,2,2,2,2,2,3],    // 2024/12 新增1人→3人
   2025:[3,3,4,4,3,3,3,3,3,3,3,4],    // 2025/03-04 增至4人，12月再增至4人（確認自「預約狀況同期比較」）
-  2026:[3,5,5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5],    // 2026/01=3人，02-03=5人，04起=4.5人
+  2026:[3,5,5,4.5,4.5,4.5,4.5,3.5,3.5,3.5,3.5,3.5],    // 2026/01=3人，02-03=5人，04-07=4.5人，08起=3.5人
 };
 
 // ── 品牌分開的年度彙整數據（直接來自「預約狀況同期比較」Google Sheet）
@@ -878,24 +878,24 @@ const sheetTotal={
     arrive:{ // 總來客數（新客+舊客到店）
       2024:[153,124,129,154,153,129,124,186,190,133,140,153],
       2025:[183,150,184,296,241,185,232,196,263,180,148,171],
-      2026:[142,180,289,344,251,37,null,null,null,null,null,null],
+      2026:[142,180,289,344,251,253,197,null,null,null,null,null],
     },
     booknew:{ // 客服預約新客數
       2024:[152,124,138,172,171,133,95,169,188,176,164,236],
       2025:[225,262,324,318,290,218,228,253,302,142,147,206],
-      2026:[183,201,370,436,239,28,null,null,null,null,null,null],
+      2026:[183,201,370,436,239,296,260,null,null,null,null,null],
     },
   },
   綺:{
     arrive:{
       2024:[75,81,101,67,91,67,55,79,75,60,84,59],
       2025:[88,80,85,122,175,138,86,97,80,111,155,139],
-      2026:[165,122,144,130,128,12,null,null,null,null,null,null],
+      2026:[165,122,144,130,128,119,109,null,null,null,null,null],
     },
     booknew:{
       2024:[80,101,87,79,80,50,49,64,75,58,89,59],
       2025:[90,86,113,131,154,128,119,119,70,144,165,160],
-      2026:[216,122,182,137,130,6,null,null,null,null,null,null],
+      2026:[216,122,182,137,130,134,121,null,null,null,null,null],
     },
   },
 };
@@ -1075,7 +1075,7 @@ async function fetchLatest2026(){
         const w_new_idx =[0,4,8,12,16]; // 渥 新客到店
         const q_new_idx =[2,6,10,14,18]; // 綺 新客到店
         const sum=(arr,idxs)=>idxs.reduce((s,i)=>s+(arr[i]||0),0);
-        history['渥'][2026].p[mi]=sum(r37,w_book_idx);
+        if (!_lockedHistoryW[mi]) history['渥'][2026].p[mi]=sum(r37,w_book_idx);
         history['綺'][2026].p[mi]=sum(r37,q_book_idx);
         history['渥'][2026].n[mi]=sum(r38,w_new_idx);
         history['綺'][2026].n[mi]=sum(r38,q_new_idx);
@@ -1143,15 +1143,16 @@ function csvVal(s) {
 }
 
 // ① 個人績效同步（Google Apps Script 直接回傳 JSON，無 CORS 問題）
-const PERF_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGnRxVOzZ6YJgtNf5NKfM7uEmySCm35205JdEcQ_2AhcOOMlYLEUkss4f2Oz5z8SJK/exec';
+const PERF_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwtyXcvUBaEnPL1UF_gSVspfBc39glB6_p2SdHW8jk_0wf23LOzV6dy5H8PDfOEC-uO/exec';
 // 記錄哪幾個月已由 Apps Script 解析來源資料（syncSourceData 不再覆寫這些月份）
 const _apsSrcMonths = new Set();
 async function syncPerfData() {
-  const res = await fetch(PERF_APPS_SCRIPT_URL);
+  const res = await fetch(PERF_APPS_SCRIPT_URL + '?t=' + Date.now());
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   const { w詢問, w預約, w新客預約, w新客, w舊客, w目標,
           q詢問, q預約, q新客預約, q新客, q舊客, q目標 } = data;
+  const wPArr = data.wPArr || []; // 原渥客服總預約數，來自「預約狀況同期比較」row17，每天更新
 
   // 自動偵測月份數：1月=6欄，2月起=5欄，totalCols=6+5*(n-1) → n=(totalCols-6)/5+1
   // Apps Script 應使用 getLastColumn() 動態抓範圍，無需每月更新
@@ -1235,16 +1236,31 @@ async function syncPerfData() {
     const wBk=sumM(w預約,mi), qBk=sumM(q預約,mi);
     const wNw=sumM(w新客,mi), qNw=sumM(q新客,mi);
     const wOd=sumM(w舊客,mi), qOd=sumM(q舊客,mi);
-    if (wBk||qBk) { history['渥'][2026].p[mi]=wBk; history['綺'][2026].p[mi]=qBk; }
-    if (wNw||qNw) { history['渥'][2026].n[mi]=wNw; history['綺'][2026].n[mi]=qNw; }
-    const wArr=wNw+wOd, qArr=qNw+qOd;
-    if (wArr||qArr) { sheetTotal['渥'].arrive[2026][mi]=wArr; sheetTotal['綺'].arrive[2026][mi]=qArr; }
-    // 客服預約新客數（需 Apps Script 回傳 w新客預約 / q新客預約）
-    // 防呆：月合計須 >= 5（整數人數），否則視為錯誤資料不採用
-    if (w新客預約 && q新客預約) {
-      const wBn=sumM(w新客預約,mi), qBn=sumM(q新客預約,mi);
-      if (wBn>=5 || qBn>=5) { sheetTotal['渥'].booknew[2026][mi]=wBn; sheetTotal['綺'].booknew[2026][mi]=qBn; }
+    // 防呆：Apps Script 值必須是整數且合理（arrive >= newClient，預約數 >= 到店數）才寫入
+    const hcP_w=history['渥'][2026].p[mi], hcP_q=history['綺'][2026].p[mi];
+    const hcA_w=sheetTotal['渥'].arrive[2026][mi], hcA_q=sheetTotal['綺'].arrive[2026][mi];
+    // 渥客服總預約數：優先用「預約狀況同期比較」row17 彙整值（每天更新），fallback sumM
+    const wPv = Math.round(Number(wPArr[mi])||0);
+    if (wPv >= 5) {
+      history['渥'][2026].p[mi] = wPv;
+      _lockedHistoryW[mi] = wPv;
+    } else if (wBk&&wBk>=5&&(hcP_w===null||Math.abs(wBk-hcP_w)/Math.max(hcP_w,1)<0.5)) {
+      history['渥'][2026].p[mi]=Math.round(wBk);
     }
+    if (qBk&&qBk>=5&&(hcP_q===null||Math.abs(qBk-hcP_q)/Math.max(hcP_q,1)<0.5)) {
+      history['綺'][2026].p[mi]=Math.round(qBk);
+    }
+    if (wNw&&qNw&&Number.isInteger(wNw)&&Number.isInteger(qNw)) {
+      history['渥'][2026].n[mi]=wNw; history['綺'][2026].n[mi]=qNw;
+    }
+    const wArr=wNw+wOd, qArr=qNw+qOd;
+    if (wArr&&qArr&&Number.isInteger(wArr)&&Number.isInteger(qArr)&&wArr>=wNw&&qArr>=qNw
+        &&(hcA_w===null||Math.abs(wArr-hcA_w)/Math.max(hcA_w,1)<0.5)) {
+      sheetTotal['渥'].arrive[2026][mi]=wArr; sheetTotal['綺'].arrive[2026][mi]=qArr;
+    }
+    // 客服預約新客數：各品牌獨立寫入，有值才覆蓋
+    if (w新客預約) { const v=w新客預約[mi]||0; if(Number.isInteger(v)&&v>=5) sheetTotal['渥'].booknew[2026][mi]=v; }
+    if (q新客預約) { const v=q新客預約[mi]||0; if(Number.isInteger(v)&&v>=5) sheetTotal['綺'].booknew[2026][mi]=v; }
   }
 
   // 重算達成率
@@ -1460,7 +1476,7 @@ async function syncTrendData() {
         const w_book=[0,1,4,5,8,9,12,13,16,17],q_book=[2,3,6,7,10,11,14,15,18,19];
         const w_new=[0,4,8,12,16],q_new=[2,6,10,14,18];
         const sum=(arr,idxs)=>idxs.reduce((s,i)=>s+(arr[i]||0),0);
-        history['渥'][2026].p[mi]=sum(r37,w_book); history['綺'][2026].p[mi]=sum(r37,q_book);
+        if (!_lockedHistoryW[mi]) history['渥'][2026].p[mi]=sum(r37,w_book); history['綺'][2026].p[mi]=sum(r37,q_book);
         history['渥'][2026].n[mi]=sum(r38,w_new);  history['綺'][2026].n[mi]=sum(r38,q_new);
         updated++;
       }
@@ -1468,13 +1484,19 @@ async function syncTrendData() {
   }
   // 歷年彙整 gid=176256949
   try {
-    const rows = await fetchSheetCSV(PERF_SHEET_ID_2, 176256949);
+    const _bnUrl=`https://docs.google.com/spreadsheets/d/${PERF_SHEET_ID_2}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent('預約狀況同期比較')}&headers=0`;
+    const _bnRes=await fetch(_bnUrl,{mode:'cors'});
+    if(!_bnRes.ok) throw new Error(`HTTP ${_bnRes.status}`);
+    const _bnTxt=await _bnRes.text();
+    const _bnJson=JSON.parse(_bnTxt.replace(/^[^(]+\(|\);?\s*$/g,''));
+    const rows=(_bnJson.table.rows||[]).map(r=>(r.c||[]).map(c=>(c&&c.v!=null)?c.v:null));
     const parsed = parseTrendSheet(rows);
     if (parsed) {
       for (const [yr,brands] of Object.entries(parsed)) {
         const y=parseInt(yr);
+        if(y===2026) continue; // 2026 全部由 Apps Script 即時提供，跳過 gviz 快取
         for (const [g,d] of Object.entries(brands)) {
-          if(d.p) history[g][y]={p:[...d.p],n:history[g][y]?.n||Array(12).fill(null)};
+          if(d.p){history[g][y]={p:[...d.p],n:history[g][y]?.n||Array(12).fill(null)};}
           if(d.n){if(!history[g][y])history[g][y]={p:Array(12).fill(null),n:d.n};else history[g][y].n=[...d.n];}
           if(d.arrive){if(!sheetTotal[g])sheetTotal[g]={arrive:{},booknew:{}};sheetTotal[g].arrive[y]=[...d.arrive];}
           if(d.booknew){if(!sheetTotal[g])sheetTotal[g]={arrive:{},booknew:{}};sheetTotal[g].booknew[y]=[...d.booknew];}
@@ -1508,8 +1530,41 @@ function parseTrendSheet(rows) {
   return Object.keys(result).length >= 1 ? result : null;
 }
 
+// ④ 預約新客數同步（預約狀況同期比較分頁，不帶 credentials 避免 CORS preflight 問題）
+async function syncBooknewData() {
+  const url=`https://docs.google.com/spreadsheets/d/${PERF_SHEET_ID_2}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent('預約狀況同期比較')}&headers=0`;
+  const res=await fetch(url,{mode:'cors'});
+  if(!res.ok) throw new Error(`HTTP ${res.status}`);
+  const txt=await res.text();
+  const json=JSON.parse(txt.replace(/^[^(]+\(|\);?\s*$/g,''));
+  const rows=(json.table.rows||[]).map(row=>(row.c||[]).map(cell=>(cell&&cell.v!=null)?cell.v:null));
+
+  // 搜尋指定品牌在 2026 年的「客服預約新客數」列
+  function findBooknew2026(brandKeyword) {
+    let inBrand=false, inYear=false;
+    for (let i=0; i<rows.length; i++) {
+      const r=rows[i]; if(!r||r[0]==null) continue;
+      const c0=String(r[0]);
+      if (c0.includes(brandKeyword) && (c0.includes('渥')||c0.includes('綺'))) { inBrand=true; inYear=false; continue; }
+      if (inBrand && c0==='2026') { inYear=true; continue; }
+      if (inBrand && inYear && c0==='客服預約新客數') {
+        return r.slice(1,13).map(v=>(v!==null&&!isNaN(Number(v)))?Number(v):null);
+      }
+    }
+    return null;
+  }
+
+  const wData=findBooknew2026('渥');
+  const qData=findBooknew2026('綺');
+  let cnt=0;
+  if (wData) wData.forEach((v,mi)=>{ if(v!==null){ sheetTotal['渥'].booknew[2026][mi]=v; cnt++; } });
+  if (qData) qData.forEach((v,mi)=>{ if(v!==null){ sheetTotal['綺'].booknew[2026][mi]=v; } });
+  return cnt;
+}
+
 // ── 全部同步主函數
 let _syncRunning = false;
+let _lockedHistoryW = {}; // mi → 從 w預約total 鎖定的渥客服總預約數，防止 syncTrendData 覆蓋
 async function syncAll() {
   if (_syncRunning) return;
   _syncRunning = true;
@@ -1523,7 +1578,7 @@ async function syncAll() {
   // ① 績效
   try {
     const n = await syncPerfData();
-    results.perf = `✓ 績效(${n}列)`;
+    results.perf = `✓ 績效`;
   } catch(e) {
     results.perf = `✗ 績效（${e.message}）`;
     console.warn('[syncAll] perf 失敗:', e);
@@ -1547,6 +1602,7 @@ async function syncAll() {
     console.warn('[syncAll] trend 失敗:', e);
   }
 
+
   const hasOk = Object.values(results).some(v => v.startsWith('✓'));
   const time = new Date().toLocaleString('zh-TW', {hour:'2-digit',minute:'2-digit'});
   if (statusEl) {
@@ -1557,7 +1613,11 @@ async function syncAll() {
     statusEl.innerHTML = parts.join(' ｜ ') + ` <span style="color:#555">${time}</span>`;
   }
   if (btn) { btn.textContent = '⟳ 全部同步'; btn.disabled = false; }
-  if (hasOk) refresh();
+  if (hasOk) {
+    // 先套 locked 值再 render，防止任何 sync 覆蓋正確數字
+    Object.entries(_lockedHistoryW).forEach(([mi,v])=>{ history['渥'][2026].p[+mi]=v; });
+    refresh();
+  }
   _syncRunning = false;
 }
 
@@ -1926,8 +1986,12 @@ function renderRanking(){
 
 // ─── STAFF PERF TAB ───────────────────────────────────
 function renderStaffSel(){
+  const hideMO=!getMonthIdxs().includes(0);
+  // 若 MO 被選中但要隱藏，重設為全體
+  if(hideMO&&curStaff===2){curStaff=-1;}
   const btns=[`<button class="ssel-btn ${curStaff===-1?'active':''}" onclick="setSt(-1,this)">全體</button>`,
-    ...STAFF_INFO.map((s,i)=>`<button class="ssel-btn ${curStaff===i?'active':''}" onclick="setSt(${i},this)">${s.zh} <small style="opacity:.6">${s.en}</small></button>`)];
+    ...STAFF_INFO.map((s,i)=>hideMO&&i===2?null:`<button class="ssel-btn ${curStaff===i?'active':''}" onclick="setSt(${i},this)">${s.zh} <small style="opacity:.6">${s.en}</small></button>`)
+      .filter(Boolean)];
   document.getElementById('staff-sel').innerHTML=btns.join('');
 }
 function setSt(idx,btn){curStaff=idx;document.querySelectorAll('.ssel-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderStaff();renderStaffPerfContent();}
@@ -1938,7 +2002,9 @@ function renderStaffCrossTable(){
   const groups=getGroups(),midxs=getMonthIdxs();
   const wrap=document.getElementById('staff-cross-table');
   if(!wrap)return;
-  const n=STAFF_INFO.length;
+  const hideMO=!midxs.includes(0);
+  const staffIdxs=STAFF_INFO.map((_,i)=>i).filter(i=>!(hideMO&&i===2));
+  const n=staffIdxs.length;
   function pct(a,b){return b>0?Math.round(a/b*100):0;}
   function achCell(v){ return pillAch(v); }
 
@@ -1971,8 +2037,9 @@ function renderStaffCrossTable(){
     // 品牌列 = 品牌標題 + 人名（凍結列）
     t+=`<tr>
       <td style="${stickyBase};background:${hdrBg};color:#fff;font-size:12px;font-weight:800;padding:6px 12px;border:1px solid ${hdrBg}">${isW?'原渥':'原綺'}</td>
-      ${midxs.map((mi,idx)=>STAFF_INFO.map((s,si)=>{
-        const isFst=si===0;
+      ${midxs.map((mi,idx)=>staffIdxs.map((si,si_idx)=>{
+        const s=STAFF_INFO[si];
+        const isFst=si_idx===0;
         return `<td style="padding:5px 8px;text-align:center;font-size:11px;font-weight:700;background:${hdrBg};color:#fff;border:1px solid ${hdrBg}${isFst&&idx>0?';border-left:2px solid #fff':''}">${s.en}</td>`;
       }).join('')).join('')}
     </tr>`;
@@ -1999,9 +2066,9 @@ function renderStaffCrossTable(){
       const txtClr=dim===true?'#9a9490':'#1a1a1a';
       t+=`<tr><td style="${lblSticky}">${name}</td>`;
       midxs.forEach((mi,mi_idx)=>{
-        STAFF_INFO.forEach((_,si)=>{
+        staffIdxs.forEach((si,si_idx)=>{
           const v=fn(mi,si);
-          const isFst=si===0;
+          const isFst=si_idx===0;
           const base=isFst?tdFirst(mi_idx):tdData(mi_idx);
           t+=`<td style="${base};color:${txtClr}">${dim==='ach'?achCell(v):v}</td>`;
         });
@@ -2138,7 +2205,7 @@ function renderSource(){
   if(!wrap)return;
   const midxs=getMonthIdxs();
   const sources=['行銷','業務','團購','其他'];
-  const brands=['渥','綺']; // 渥在左，綺在右
+  const brands=getGroups(); // 依品牌篩選器決定顯示渥／綺／兩者
 
   // 彙整多月
   const totals={};
@@ -2233,7 +2300,9 @@ function generateReport(){
     const convRate=inqT>0?Math.round(arrive/inqT*100):0;
     teamData[g]={target,arrive,ach,diff:arrive-target,inq:inqT,book:bookT,bookRate,convRate};
   });
+  const hideMO=!midxs.includes(0);
   const staffData=STAFF_INFO.map((s,si)=>{
+    if(hideMO&&si===2)return null;
     const gd={};
     groups.forEach(g=>{
       const newC=midxs.reduce((sum,mi)=>sum+perf[g].新客到店[mi][si],0);
@@ -2247,7 +2316,7 @@ function generateReport(){
         convRate:inq>0?Math.round(arrive/inq*100):0};
     });
     return{...s,gd};
-  });
+  }).filter(Boolean);
 
   // ── helpers
   const achClr=v=>v>=100?'#15803d':v>0?'#dc2626':'#aea9a4';
