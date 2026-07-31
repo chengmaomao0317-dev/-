@@ -78,6 +78,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .prog-label strong{font-size:11px;font-weight:700}
 .prog-bar{height:8px;background:#ede9e3;border-radius:4px;overflow:hidden;position:relative}
 .prog-fill{height:100%;border-radius:4px;transition:width .4s}
+/* ── Hist chart ── */
+.hch-wrap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.hch-panel{background:#fff;border:.5px solid var(--border,rgba(0,0,0,.09));border-radius:12px;padding:13px 12px 10px;overflow:hidden}
+.hch-ph{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.hch-pd{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.hch-pn{font-size:12px;font-weight:700}
+.hch-pt{font-size:10px;color:#888780;margin-left:auto}
+.hch-chart{display:flex;align-items:flex-end;gap:3px;height:130px;border-bottom:.5px solid rgba(0,0,0,.07);position:relative}
+.hch-yl{position:absolute;left:0;right:0;border-top:.5px dashed rgba(0,0,0,.06);pointer-events:none}
+.hch-bw{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end}
+.hch-bv{font-size:7.5px;font-weight:600;color:#444;margin-bottom:2px;text-align:center;line-height:1.3}
+.hch-ytd-lbl{color:#888780}
+.hch-bar{border-radius:3px 3px 0 0;width:100%}
+.hch-ytd{opacity:.5}
+.hch-xl{display:flex;gap:3px;margin-top:5px}
+.hch-xi{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.hch-xn{font-size:8px;color:#888780;text-align:center}
+.hch-cur{color:#444;font-weight:500}
+.hch-yoy{font-size:7.5px;font-weight:600;padding:1px 3px;border-radius:3px}
+.hch-up{color:#1a6b3c;background:rgba(26,107,60,.1)}
+.hch-dn{color:#c0392b;background:rgba(180,30,30,.1)}
+.hch-na{color:#888780}
+.hch-sum{display:flex;justify-content:space-between;margin-top:8px;padding-top:7px;border-top:.5px solid rgba(0,0,0,.06)}
+.hch-sum-item{text-align:center}
+.hch-sv{font-size:11px;font-weight:600;color:#1a1a18}
+.hch-sl{font-size:8px;color:#888780;margin-top:1px}
+.hch-note{font-size:9.5px;color:#888780;margin-bottom:12px}
+.hch-xi-lbl{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;padding-right:3px;margin-right:0}
+.hch-xi-lbl-r{visibility:hidden;display:block}
+.hch-xi-lbl-r:first-child{font-size:8px;line-height:1.5}
+.hch-xi-lbl-r:nth-child(2){font-size:7.5px;line-height:1.5;padding:1px 3px}
+.hch-xi-lbl-t{font-size:7.5px;color:#aaa;font-weight:500;white-space:nowrap;line-height:1.5}
+.hch-tgt-v{font-size:7.5px;color:#aaa;display:block;text-align:center;min-height:1em;line-height:1.5}
+.hch-xi-lbl-div{display:block;align-self:stretch;border-top:.5px dashed rgba(0,0,0,.08);margin:2px 0}
+.hch-tgt-grp{border-top:.5px dashed rgba(0,0,0,.08);padding-top:2px;margin-top:2px;display:flex;flex-direction:column;align-items:center;gap:2px;width:100%}
 /* ── Monthly bars ── */
 .month-sec{margin-bottom:0}
 .month-sec-label{font-size:9px;font-weight:600;color:#444;margin-bottom:4px}
@@ -346,6 +381,88 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .mch-sub td{background:#f8f7f4;font-weight:500}
 .mch-divider{display:flex;align-items:center;gap:10px;margin:4px 0 12px;font-size:11px;font-weight:500;color:#888780}
 .mch-divider::before,.mch-divider::after{content:'';flex:1;height:.5px;background:rgba(0,0,0,.1)}
+/* ── 產品業績 Tab ── */
+.prod-pane{display:none}
+.prod-pane.active{display:block}
+.prod-yr-wrap{display:flex;gap:4px;margin-bottom:12px;align-items:center}
+.prod-yr-btn{padding:4px 12px;border-radius:7px;font-size:11px;font-weight:500;border:.5px solid rgba(0,0,0,.1);cursor:pointer;background:transparent;color:#888;transition:background .12s}
+.prod-yr-btn.active{background:#1a1a18;color:#fff;border-color:#1a1a18}
+.prod-yr-note{font-size:10px;color:#aaa;margin-left:6px}
+.prod-tbl-wrap{overflow-x:auto;border-radius:10px;border:.5px solid rgba(0,0,0,.09);margin-bottom:12px}
+.prod-tbl{width:100%;border-collapse:collapse;font-size:10.5px;white-space:nowrap}
+.prod-tbl thead tr:first-child th{background:#111;color:#bbb;font-weight:500;font-size:10px;padding:7px 8px;text-align:right;border-right:.5px solid rgba(255,255,255,.08)}
+.prod-tbl thead tr:first-child th:first-child{text-align:left;min-width:80px}
+.prod-tbl thead tr:last-child th{background:#1e1e1e;color:#888;font-weight:400;font-size:9px;padding:5px 8px;text-align:right;border-right:.5px solid rgba(255,255,255,.05);border-bottom:.5px solid rgba(255,255,255,.1)}
+.prod-tbl thead tr:last-child th:first-child{text-align:left}
+.prod-tbl tbody td{padding:5px 8px;border-bottom:.5px solid rgba(0,0,0,.05);text-align:right;color:#1a1a18}
+.prod-tbl tbody td:first-child{text-align:left;font-weight:600;font-size:10px;position:sticky;left:0;background:#fff;z-index:2;border-right:.5px solid rgba(0,0,0,.08)}
+.prod-tbl tfoot td{font-weight:700;background:#f5f3ee;border-top:.5px solid rgba(0,0,0,.1);font-size:10.5px}
+.prod-tbl tfoot td:first-child{background:#f5f3ee;text-align:left;position:sticky;left:0;z-index:2}
+.prod-tbl .prod-ann td{font-size:9px;color:#aaa;background:#f9f8f6;padding:3px 8px}
+.prod-tbl .prod-ann td:first-child{background:#f9f8f6;text-align:left;font-weight:500;position:sticky;left:0;z-index:2}
+.prod-ki-acc td:first-child{border-left:3px solid #c04070}
+.prod-wo-acc td:first-child{border-left:3px solid #2d5a9e}
+.prod-dim{color:#ccc}
+.prod-note{font-size:9.5px;color:#aaa;margin-top:6px}
+.prod-sec-hd{font-size:11px;font-weight:600;color:#444;letter-spacing:.04em;margin:16px 0 10px;display:flex;align-items:center;gap:8px}
+.prod-sec-hd::after{content:'';flex:1;height:.5px;background:rgba(0,0,0,.1)}
+.prod-chart-panel{background:#fff;border:.5px solid rgba(0,0,0,.09);border-radius:12px;padding:14px;margin-bottom:6px;overflow:hidden}
+.prod-chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.prod-leg-item{display:flex;align-items:center;gap:5px;font-size:9.5px;color:#888780}
+.prod-leg-sw{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+.prod-leg-line{width:20px;height:3px;border-radius:2px;flex-shrink:0}
+/* ══ 諮詢師成交 Tab ══ */
+.cs-top-bar{display:flex;align-items:center;gap:8px;padding:14px 0 12px;border-bottom:.5px solid rgba(0,0,0,.08);margin-bottom:16px;flex-wrap:wrap}
+.cs-seg{display:flex;border:.5px solid rgba(0,0,0,.15);border-radius:8px;overflow:hidden}
+.cs-seg-btn{font-size:12px;padding:5px 16px;background:#fff;color:#888;cursor:pointer;border:none;border-right:.5px solid rgba(0,0,0,.1);font-weight:500;transition:background .12s}
+.cs-seg-btn:last-child{border-right:none}
+.cs-seg-btn.on{background:#1a1a18;color:#fff}
+.cs-mo-btn{font-size:12px;padding:5px 12px;border-radius:7px;border:.5px solid rgba(0,0,0,.12);background:#fff;color:#888;cursor:pointer}
+.cs-brand-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.cs-brand-card{border-radius:10px;border:.5px solid rgba(0,0,0,.09);overflow:hidden}
+.cs-brand-top-wo{border-top:2px solid #2d5a9e}
+.cs-brand-top-ki{border-top:2px solid #c04070}
+.cs-brand-hd{padding:10px 14px 8px;display:flex;align-items:center;justify-content:space-between}
+.cs-brand-name{font-size:13px;font-weight:600}
+.cs-brand-name.wo{color:#0c447c}.cs-brand-name.ki{color:#72243e}
+.cs-brand-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:.5px solid rgba(0,0,0,.07)}
+.cs-bs{padding:9px 0;text-align:center;border-right:.5px solid rgba(0,0,0,.07)}
+.cs-bs:last-child{border-right:none}
+.cs-bs-v{font-size:14px;font-weight:600;color:#1a1a18}
+.cs-bs-l{font-size:9px;color:#aaa;margin-top:2px}
+.cs-sec-label{font-size:10px;font-weight:600;color:#999;letter-spacing:.04em;margin:0 0 8px}
+.cs-store-wrap{border:.5px solid rgba(0,0,0,.09);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.cs-store-hd{display:grid;grid-template-columns:88px 1fr;background:#f7f5f1}
+.cs-store-label{padding:9px 12px;display:flex;align-items:center;gap:6px;border-right:.5px solid rgba(0,0,0,.07)}
+.cs-store-nm{font-size:12px;font-weight:600;color:#1a1a18}
+.cs-pill{font-size:9px;font-weight:600;padding:1px 5px;border-radius:3px}
+.cs-pill-wo{background:#e6eef8;color:#0c447c}
+.cs-pill-ki{background:#fbeaf0;color:#72243e}
+.cs-store-stats{display:grid;grid-template-columns:repeat(4,1fr);background:#f7f5f1}
+.cs-ss{padding:9px 0;text-align:center;border-right:.5px solid rgba(0,0,0,.07)}
+.cs-ss:last-child{border-right:none}
+.cs-ss-v{font-size:12px;font-weight:600;color:#1a1a18}
+.cs-ss-l{font-size:9px;color:#aaa;margin-top:1px}
+.cs-c-row{display:grid;grid-template-columns:88px 1fr;border-top:.5px solid rgba(0,0,0,.06)}
+.cs-c-cell{padding:8px 12px;display:flex;align-items:center;gap:7px;border-right:.5px solid rgba(0,0,0,.06);background:#fff}
+.cs-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.cs-av-wo{background:#e6eef8;color:#0c447c}
+.cs-av-ki{background:#fbeaf0;color:#72243e}
+.cs-c-name{font-size:11px;color:#1a1a18}
+.cs-c-stats{display:grid;grid-template-columns:repeat(4,1fr);background:#fff}
+.cs-cs{padding:8px 0;text-align:center;border-right:.5px solid rgba(0,0,0,.06)}
+.cs-cs:last-child{border-right:none}
+.cs-cs-v{font-size:12px;font-weight:600;color:#1a1a18}
+.cs-cs-l{font-size:9px;color:#aaa;margin-top:1px}
+.cs-rate-hi{color:#2a7a4a}.cs-rate-lo{color:#a32d2d}.cs-rate-mid{color:#ba7517}
+.cs-total-bar{background:#f0ede8;border-radius:10px;padding:12px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:.5px solid rgba(0,0,0,.07);margin-top:18px}
+.cs-tb{text-align:center}
+.cs-tb-v{font-size:18px;font-weight:600;color:#1a1a18}
+.cs-tb-l{font-size:10px;color:#aaa;margin-top:2px}
+.cs-chips{display:flex;justify-content:center;gap:3px;margin-top:3px}
+.cs-chip{font-size:9px;padding:1px 5px;border-radius:3px}
+.cs-chip-ok{background:#eaf3de;color:#27500a}
+.cs-chip-no{background:#fcebeb;color:#791f1f}
 </style>
 </head>
 <body>
@@ -372,6 +489,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
     <button class="nav-item" onclick="switchTab(1,this)">業績細項</button>
     <button class="nav-item" onclick="switchTab(2,this)">每月業績狀況進度</button>
     <button class="nav-item" onclick="switchTab(3,this)">每月達標狀況</button>
+    <button class="nav-item" onclick="switchTab(4,this)">產品業績</button>
+    <button class="nav-item" onclick="switchTab(5,this)">諮詢師成交</button>
     <div class="nav-filter">
       <span class="filter-label">年份</span>
       <select id="year-filter" onchange="refreshAll()"><option value="2026" selected>2026</option></select>
@@ -384,12 +503,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 
   <!-- ── TAB 1: 年度達成 ── -->
   <div id="tab0" class="tab-content active">
-    <div class="kpi-strip" id="kpi-strip"></div>
+    <div id="hist-chart-wrap"></div>
     <div id="tab1-body"></div>
   </div>
 
   <!-- ── TAB 2: 業績細項 ── -->
   <div id="tab1" class="tab-content">
+    <div class="kpi-strip" id="kpi-strip"></div>
     <div id="tab3-body"></div>
   </div>
 
@@ -403,9 +523,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
     <div id="tab5-body"></div>
   </div>
 
+  <!-- ── TAB 5: 產品業績 ── -->
+  <div id="tab4" class="tab-content">
+    <div id="prod-tab-body"></div>
+  </div>
+
+  <!-- ── TAB 6: 諮詢師成交 ── -->
+  <div id="tab5" class="tab-content">
+    <div id="consultant-tab-body"></div>
+  </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="consultant_data.js"></script>
 <script>
 // ══════════════════════════════════════════
 //  DATA
@@ -547,28 +678,28 @@ const BRAND_SOURCES = {
 
 // Historical full-year revenue + annual targets (2021-2025)
 const HIST_DATA = {
-  wo_zhanqian:  [{yr:2021,rev:13688102},{yr:2022,rev:23020490},{yr:2023,rev:23453956},{yr:2024,rev:24299505,target:25000000},{yr:2025,rev:19552617,target:20000000}],
-  wo_daan:      [{yr:2021,rev:15230076},{yr:2022,rev:18552207},{yr:2023,rev:16447696},{yr:2024,rev:19123398,target:19000000},{yr:2025,rev:20196873,target:20000000}],
-  wo_zhongxiao: [{yr:2021,rev:14625981},{yr:2022,rev:17207579},{yr:2023,rev:13052327},{yr:2024,rev:21447352,target:18000000},{yr:2025,rev:20583761,target:20000000}],
+  wo_zhanqian:  [{yr:2021,rev:13688102},{yr:2022,rev:23020490},{yr:2023,rev:23453956},{yr:2024,rev:24299505,target:25000000},{yr:2025,rev:19552617,target:21490000}],
+  wo_daan:      [{yr:2021,rev:15230076},{yr:2022,rev:18552207},{yr:2023,rev:16447696},{yr:2024,rev:19123398,target:19000000},{yr:2025,rev:20196873,target:18600000}],
+  wo_zhongxiao: [{yr:2021,rev:14625981},{yr:2022,rev:17207579},{yr:2023,rev:13052327},{yr:2024,rev:21447352,target:18000000},{yr:2025,rev:20583761,target:19720000}],
   wo_dongmen:   [{yr:2022,rev:613069},{yr:2023,rev:12807149},{yr:2024,rev:7630404,target:5000000},{yr:2025,rev:11367717}],
-  wo_taichung:  [{yr:2024,rev:26582974},{yr:2025,rev:20223024,target:47000000}],
+  wo_taichung:  [{yr:2024,rev:26582974},{yr:2025,rev:20223024,target:47500000}],
   wo_banqiao:   [],
-  ki_taipei:    [{yr:2021,rev:68072608},{yr:2022,rev:75864702},{yr:2023,rev:84932851},{yr:2024,rev:80518226,target:100000000},{yr:2025,rev:72855217,target:85000000}],
+  ki_taipei:    [{yr:2021,rev:68072608},{yr:2022,rev:75864702},{yr:2023,rev:84932851},{yr:2024,rev:80518226,target:100000000},{yr:2025,rev:72855217,target:103420000}],
   ki_taichung:  [{yr:2024,rev:11571364},{yr:2025,rev:28263211}],
 };
 // Full-year 2026 annual targets (H1 target × 2 approximation, per-store)
 const TARGET_2026 = {
-  wo_zhanqian:22000000, wo_daan:20000000, wo_zhongxiao:21000000,
-  wo_dongmen:100000000, wo_taichung:55000000, wo_banqiao:15000000,
-  ki_taipei:100000000, ki_taichung:44700000,
+  wo_zhanqian:22000000, wo_daan:20000000, wo_zhongxiao:18000000,
+  wo_dongmen:93700000, wo_taichung:55000000, wo_banqiao:10000000,
+  ki_taipei:93700000, ki_taichung:44700000,
 };
 
 // Cross-brand shared annual targets (starting 2025)
 const PAIRED_STORES = {
-  wo_dongmen:  {isFirst:true,  partner:'ki_taipei',   borderColor:'#8B7355', bg:'#EDE8DF', badge:'①', sharedTgt:{2025:85000000,  2026:100000000}},
-  ki_taipei:   {isFirst:false, partner:'wo_dongmen',  borderColor:'#8B7355', bg:'#EDE8DF', badge:'①', sharedTgt:{2025:85000000,  2026:100000000}},
-  wo_taichung: {isFirst:true,  partner:'ki_taichung', borderColor:'#C4B49A', bg:'#F5F1EA', badge:'②', sharedTgt:{2025:47000000,  2026:55000000}},
-  ki_taichung: {isFirst:false, partner:'wo_taichung', borderColor:'#C4B49A', bg:'#F5F1EA', badge:'②', sharedTgt:{2025:47000000,  2026:55000000}},
+  wo_dongmen:  {isFirst:true,  partner:'ki_taipei',   borderColor:'#8B7355', bg:'#EDE8DF', badge:'①', sharedTgt:{2025:103420000, 2026:93700000}},
+  ki_taipei:   {isFirst:false, partner:'wo_dongmen',  borderColor:'#8B7355', bg:'#EDE8DF', badge:'①', sharedTgt:{2025:103420000, 2026:93700000}},
+  wo_taichung: {isFirst:true,  partner:'ki_taichung', borderColor:'#C4B49A', bg:'#F5F1EA', badge:'②', sharedTgt:{2025:47500000,  2026:55000000}},
+  ki_taichung: {isFirst:false, partner:'wo_taichung', borderColor:'#C4B49A', bg:'#F5F1EA', badge:'②', sharedTgt:{2025:47500000,  2026:55000000}},
 };
 
 // Brand totals — recalculated after each data load
@@ -591,8 +722,8 @@ function recalcTotals(){
   },0);
   // Brand-level annual targets (fixed per management plan)
   KI_TARGET_YR = 118600000;
-  WO_TARGET_YR = 103900000;
-  TOTAL_TARGET_YR = 222500000;
+  WO_TARGET_YR = 100100000;
+  TOTAL_TARGET_YR = 218700000;
 }
 
 // ══════════════════════════════════════════
@@ -619,7 +750,7 @@ function monthBarColor(p){
 function yoyBadge(y){
   if(y===null) return '<span class="yoy yoy-fl">新開店</span>';
   const cls = y>0?'yoy-up':y<0?'yoy-dn':'yoy-fl';
-  return `<span class="yoy ${cls}">${Math.round(y*100)}% YOY</span>`;
+  return `<span class="yoy ${cls}">${Math.round(y*100)}%</span>`;
 }
 
 // ══════════════════════════════════════════
@@ -631,16 +762,193 @@ function switchTab(idx, el){
   el.classList.add('active');
   if(idx===2) renderTab4();
   if(idx===3) renderAchMatrix();
+  if(idx===4) renderProductTab();
+  if(idx===5) renderConsultantTab();
+}
+
+// ══════════════════════════════════════════
+//  HIST CHART (歷年三欄柱狀圖)
+// ══════════════════════════════════════════
+function renderHistChart(){
+  const el=document.getElementById('hist-chart-wrap');
+  if(!el) return;
+  // Collect sorted historical years
+  const yrSet=new Set();
+  Object.values(HIST_DATA).forEach(arr=>arr.forEach(e=>yrSet.add(e.yr)));
+  const histYrs=Array.from(yrSet).sort((a,b)=>a-b);
+  const allKeys=[...KI_STORES,...WO_STORES];
+  // Sum revenue by brand+year
+  function sumYr(keys,yr){
+    return keys.reduce((s,k)=>{
+      const e=(HIST_DATA[k]||[]).find(d=>d.yr===yr);
+      return s+(e?e.rev:0);
+    },0);
+  }
+  // 2026 H1 from live DATA
+  const ki26=KI_STORES.reduce((s,k)=>s+DATA[k].revenue,0);
+  const wo26=WO_STORES.reduce((s,k)=>s+DATA[k].revenue,0);
+  const tot26=ki26+wo26;
+  const allYrs=[...histYrs,2026];
+  const kiS=[...histYrs.map(y=>sumYr(KI_STORES,y)),ki26];
+  const woS=[...histYrs.map(y=>sumYr(WO_STORES,y)),wo26];
+  const totS=[...histYrs.map(y=>sumYr(allKeys,y)),tot26];
+  const CHART_H=130;
+  function mkH(series){const mx=Math.max(...series);return series.map(v=>mx>0?Math.round(v/mx*CHART_H):0);}
+  const kiH=mkH(kiS),woH=mkH(woS),totH=mkH(totS);
+  function fv(v){
+    if(v>=100000000) return(v/100000000).toFixed(2).replace(/\.?0+$/,'')+'億';
+    return Math.round(v/10000).toLocaleString()+'萬';
+  }
+  function fvTgt(v){ return Math.round(v/10000).toLocaleString()+'萬'; }
+  function yoyBadge(series,i){
+    const last=i===allYrs.length-1;
+    if(last) return'<span class="hch-yoy hch-na">H1</span>';
+    if(i===0) return'<span class="hch-yoy hch-na">—</span>';
+    const r=(series[i]-series[i-1])/series[i-1];
+    const cls=r>0?'hch-up':'hch-dn';
+    return`<span class="hch-yoy ${cls}">${r>0?'+':''}${Math.round(r*100)}%</span>`;
+  }
+  // 集團年度目標（2026 為全年目標 2.225億 之 H1 比例）
+  const GROUP_TARGETS={2024:167000000,2025:210730000,2026:218700000};  // 各年門市目標加總
+  // 線上通路業績（不計入目標，疊加在集團 bar 上）
+  const ONLINE_DATA={2022:4428458,2023:2004352,2024:1045037,2025:448103};
+  const online26H1=125173;
+  const onlineS=[...histYrs.map(y=>ONLINE_DATA[y]||0),online26H1];
+  function panel(name,color,nameClr,borderClr,series,heights,tgtArr,onlineSeries){
+    // If online series provided, scale bars by total (store+online)
+    const totalSeries=onlineSeries?series.map((v,i)=>v+(onlineSeries[i]||0)):series;
+    // mx 納入年度目標，確保全年目標 bar 不超出圖表
+    const tgtMax=tgtArr?Math.max(0,...tgtArr.filter(t=>t!=null)):0;
+    const mx=Math.max(...totalSeries,tgtMax);
+    const hasTgt=tgtArr&&tgtArr.some(t=>t!=null);
+    const bars=allYrs.map((yr,i)=>{
+      const ytd=i===allYrs.length-1;
+      const onlineV=onlineSeries?(onlineSeries[i]||0):0;
+      const storeH=mx>0?Math.round(series[i]/mx*CHART_H):0;
+      const onlineH=mx>0?Math.round(onlineV/mx*CHART_H):0;
+      // 剩餘目標：ytd 欄顯示（年度目標 − H1 實績）的條紋段
+      const lastTgtV=tgtArr?tgtArr[allYrs.length-1]:null;
+      const h2H=ytd&&lastTgtV&&lastTgtV>series[i]?Math.max(0,Math.round((lastTgtV-series[i])/mx*CHART_H)):0;
+      const hasAbove=onlineH>0||h2H>0;
+      const lbl=`<div class="hch-bv${ytd?' hch-ytd-lbl':''}">${fv(series[i])}${ytd?'<br>H1':''}</div>`;
+      const onlineDiv=onlineH>0?`<div style="height:${onlineH}px;background:#c8a84b;border-radius:${h2H>0?'0':'3px 3px 0 0'};width:100%;flex-shrink:0"></div>`:'';
+      const h2Div=h2H>0?`<div style="height:${h2H}px;background:repeating-linear-gradient(45deg,${color} 0,${color} 1.5px,transparent 1.5px,transparent 5px);opacity:.45;width:100%;flex-shrink:0;border:.5px dashed ${color};box-sizing:border-box;border-radius:${onlineH>0?'0':'3px 3px 0 0'}"></div>`:'';
+      const storeDiv=`<div class="hch-bar${ytd?' hch-ytd':''}" style="height:${storeH}px;background:${color};${hasAbove?'border-radius:0;':''}${ytd&&!hasAbove?`border-top:2px dashed ${color};`:''}"></div>`;
+      return`<div class="hch-bw">${lbl}${onlineDiv}${h2Div}${storeDiv}</div>`;
+    }).join('');
+    // SVG target dashed line overlay
+    let svgOvl='';
+    if(hasTgt&&mx>0){
+      const svgPts=allYrs.map((yr,i)=>{
+        if(tgtArr[i]==null) return null;
+        const cx=((i+0.5)/allYrs.length*100).toFixed(2);
+        const barTopCy=(1-series[i]/mx)*100;
+        const tgtCy=(1-tgtArr[i]/mx)*100;
+        // 實際>=目標時，確保虛線至少在 bar 頂下方 8 SVG-unit（≈10px，避免視覺上超出）
+        const cy=series[i]>=tgtArr[i]?Math.max(tgtCy,barTopCy+8):tgtCy;
+        return`${cx},${cy.toFixed(2)}`;
+      }).filter(Boolean);
+      if(svgPts.length>1){
+        svgOvl=`<svg style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <polyline points="${svgPts.join(' ')}" stroke="#666" stroke-width="1.5" stroke-dasharray="4,3" fill="none" vector-effect="non-scaling-stroke"/>
+        </svg>`;
+      }
+    }
+    // Target YOY badge
+    function tgtYoy(i){
+      const last=i===allYrs.length-1;
+      const cur=tgtArr[i];
+      if(cur==null) return '';
+      if(last) return'<span class="hch-yoy hch-na">—</span>';
+      const prev=i>0?tgtArr[i-1]:null;
+      if(prev==null) return'<span class="hch-yoy hch-na">—</span>';
+      const r=(cur-prev)/prev;
+      return`<span class="hch-yoy ${r>0?'hch-up':'hch-dn'}">${r>0?'+':''}${Math.round(r*100)}%</span>`;
+    }
+    // X-axis label area — grid layout when targets present (guarantees row alignment)
+    const n=allYrs.length;
+    let xlHtml;
+    if(hasTgt){
+      const rYr =allYrs.map((yr,i)=>`<div style="text-align:center"><span class="hch-xn${i===n-1?' hch-cur':''}">${yr}</span></div>`).join('');
+      const rYoy=allYrs.map((_,i)=>`<div style="text-align:center">${yoyBadge(series,i)}</div>`).join('');
+      const rTgt=allYrs.map((_,i)=>`<div style="text-align:center"><span class="hch-tgt-v">${tgtArr[i]!=null?fvTgt(tgtArr[i]):''}</span></div>`).join('');
+      xlHtml=`<div style="display:grid;grid-template-columns:auto repeat(${n},1fr);column-gap:3px;row-gap:0;margin-top:5px;align-items:center">
+        <div></div>${rYr}
+        <div></div>${rYoy}
+        <div style="grid-column:1/-1;border-top:.5px dashed rgba(0,0,0,.08);margin:3px 0 2px"></div>
+        <div class="hch-xi-lbl-t" style="text-align:right;padding-right:4px">目標</div>${rTgt}
+      </div>`;
+    } else {
+      const xlbls=allYrs.map((yr,i)=>`<div class="hch-xi">
+        <span class="hch-xn${i===n-1?' hch-cur':''}">${yr}</span>
+        ${yoyBadge(series,i)}
+      </div>`).join('');
+      xlHtml=`<div class="hch-xl">${xlbls}</div>`;
+    }
+    const tot5=series.slice(0,-1).reduce((a,b)=>a+b,0);
+    const last=series[series.length-2];
+    // 全年進度列
+    const lastTgt=tgtArr?tgtArr[allYrs.length-1]:null;
+    const fullYrTgt=lastTgt||null;
+    const h1Rev=series[allYrs.length-1];
+    let progHtml='';
+    if(fullYrTgt){
+      const h1Pct=Math.min(100,Math.round(h1Rev/fullYrTgt*100));
+      progHtml=`<div style="margin-top:8px;padding-top:8px;border-top:.5px solid rgba(0,0,0,.07)">
+        <div style="font-size:7.5px;color:#aaa;margin-bottom:2px">H1 目標達成進度</div>
+        <div style="height:4px;border-radius:2px;background:rgba(0,0,0,.08);overflow:hidden;margin:3px 0;position:relative">
+          <div style="position:absolute;left:0;top:0;width:${h1Pct}%;height:100%;background:${color}"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:8px;color:#aaa;margin-top:2px">
+          <span>H1 實績 <b style="color:#555">${fv(h1Rev)}</b></span>
+          <span>年度目標 <b style="color:#555">${fvTgt(fullYrTgt)}</b></span>
+          <span><b style="color:#555">${h1Pct}%</b> 達成率</span>
+        </div>
+      </div>`;
+    }
+    return`<div class="hch-panel" style="border-color:${borderClr}">
+      <div class="hch-ph">
+        <div class="hch-pd" style="background:${color}"></div>
+        <span class="hch-pn" style="color:${nameClr}">${name}</span>
+        <span class="hch-pt">億元</span>
+      </div>
+      <div class="hch-chart">
+        <div class="hch-yl" style="bottom:75%"></div>
+        <div class="hch-yl" style="bottom:50%"></div>
+        <div class="hch-yl" style="bottom:25%"></div>
+        ${bars}
+        ${svgOvl}
+      </div>
+      ${xlHtml}
+      ${progHtml}
+      <div class="hch-sum">
+        <div class="hch-sum-item"><div class="hch-sv">${fv(tot5)}</div><div class="hch-sl">${histYrs[0]}–${histYrs[histYrs.length-1]} 累計</div></div>
+        <div class="hch-sum-item"><div class="hch-sv">${fv(last)}</div><div class="hch-sl">${histYrs[histYrs.length-1]} 全年</div></div>
+      </div>
+    </div>`;
+  }
+  const WO_TARGETS={2026:100100000};   // 全年目標
+  const KI_TARGETS={2026:118600000};   // 全年目標
+  const totTgt=allYrs.map(yr=>GROUP_TARGETS[yr]||null);
+  const woTgt=allYrs.map(yr=>WO_TARGETS[yr]||null);
+  const kiTgt=allYrs.map(yr=>KI_TARGETS[yr]||null);
+  el.innerHTML=`<div class="hch-wrap">
+    ${panel('集團總計','#888780','#1a1a18','rgba(0,0,0,.09)',totS,totH,totTgt,onlineS)}
+    ${panel('原渥','#2d5a9e','#1a3a6e','rgba(45,90,158,.25)',woS,woH,woTgt)}
+    ${panel('原綺','#c04070','#8c2044','rgba(192,64,112,.25)',kiS,kiH,kiTgt)}
+  </div>
+  <div class="hch-note">2026 為 H1 實績（1–6月）；斜線條紋為距全年目標之剩餘缺口（目標 − H1 實績）。虛線為年度目標（集團 2,225萬、原渥 1,001萬、原綺 1,186萬）。2021–2022 原渥僅含站前/大安/忠孝 3 店。<br>集團灰色 = 門市業績；<span style="display:inline-block;width:8px;height:8px;background:#c8a84b;border-radius:1px;vertical-align:middle;margin:0 2px"></span> 黃色 = 線上通路（不計入目標，2022 起）。</div>`;
 }
 
 // ══════════════════════════════════════════
 //  RENDER KPI STRIP
 // ══════════════════════════════════════════
 function renderKPI(){
-  const ki_ach  = KI_TOTAL_REV / KI_TARGET_YR;
-  const wo_ach  = WO_TOTAL_REV / WO_TARGET_YR;
-  const total_ach = TOTAL_REV  / TOTAL_TARGET_YR;
+  const ki_ach    = KI_TOTAL_REV / KI_TARGET_YR;
+  const wo_ach    = WO_TOTAL_REV / WO_TARGET_YR;
+  const total_ach = TOTAL_REV    / TOTAL_TARGET_YR;
   const el = document.getElementById('kpi-strip');
+  el.style.gridTemplateColumns = '1fr 1fr auto 1fr 1fr';
   el.innerHTML = `
     <div class="kpi-card">
       <div class="kpi-label">集團累計業績（2026）</div>
@@ -652,15 +960,38 @@ function renderKPI(){
       <div class="kpi-value">${fmtPct(total_ach)}</div>
       <div class="kpi-sub flat">年目標 ${fmtM(TOTAL_TARGET_YR)}</div>
     </div>
+    <div style="width:1px;background:rgba(0,0,0,.08);border-radius:1px;align-self:stretch"></div>
     <div class="kpi-card">
-      <div class="kpi-label">原綺 年度達成率</div>
-      <div class="kpi-value" style="color:#c04070">${fmtPct(ki_ach)}</div>
-      <div class="kpi-sub flat">年目標 ${fmtM(KI_TARGET_YR)}</div>
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px">
+        <div style="width:7px;height:7px;border-radius:50%;background:#c04070;flex-shrink:0"></div>
+        <div class="kpi-label" style="margin:0">原綺</div>
+      </div>
+      <div class="kpi-value" style="font-size:17px;color:#c04070">${fmtM(KI_TOTAL_REV)}</div>
+      <div style="height:.5px;background:rgba(0,0,0,.07);margin:5px 0"></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+        <span class="kpi-sub flat" style="margin:0">達成率</span>
+        <span style="font-size:10px;font-weight:600;color:#c04070">${fmtPct(ki_ach)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span class="kpi-sub flat" style="margin:0">年目標</span>
+        <span class="kpi-sub flat" style="margin:0">${fmtM(KI_TARGET_YR)}</span>
+      </div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">原渥 年度達成率</div>
-      <div class="kpi-value" style="color:#c0392b">${fmtPct(wo_ach)}</div>
-      <div class="kpi-sub flat">年目標 ${fmtM(WO_TARGET_YR)}</div>
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px">
+        <div style="width:7px;height:7px;border-radius:50%;background:#2d5a9e;flex-shrink:0"></div>
+        <div class="kpi-label" style="margin:0">原渥</div>
+      </div>
+      <div class="kpi-value" style="font-size:17px;color:#2d5a9e">${fmtM(WO_TOTAL_REV)}</div>
+      <div style="height:.5px;background:rgba(0,0,0,.07);margin:5px 0"></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+        <span class="kpi-sub flat" style="margin:0">達成率</span>
+        <span style="font-size:10px;font-weight:600;color:#2d5a9e">${fmtPct(wo_ach)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span class="kpi-sub flat" style="margin:0">年目標</span>
+        <span class="kpi-sub flat" style="margin:0">${fmtM(WO_TARGET_YR)}</span>
+      </div>
     </div>
   `;
 }
@@ -837,7 +1168,9 @@ function renderTab1(){
         } else {
           cells+=`<td class="yr-sep">${revCell(rev)}</td><td>${yoyTxt(rev,prevRev)}</td>`;
         }
-      } else if(yr<2025){
+      } else if(yr===2023){
+        cells+=`<td class="yr-sep">${revCell(rev)}</td><td>${yoyTxt(rev,prevRev)}</td>`;
+      } else if(yr===2024){
         cells+=`<td class="yr-sep">${revCell(rev)}</td><td>${tgtCell(tgt)}</td><td>${achChip(rev,tgt)}</td><td>${yoyTxt(rev,prevRev)}</td>`;
       } else {
         // yr===2025 — shared target for paired stores
@@ -898,6 +1231,8 @@ function renderTab1(){
         cells+=`<td class="yr-sep">${revCell(rev)}</td>`;
       } else if(yr===2022){
         cells+=`<td class="yr-sep">${revCell(rev)}</td><td>${yoyTxt(rev,prevRev)}</td>`;
+      } else if(yr===2023){
+        cells+=`<td class="yr-sep">${revCell(rev)}</td><td>${yoyTxt(rev,prevRev)}</td>`;
       } else {
         cells+=`<td class="yr-sep">${revCell(rev)}</td><td>${tgtCell(tgt)}</td><td>${achChip(rev,tgt)}</td><td>${yoyTxt(rev,prevRev)}</td>`;
       }
@@ -941,7 +1276,7 @@ function renderTab1(){
             <th rowspan="2">門市</th>
             <th colspan="1" style="border-left:0.5px solid rgba(255,255,255,.12)">2021</th>
             <th colspan="2" style="border-left:0.5px solid rgba(255,255,255,.12)">2022</th>
-            <th colspan="4" style="border-left:0.5px solid rgba(255,255,255,.12)">2023</th>
+            <th colspan="2" style="border-left:0.5px solid rgba(255,255,255,.12)">2023</th>
             <th colspan="4" style="border-left:0.5px solid rgba(255,255,255,.12)">2024</th>
             <th colspan="4" style="border-left:0.5px solid rgba(255,255,255,.12)">2025</th>
             <th colspan="4" style="border-left:0.5px solid rgba(255,255,255,.12);color:#7ab3ff">2026 H1</th>
@@ -949,7 +1284,7 @@ function renderTab1(){
           <tr>
             <th class="yr-sep">業績</th>
             <th class="yr-sep">業績</th><th>YOY</th>
-            <th class="yr-sep">業績</th><th>目標</th><th>達成</th><th>YOY</th>
+            <th class="yr-sep">業績</th><th>YOY</th>
             <th class="yr-sep">業績</th><th>目標</th><th>達成</th><th>YOY</th>
             <th class="yr-sep">業績</th><th>目標</th><th>達成</th><th>YOY</th>
             <th class="yr-sep" style="color:#7ab3ff">業績</th><th>年目標</th><th>達成</th><th>YOY</th>
@@ -1135,9 +1470,12 @@ function renderStoreDetail(s, storeKey){
   const srcTotal = Object.values(src).reduce((a,b)=>a+b,0);
   const srcLabel = s.new_src ? (s.new_src._label||'H1累計') : '品牌整體';
   const srcTitle = `新客來源分析（${srcLabel}）`;
-  const colors = {行銷:'#5b8dee',業務:'#e27575',團購:'#f0a030',其他:'#5bbf8a'};
-  const newColor = s.brandKey==='wo' ? '#5b8dee' : '#e87b8d';
-  const oldColor = '#e8c86e';
+  const brandClr = s.brandKey==='wo' ? '#2d5a9e' : '#c04070';
+  const brandMid = s.brandKey==='wo' ? '#6b8ec0' : '#d47098';
+  const brandLt  = s.brandKey==='wo' ? '#9ab2d5' : '#e5a0bc';
+  const colors = {行銷:brandClr, 業務:brandMid, 團購:brandLt, 其他:'#b0ada5'};
+  const newColor = brandClr;
+  const oldColor = s.brandKey==='wo' ? 'rgba(45,90,158,0.25)' : 'rgba(192,64,112,0.25)';
 
   const srcBars = Object.entries(src).map(([k,v])=>
     `<div style="width:${(v/srcTotal*100).toFixed(1)}%;background:${colors[k]}"></div>`
@@ -1155,13 +1493,13 @@ function renderStoreDetail(s, storeKey){
       <td>${m.m}</td>
       <td colspan="7" style="color:#ccc;font-size:9px;text-align:center">— 尚未累完 —</td>
     </tr>`;
-    // Priority: m.tgt (from sync) → monthly_tgt[idx] (hardcoded) → back-calc from achieve
-    const tgt = m.tgt||(s.monthly_tgt?s.monthly_tgt[idx]:null)||((m.achieve&&m.achieve>0&&m.rev>0)?Math.round(m.rev/m.achieve):null);
+    // Priority: m.tgt (from sync) → monthly_tgt[idx] (hardcoded)
+    const tgt = m.tgt||(s.monthly_tgt?s.monthly_tgt[idx]:null)||null;
     const achStr = m.achieve!==null ? `<span style="color:${pctTextColor(m.achieve)}">${fmtPct(m.achieve)}</span>` : '—';
     const snap = (typeof MO_SNAP_DATA!=='undefined'&&MO_SNAP_DATA[idx]&&storeKey)?MO_SNAP_DATA[idx][storeKey]:null;
     const hasSrc = snap&&(snap.src_new||snap.src_old);
     const expId = `exp_${storeKey}_${idx}`;
-    const srcColors = {行銷:'#5b8dee',業務:'#e27575',團購:'#f0a030',其他:'#5bbf8a'};
+    const srcColors = colors;
     function srcRows(obj, total){
       if(!obj) return '<div style="font-size:10px;color:#aaa">無資料</div>';
       return Object.entries(obj).map(([k,v])=>`
@@ -1174,11 +1512,11 @@ function renderStoreDetail(s, storeKey){
     <tr id="${expId}" class="exp-row" style="display:none">
       <td colspan="8"><div class="exp-inner"><div class="exp-grid">
         <div>
-          <div class="exp-sec-label"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e87b8d"></span>新客來源（${snap.new_n||0}人）</div>
+          <div class="exp-sec-label"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${brandClr}"></span>新客來源（${snap.new_n||0}人）</div>
           ${srcRows(snap.src_new, snap.new_n)}
         </div>
         <div>
-          <div class="exp-sec-label"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e8c86e"></span>舊客來源（${snap.old_n||0}人）</div>
+          <div class="exp-sec-label"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${brandMid}"></span>舊客來源（${snap.old_n||0}人）</div>
           ${srcRows(snap.src_old, snap.old_n)}
         </div>
       </div></div></td>
@@ -1689,10 +2027,358 @@ function switchMoTab(idx){
 function refreshAll(){
   recalcTotals();
   renderKPI();
+  renderHistChart();
   renderTab1();
   renderTab3();
   renderTab4();
   renderAchMatrix();
+}
+
+// ══════════════════════════════════════════
+//  PRODUCT DATA
+// ══════════════════════════════════════════
+const PROD_STORE_DATA = {
+  2026: [
+    {key:'ki_taipei',   label:'台北原綺', brandKey:'ki', months:[13580,18270,9020,5726,4380,7358,0,0,0,0,0,0]},
+    {key:'wo_zhanqian', label:'站前',     brandKey:'wo', months:[78816,18039,93824,47439,30127,64488,0,0,0,0,0,0]},
+    {key:'wo_daan',     label:'大安',     brandKey:'wo', months:[153915,61669,151477,37352,41826,54595,0,0,0,0,0,0]},
+    {key:'wo_zhongxiao',label:'忠孝',     brandKey:'wo', months:[160244,84664,70663,79643,65002,29478,0,0,0,0,0,0]},
+    {key:'wo_banqiao',  label:'板橋',     brandKey:'wo', months:[0,0,38101,32018,66308,57709,0,0,0,0,0,0]},
+    {key:'wo_dongmen',  label:'東門',     brandKey:'wo', months:[59516,39372,30326,23493,12497,13449,0,0,0,0,0,0]},
+    {key:'wo_taichung', label:'台中',     brandKey:'wo', months:[61227,58252,118135,127741,63610,70878,0,0,0,0,0,0]},
+  ],
+  2025: [
+    {key:'ki_taipei',   label:'台北原綺', brandKey:'ki', months:[76292,48685,46650,27010,21059,23303,13420,7000,38093,32810,9810,9910]},
+    {key:'wo_zhanqian', label:'站前',     brandKey:'wo', months:[49964,52350,73940,98599,35881,82976,30160,64280,194879,192989,61879,61155]},
+    {key:'wo_daan',     label:'大安',     brandKey:'wo', months:[136188,351300,369253,167442,258651,386933,141570,121122,124122,164393,157496,147529]},
+    {key:'wo_zhongxiao',label:'忠孝',     brandKey:'wo', months:[330559,287388,281157,134191,229565,197864,87970,231980,329192,355073,164162,52757]},
+    {key:'wo_dongmen',  label:'東門',     brandKey:'wo', months:[50994,34970,78177,54479,72056,41032,61325,31260,50480,42976,59826,107804]},
+    {key:'wo_taichung', label:'台中',     brandKey:'wo', months:[248879,121648,69936,116520,68670,122293,164284,127047,214404,204241,194994,79342]},
+  ],
+  2024: [
+    {key:'ki_taipei',   label:'台北原綺', brandKey:'ki', months:[92149,80606,87710,47719,84840,19120,36040,0,0,0,0,0]},
+    {key:'wo_zhanqian', label:'站前',     brandKey:'wo', months:[229010,149886,249969,166121,168494,145583,73510,0,0,0,0,0]},
+    {key:'wo_daan',     label:'大安',     brandKey:'wo', months:[216671,298041,84400,186351,191680,149649,42033,0,0,0,0,0]},
+    {key:'wo_zhongxiao',label:'忠孝',     brandKey:'wo', months:[293769,288857,353362,232622,138042,276631,270552,0,0,0,0,0]},
+    {key:'wo_dongmen',  label:'東門',     brandKey:'wo', months:[15698,19783,105997,70678,127498,42789,51134,0,0,0,0,0]},
+    {key:'wo_taichung', label:'台中',     brandKey:'wo', months:[0,0,0,0,0,8900,83360,0,0,0,0,0]},
+  ],
+};
+
+const PROD_EC_DATA = {
+  2026:{
+    platforms:[
+      {label:'原渥官網',total:75606, orders:28,months:[{r:19830,o:6},{r:6195,o:5},{r:32473,o:8},{r:8294,o:6},{r:8814,o:3},{r:0,o:0},{r:0,o:0},{r:0,o:0},{r:0,o:0},{r:0,o:0},{r:0,o:0},{r:0,o:0}]},
+      {label:'SHOPLINE',total:49567, orders:13,months:[{r:9123,o:2},{r:3695,o:2},{r:2435,o:1},{r:26173,o:6},{r:8141,o:2},{r:0,o:0},{r:0,o:0},{r:0,o:0},{r:0,o:0},{r:0,o:0},{r:0,o:0},{r:0,o:0}]},
+      {label:'HK',      total:0,    orders:0, months:Array.from({length:12},()=>({r:0,o:0}))},
+      {label:'蝦皮',    total:0,    orders:0, months:Array.from({length:12},()=>({r:0,o:0}))},
+    ],
+    total:125173, orders:41, avg:3053,
+    mo_r:[28953,9890,34908,34467,16955,0,0,0,0,0,0,0],
+    mo_o:[8,7,9,12,5,0,0,0,0,0,0,0],
+    mom:[null,-0.658,2.53,-0.013,-0.508,null,null,null,null,null,null,null],
+    yoy:-0.721,
+    yoy_mo:[-0.146,-0.806,-0.092,-0.455,-0.724,null,null,null,null,null,null,null],
+  },
+  2025:{
+    platforms:[
+      {label:'原渥官網',total:204146,orders:66,months:Array.from({length:12},()=>({r:0,o:0}))},
+      {label:'SHOPLINE',total:200485,orders:62,months:Array.from({length:12},()=>({r:0,o:0}))},
+      {label:'HK',      total:29513, orders:9, months:Array.from({length:12},()=>({r:0,o:0}))},
+      {label:'蝦皮',    total:13959, orders:11,months:Array.from({length:12},()=>({r:0,o:0}))},
+    ],
+    total:448103, orders:148, avg:3028,
+    mo_r:Array(12).fill(0), mo_o:Array(12).fill(0),
+    mom:Array(12).fill(null), yoy:null, yoy_mo:Array(12).fill(null),
+  }
+};
+
+let _prodSubTab='store', _prodStoreYr=2026, _prodEcYr=2026;
+
+const PROD_STORE_CLR={
+  wo_zhanqian:'#2d5a9e', wo_daan:'#4a7abc', wo_zhongxiao:'#1a3a7e',
+  wo_banqiao:'#9ab8d8', wo_dongmen:'#5472a8', wo_taichung:'#3d6db3',
+  ki_taipei:'#c04070',
+};
+
+function _fvs(v){
+  if(!v) return'$0';
+  if(v>=100000000) return'$'+(v/100000000).toFixed(2)+'億';
+  if(v>=10000000) return'$'+(v/10000000).toFixed(2)+'千萬';
+  if(v>=10000) return'$'+(v/10000).toFixed(0)+'萬';
+  return'$'+Math.round(v).toLocaleString();
+}
+
+function _renderProdStoreCharts(){
+  const stores=PROD_STORE_DATA[_prodStoreYr]||[];
+  const MO_L=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+  // ① 歷年業績圖表 (合計 1 panel)
+  const histEl=document.getElementById('prod-hist-panel');
+  if(histEl){
+    const yr24=(PROD_STORE_DATA[2024]||[]).reduce((s,st)=>s+st.months.reduce((a,b)=>a+b,0),0);
+    const yr25=(PROD_STORE_DATA[2025]||[]).reduce((s,st)=>s+st.months.reduce((a,b)=>a+b,0),0);
+    const yr26=(PROD_STORE_DATA[2026]||[]).reduce((s,st)=>s+st.months.reduce((a,b)=>a+b,0),0);
+    const maxV=Math.max(yr24,yr25,yr26,1);
+    const H=80;
+    const yrs=[
+      {yr:2024,v:yr24,sub:'1–7月',clr:'#c8c7c0'},
+      {yr:2025,v:yr25,sub:'全年', clr:'#888780'},
+      {yr:2026,v:yr26,sub:'H1',  clr:'rgba(136,135,128,.55)',ytd:true},
+    ];
+    const barsHtml=yrs.map(d=>{
+      const h=Math.max(Math.round(d.v/maxV*H),4);
+      return`<div style="display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end">
+        <div style="font-size:8px;font-weight:600;color:#444;margin-bottom:3px;text-align:center;line-height:1.3">${_fvs(d.v)}</div>
+        <div style="height:${h}px;border-radius:3px 3px 0 0;width:70%;background:${d.clr};${d.ytd?'border-top:2px dashed #888780':''}"></div>
+      </div>`;
+    }).join('');
+    const xlHtml=yrs.map(d=>`<div style="flex:1;text-align:center;margin-top:5px">
+      <div style="font-size:8.5px;color:#555">${d.yr}</div>
+      <div style="font-size:7.5px;color:#aaa">${d.sub}</div>
+    </div>`).join('');
+    histEl.innerHTML=`<div style="display:flex;align-items:flex-end;gap:6px;height:${H}px;border-bottom:.5px solid rgba(0,0,0,.07);padding:0 8%">${barsHtml}</div>
+    <div style="display:flex;gap:6px;padding:0 8%">${xlHtml}</div>`;
+  }
+
+  // ② 各店歷年業績 – 現在直接由 storePane() 靜態渲染，無需動態注入
+
+  // ③ 每月業績 SVG 折線圖
+  const moSvg=document.getElementById('prod-mo-chart');
+  const moLeg=document.getElementById('prod-mo-legend');
+  if(moSvg&&moLeg){
+    const W=640,H=130,pL=40,pR=16,pT=10,pB=24;
+    const cW=W-pL-pR,cH=H-pT-pB,MC=12;
+    const allV=stores.flatMap(s=>s.months.filter(v=>v>0));
+    const maxV=allV.length>0?Math.max(...allV):1;
+    const cx=i=>pL+i/(MC-1)*cW;
+    const cy=v=>pT+cH-(v/maxV*cH);
+    let svg='';
+    [0.25,0.5,0.75,1].forEach(p=>{
+      const yy=(pT+cH-p*cH).toFixed(1);
+      svg+=`<line x1="${pL}" y1="${yy}" x2="${W-pR}" y2="${yy}" stroke="rgba(0,0,0,.05)" stroke-width="1"/>`;
+      svg+=`<text x="${pL-4}" y="${(+yy+3).toFixed(1)}" text-anchor="end" font-size="8" fill="#aaa">${_fvs(maxV*p)}</text>`;
+    });
+    MO_L.forEach((m,i)=>{
+      svg+=`<text x="${cx(i).toFixed(1)}" y="${H-4}" text-anchor="middle" font-size="8" fill="#aaa">${m}</text>`;
+    });
+    stores.forEach(s=>{
+      const clr=PROD_STORE_CLR[s.key]||'#888780';
+      const pts=s.months.map((v,i)=>({i,v})).filter(p=>p.v>0);
+      if(!pts.length) return;
+      const poly=pts.map(p=>`${cx(p.i).toFixed(1)},${cy(p.v).toFixed(1)}`).join(' ');
+      svg+=`<polyline points="${poly}" fill="none" stroke="${clr}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+      pts.forEach(p=>{
+        svg+=`<circle cx="${cx(p.i).toFixed(1)}" cy="${cy(p.v).toFixed(1)}" r="3.5" fill="#fff" stroke="${clr}" stroke-width="2"/>`;
+      });
+      const last=pts[pts.length-1];
+      if(last.i<MC-1){
+        svg+=`<line x1="${cx(last.i).toFixed(1)}" y1="${cy(last.v).toFixed(1)}" x2="${cx(MC-1).toFixed(1)}" y2="${cy(last.v).toFixed(1)}" stroke="${clr}" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.2"/>`;
+      }
+    });
+    moSvg.innerHTML=svg;
+    moLeg.innerHTML=stores.filter(s=>s.months.some(v=>v>0)).map(s=>{
+      const clr=PROD_STORE_CLR[s.key]||'#888780';
+      return`<div class="prod-leg-item"><div class="prod-leg-line" style="background:${clr}"></div><span>${s.label}</span></div>`;
+    }).join('');
+  }
+}
+
+function renderProductTab(){
+  const el=document.getElementById('prod-tab-body');
+  if(!el) return;
+  const MO=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+  function storePane(){
+    const stores=PROD_STORE_DATA[_prodStoreYr]||[];
+    const stores26=PROD_STORE_DATA[2026]||[];
+    const stores25=PROD_STORE_DATA[2025]||[];
+    const stores24=PROD_STORE_DATA[2024]||[];
+    const moTotals=MO.map((_,i)=>stores.reduce((s,st)=>s+(st.months[i]||0),0));
+    const lastData=moTotals.reduce((l,v,i)=>v>0?i:l,-1);
+    const showMoCnt=Math.max(lastData+2,6);
+    const moShow=MO.slice(0,showMoCnt);
+    const storeTotal=stores.reduce((s,st)=>s+st.months.reduce((a,b)=>a+b,0),0);
+
+    // 各店歷年業績 heat table rows
+    const tot24=stores24.reduce((s,st)=>s+st.months.reduce((a,b)=>a+b,0),0);
+    const tot25=stores25.reduce((s,st)=>s+st.months.reduce((a,b)=>a+b,0),0);
+    const tot26=stores26.reduce((s,st)=>s+st.months.reduce((a,b)=>a+b,0),0);
+    const allV26=stores26.map(st=>st.months.reduce((a,b)=>a+b,0));
+    const max26h=Math.max(...allV26,1), min26h=Math.min(...allV26);
+    const heatA=v=>((v-min26h)/(max26h-min26h)*0.18).toFixed(3);
+    const yFmt=y=>y===null?'<span class="prod-dim">—</span>':`<span style="color:${y>=0?'#2a7a4a':'#c0392b'};font-weight:700">${y>=0?'+':''}${Math.round(y*100)}%</span>`;
+    const yrRows=stores26.map(st=>{
+      const acc=st.brandKey==='ki'?'prod-ki-acc':'prod-wo-acc';
+      const t26=st.months.reduce((a,b)=>a+b,0);
+      const st25=stores25.find(s=>s.key===st.key);
+      const st24=stores24.find(s=>s.key===st.key);
+      const t25=st25?st25.months.reduce((a,b)=>a+b,0):null;
+      const t24=st24?st24.months.reduce((a,b)=>a+b,0):null;
+      const p24=st24?st24.months.slice(0,7).reduce((a,b)=>a+b,0):0;
+      const p25=st25?st25.months.slice(0,7).reduce((a,b)=>a+b,0):0;
+      const yoy25=(p24>0&&p25>0)?(p25/p24-1):null;
+      const h1_25=st25?st25.months.slice(0,6).reduce((a,b)=>a+b,0):0;
+      const yoy26=h1_25>0?(t26/h1_25-1):null;
+      return`<tr class="${acc}">
+        <td>${st.label}</td>
+        <td>${t24!==null?fmtM(t24):'<span class="prod-dim">—</span>'}</td>
+        <td style="border-left:.5px solid rgba(0,0,0,.07)">${t25!==null?fmtM(t25):'<span class="prod-dim">—</span>'}</td>
+        <td style="background:rgba(0,0,0,.02);font-size:9.5px">${yFmt(yoy25)}</td>
+        <td style="border-left:.5px solid rgba(0,0,0,.07);background:rgba(45,90,158,${heatA(t26)})">${fmtM(t26)}</td>
+        <td style="background:rgba(0,0,0,.02);font-size:9.5px">${yFmt(yoy26)}</td>
+      </tr>`;
+    }).join('');
+    const tp24=stores24.reduce((s,st)=>s+st.months.slice(0,7).reduce((a,b)=>a+b,0),0);
+    const tp25=stores25.reduce((s,st)=>s+st.months.slice(0,7).reduce((a,b)=>a+b,0),0);
+    const tyoy25=tp24>0?(tp25/tp24-1):null;
+    const th1_25=stores25.reduce((s,st)=>s+st.months.slice(0,6).reduce((a,b)=>a+b,0),0);
+    const tyoy26=th1_25>0?(tot26/th1_25-1):null;
+
+    // 每月業績 table rows
+    let moRows=stores.map(st=>{
+      const acc=st.brandKey==='ki'?'prod-ki-acc':'prod-wo-acc';
+      const total=st.months.reduce((a,b)=>a+b,0);
+      const moCells=moShow.map((_,i)=>st.months[i]>0?`<td>${fmtM(st.months[i])}</td>`:`<td class="prod-dim">—</td>`).join('');
+      return`<tr class="${acc}"><td>${st.label}</td><td>${total>0?fmtM(total):'<span class="prod-dim">$0</span>'}</td>${moCells}</tr>`;
+    }).join('');
+    if(_prodStoreYr===2026){
+      moRows+=`<tr class="prod-ann"><td>YOY（vs 2025）</td><td class="prod-dim">—</td>${moShow.map((_,i)=>{
+        const v26=moTotals[i]||0;
+        const v25=stores25.reduce((s,st)=>s+(st.months[i]||0),0);
+        if(!v25) return`<td class="prod-dim">—</td>`;
+        const yoy=v26/v25-1;
+        return`<td style="color:${yoy>=0?'#2a7a4a':'#c0392b'}">${yoy>=0?'+':''}${Math.round(yoy*100)}%</td>`;
+      }).join('')}</tr>`;
+    }
+    const totCells=moShow.map((_,i)=>moTotals[i]>0?`<td>${fmtM(moTotals[i])}</td>`:`<td class="prod-dim">—</td>`).join('');
+
+    return`<div class="prod-yr-wrap">
+      <button class="prod-yr-btn${_prodStoreYr===2026?' active':''}" onclick="_prodStoreYr=2026;renderProductTab()">2026</button>
+      <button class="prod-yr-btn${_prodStoreYr===2025?' active':''}" onclick="_prodStoreYr=2025;renderProductTab()">2025</button>
+      <button class="prod-yr-btn${_prodStoreYr===2024?' active':''}" onclick="_prodStoreYr=2024;renderProductTab()">2024</button>
+    </div>
+
+    <div class="prod-sec-hd" style="margin-top:0">歷年業績圖表</div>
+    <div class="prod-chart-panel" id="prod-hist-panel"></div>
+
+    <div class="prod-sec-hd">各店歷年業績</div>
+    <div class="prod-tbl-wrap">
+      <table class="prod-tbl">
+        <thead>
+          <tr>
+            <th>門市</th>
+            <th style="color:#c8c7c0">2024 全年</th>
+            <th style="color:#888780;border-left:.5px solid rgba(0,0,0,.07)">2025 全年</th>
+            <th style="background:rgba(0,0,0,.02)">YOY</th>
+            <th style="color:#2d5a9e;border-left:.5px solid rgba(0,0,0,.07)">2026 H1</th>
+            <th style="background:rgba(0,0,0,.02)">YOY</th>
+          </tr>
+        </thead>
+        <tbody>${yrRows}</tbody>
+        <tfoot><tr>
+          <td>Total</td>
+          <td>${fmtM(tot24)}</td>
+          <td style="border-left:.5px solid rgba(0,0,0,.07)">${fmtM(tot25)}</td>
+          <td style="background:rgba(0,0,0,.02);font-size:9.5px">${yFmt(tyoy25)}</td>
+          <td style="border-left:.5px solid rgba(0,0,0,.07)">${fmtM(tot26)}</td>
+          <td style="background:rgba(0,0,0,.02);font-size:9.5px">${yFmt(tyoy26)}</td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <p class="prod-note">＊2025 YOY = 前7月同期比（vs 2024）｜2026 YOY = H1 vs 2025 H1（前6月）</p>
+
+    <div class="prod-sec-hd">每月業績（${_prodStoreYr}）</div>
+    <div class="prod-chart-panel">
+      <div class="prod-chart-legend" id="prod-mo-legend"></div>
+      <svg id="prod-mo-chart" width="100%" height="150" viewBox="0 0 640 150" style="overflow:visible"></svg>
+    </div>
+    <div class="prod-tbl-wrap" style="margin-top:6px">
+      <table class="prod-tbl">
+        <thead>
+          <tr><th>門市</th><th>累計業績</th>${moShow.map(m=>`<th>${m}</th>`).join('')}</tr>
+          <tr><th></th><th></th>${moShow.map(()=>`<th>業績</th>`).join('')}</tr>
+        </thead>
+        <tbody>${moRows}</tbody>
+        <tfoot><tr><td>Total</td><td>${fmtM(storeTotal)}</td>${totCells}</tr></tfoot>
+      </table>
+    </div>
+    <p class="prod-note">資料來源：門市產品業績總表。2024 H1–H2，2025 全年，2026 H1 實績。</p>`;
+  }
+
+  function ecPane(){
+    const d=PROD_EC_DATA[_prodEcYr];
+    const lastData=d.mo_r.reduce((l,v,i)=>v>0?i:l,-1);
+    const showMoCnt=_prodEcYr===2026?Math.max(lastData+2,5):0;
+    const moShow=MO.slice(0,showMoCnt);
+    const hasMonths=moShow.length>0;
+
+    const kpi=_prodEcYr===2026?`<div class="kpi-strip">
+      <div class="kpi-card"><div class="kpi-label">電商總業績（H1）</div><div class="kpi-value">${fmtM(d.total)}</div><div class="kpi-sub down">YOY ${Math.round(d.yoy*100)}%</div></div>
+      <div class="kpi-card"><div class="kpi-label">總訂單數</div><div class="kpi-value">${d.orders}</div><div class="kpi-sub down">YOY ${Math.round((d.orders/PROD_EC_DATA[2025].orders-1)*100)}%</div></div>
+      <div class="kpi-card"><div class="kpi-label">平均客單</div><div class="kpi-value">${fmtM(d.avg)}</div><div class="kpi-sub" style="color:#888780">vs 2025 ${fmtM(PROD_EC_DATA[2025].avg)}</div></div>
+      <div class="kpi-card"><div class="kpi-label">活躍平台</div><div class="kpi-value">${d.platforms.filter(p=>p.total>0).length}</div><div class="kpi-sub" style="color:#888780">${d.platforms.filter(p=>p.total>0).map(p=>p.label).join(' ／ ')}</div></div>
+    </div>`:'';
+
+    let rows=d.platforms.map(p=>{
+      const dAttr=p.total===0?' class="prod-dim"':'';
+      const cumCell=p.total>0?`$${p.total.toLocaleString()} / ${p.orders}`:'$0 / 0';
+      const moCells=hasMonths?moShow.map((_,i)=>{
+        const mo=p.months[i];
+        return mo&&mo.r>0?`<td>$${mo.r.toLocaleString()} / ${mo.o}</td>`:`<td class="prod-dim">—</td>`;
+      }).join(''):'';
+      return`<tr><td${dAttr}>${p.label}</td><td${dAttr}>${cumCell}</td>${moCells}</tr>`;
+    }).join('');
+
+    if(_prodEcYr===2026&&hasMonths){
+      const momCells=moShow.map((_,i)=>{
+        const v=d.mom[i];
+        if(v===null) return`<td class="prod-dim">—</td>`;
+        const clr=v>=0?'#2a7a4a':'#c0392b';
+        return`<td style="color:${clr}">${v>=0?'+':''}${Math.round(v*100)}%</td>`;
+      }).join('');
+      rows+=`<tr class="prod-ann"><td>MOM</td><td class="prod-dim">—</td>${momCells}</tr>`;
+      const yoyCells=moShow.map((_,i)=>{
+        const v=d.yoy_mo[i];
+        if(v===null) return`<td class="prod-dim">—</td>`;
+        const clr=v>=0?'#2a7a4a':'#c0392b';
+        return`<td style="color:${clr}">${v>=0?'+':''}${Math.round(v*100)}%</td>`;
+      }).join('');
+      rows+=`<tr class="prod-ann"><td>YOY</td><td style="color:#c0392b">${Math.round(d.yoy*100)}%</td>${yoyCells}</tr>`;
+    }
+
+    const totCells=hasMonths?moShow.map((_,i)=>{
+      const rv=d.mo_r[i]||0,ord=d.mo_o[i]||0;
+      return rv>0?`<td>$${rv.toLocaleString()} / ${ord}</td>`:`<td class="prod-dim">—</td>`;
+    }).join(''):'';
+
+    return`<div class="prod-yr-wrap">
+      <button class="prod-yr-btn${_prodEcYr===2026?' active':''}" onclick="_prodEcYr=2026;renderProductTab()">2026</button>
+      <button class="prod-yr-btn${_prodEcYr===2025?' active':''}" onclick="_prodEcYr=2025;renderProductTab()">2025</button>
+    </div>
+    ${kpi}
+    <div class="prod-tbl-wrap"><table class="prod-tbl">
+      <thead>
+        <tr><th>平台</th><th>累計</th>${moShow.map(m=>`<th>${m}</th>`).join('')}</tr>
+        <tr><th></th><th></th>${moShow.map(()=>`<th>業績 / 訂單</th>`).join('')}</tr>
+      </thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr><td>Total</td><td>$${d.total.toLocaleString()} / ${d.orders}</td>${totCells}</tr></tfoot>
+    </table></div>
+    <p class="prod-note">資料來源：電商產品總表。6月以後資料補齊後自動更新。</p>`;
+  }
+
+  el.innerHTML=`<div class="mo-tabs-wrap">
+    <button class="mo-tab-btn${_prodSubTab==='store'?' active':''}" onclick="_prodSubTab='store';renderProductTab()">門市業績</button>
+    <button class="mo-tab-btn${_prodSubTab==='ec'?' active':''}" onclick="_prodSubTab='ec';renderProductTab()">電商業績</button>
+  </div>
+  <div class="prod-pane${_prodSubTab==='store'?' active':''}">
+    ${storePane()}
+  </div>
+  <div class="prod-pane${_prodSubTab==='ec'?' active':''}">
+    ${ecPane()}
+  </div>`;
+  if(_prodSubTab==='store') _renderProdStoreCharts();
 }
 
 // ══════════════════════════════════════════
@@ -1908,15 +2594,10 @@ async function loadData(){
       d.new_avg=ss.newCnt>0?Math.round(ss.newRev/ss.newCnt):0;
       d.old_avg=ss.oldCnt>0?Math.round(ss.oldRev/ss.oldCnt):0;
       d.achieve_h1=d.target_h1>0?ss.totalRev/d.target_h1:0;
-      // Monthly achieve: priority: Sheet 目標 row → DATA.monthly_tgt → H1/6 fallback
+      // Monthly target priority: Sheet 目標 row → DATA.monthly_tgt → H1/6 fallback
       const fallbackMTgt=d.target_h1/6;
-      // Back-calc implied targets from hardcoded achieve×rev (computed BEFORE sync overwrites months)
-      // Priority: explicit monthly_tgt > implied-from-hardcode > sheet tgt > H1/6 fallback
-      const impliedTgt=(d.months||[]).map(m=>
-        (m.rev>0&&m.achieve)?Math.round(m.rev/m.achieve):0
-      );
       d.months=ss.months.map((m,idx)=>{
-        const tgt=(d.monthly_tgt&&d.monthly_tgt[idx])||impliedTgt[idx]||m.tgt||fallbackMTgt;
+        const tgt=m.tgt||(d.monthly_tgt&&d.monthly_tgt[idx])||fallbackMTgt;
         return {...m,achieve:m.rev>0&&tgt>0?m.rev/tgt:null,tgt:tgt||null};
       });
     }
@@ -1951,6 +2632,154 @@ async function loadData(){
     console.error('Sheets sync failed:',err.message, err);
     document.getElementById('sync-time').textContent='離線模式（本地資料）';
   }
+}
+
+// CONSULTANT_RECORDS 已移至 consultant_data.js（外部引用）
+// 直接編輯 consultant_data.js 新增或修改記錄
+
+// ══════════════════════════════════════════
+//  RENDER: 諮詢師成交
+// ══════════════════════════════════════════
+let _csMode = 'month'; // 'today' | 'month'
+let _csDate = '2026-07-04'; // 今日基準（可從資料最新日期推導）
+
+function renderConsultantTab(){
+  const el = document.getElementById('consultant-tab-body');
+  if(!el) return;
+
+  // 計算今日/本月篩選
+  const todayStr = _csDate;
+  const [cy, cm] = todayStr.split('-').map(Number);
+  const monthPrefix = `${cy}-${String(cm).padStart(2,'0')}`;
+
+  const records = CONSULTANT_RECORDS.filter(r =>
+    _csMode === 'today' ? r.date === todayStr : r.date.startsWith(monthPrefix)
+  );
+
+  // 計算每筆 record 的統計
+  function calcStats(recs){
+    let 接待=0, 成交=0, totalAmt=0;
+    recs.forEach(r => {
+      r.clients.filter(c=>c.type==='新客').forEach(c=>{
+        接待++;
+        totalAmt += c.total_amt;
+        if(c.total_amt > c.trial_amt) 成交++;
+      });
+    });
+    const 成交率 = 接待>0 ? Math.round(成交/接待*100) : null;
+    const 平均客單 = 接待>0 ? Math.round(totalAmt/接待) : null;
+    return {接待, 成交, 未成交:接待-成交, 成交率, 平均客單};
+  }
+
+  function rateClr(r){ return r===null?'#aaa':r>=70?'#2a7a4a':r>=50?'#ba7517':'#a32d2d'; }
+  function fmtAmt(v){ return v===null?'—':'$'+v.toLocaleString(); }
+  function fmtRate(r){ return r===null?'—':r+'%'; }
+
+  function chipsHtml(s){
+    return `<div class="cs-chips">
+      ${s.成交>0?`<span class="cs-chip cs-chip-ok">成交 ×${s.成交}</span>`:''}
+      ${s.未成交>0?`<span class="cs-chip cs-chip-no">未成 ×${s.未成交}</span>`:''}
+    </div>`;
+  }
+
+  // 品牌統計
+  function brandBlock(brandKey, brandLabel){
+    const br = records.filter(r=>r.brandKey===brandKey);
+    const s = calcStats(br);
+    const topCls = brandKey==='wo'?'cs-brand-top-wo':'cs-brand-top-ki';
+    const nameCls = brandKey==='wo'?'wo':'ki';
+    const stores = [...new Set(br.map(r=>r.storeKey))];
+    return {s, topCls, nameCls, stores, br, brandLabel};
+  }
+
+  // 門市+諮詢師區塊
+  function storeHtml(storeKey, storeName, brand, brandKey, recs){
+    const s = calcStats(recs);
+    const pillCls = brandKey==='wo'?'cs-pill-wo':'cs-pill-ki';
+    const avCls = brandKey==='wo'?'cs-av-wo':'cs-av-ki';
+    const consultants = [...new Set(recs.map(r=>r.consultant))];
+    const cRows = consultants.map(c=>{
+      const cr = recs.filter(r=>r.consultant===c);
+      const cs = calcStats(cr);
+      const init = c.charAt(0);
+      return `<div class="cs-c-row">
+        <div class="cs-c-cell"><div class="cs-av ${avCls}">${init}</div><span class="cs-c-name">${c}</span></div>
+        <div class="cs-c-stats">
+          <div class="cs-cs"><div class="cs-cs-v">${cs.接待}</div><div class="cs-cs-l">接待</div></div>
+          <div class="cs-cs"><div class="cs-cs-v">${cs.成交}</div>${chipsHtml(cs)}<div class="cs-cs-l">成交</div></div>
+          <div class="cs-cs"><div class="cs-cs-v" style="color:${rateClr(cs.成交率)}">${fmtRate(cs.成交率)}</div><div class="cs-cs-l">成交率</div></div>
+          <div class="cs-cs"><div class="cs-cs-v">${fmtAmt(cs.平均客單)}</div><div class="cs-cs-l">平均客單</div></div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="cs-store-wrap">
+      <div class="cs-store-hd">
+        <div class="cs-store-label"><span class="cs-store-nm">${storeName}</span><span class="cs-pill ${pillCls}">${brand}</span></div>
+        <div class="cs-store-stats">
+          <div class="cs-ss"><div class="cs-ss-v">${s.接待}</div><div class="cs-ss-l">新客接待</div></div>
+          <div class="cs-ss"><div class="cs-ss-v">${s.成交}</div><div class="cs-ss-l">成交</div></div>
+          <div class="cs-ss"><div class="cs-ss-v" style="color:${rateClr(s.成交率)}">${fmtRate(s.成交率)}</div><div class="cs-ss-l">成交率</div></div>
+          <div class="cs-ss"><div class="cs-ss-v">${fmtAmt(s.平均客單)}</div><div class="cs-ss-l">平均客單</div></div>
+        </div>
+      </div>
+      ${cRows}
+    </div>`;
+  }
+
+  const wo = brandBlock('wo','原渥');
+  const ki = brandBlock('ki','原綺');
+  const total = calcStats(records);
+
+  // 取所有門市列表（保持順序）
+  const allStoreKeys = [...new Set(records.map(r=>r.storeKey))];
+  const storeBlocks = allStoreKeys.map(sk=>{
+    const sr = records.filter(r=>r.storeKey===sk);
+    const {store, brand, brandKey} = sr[0];
+    return storeHtml(sk, store, brand, brandKey, sr);
+  }).join('');
+
+  const modeLabel = _csMode==='today' ? `${todayStr.slice(5).replace('-','/')} 當日` : `${cy}年${cm}月 累計`;
+
+  el.innerHTML = `
+    <div class="cs-top-bar">
+      <div class="cs-seg">
+        <button class="cs-seg-btn${_csMode==='today'?' on':''}" onclick="_csMode='today';renderConsultantTab()">今日</button>
+        <button class="cs-seg-btn${_csMode==='month'?' on':''}" onclick="_csMode='month';renderConsultantTab()">本月</button>
+      </div>
+      <span class="cs-mo-btn">${modeLabel}</span>
+    </div>
+
+    <div style="font-size:10px;font-weight:600;color:#999;letter-spacing:.04em;margin-bottom:8px">品牌</div>
+    <div class="cs-brand-row">
+      ${['wo','ki'].map(bk=>{
+        const b = bk==='wo'?wo:ki;
+        const stores = [...new Set(records.filter(r=>r.brandKey===bk).map(r=>r.store))];
+        return `<div class="cs-brand-card ${b.topCls}">
+          <div class="cs-brand-hd">
+            <span class="cs-brand-name ${b.nameCls}">${b.brandLabel}</span>
+            <span style="font-size:10px;color:#aaa">${stores.length} 間門市</span>
+          </div>
+          <div class="cs-brand-stats">
+            <div class="cs-bs"><div class="cs-bs-v">${b.s.接待}</div><div class="cs-bs-l">新客接待</div></div>
+            <div class="cs-bs"><div class="cs-bs-v">${b.s.成交}</div><div class="cs-bs-l">成交</div></div>
+            <div class="cs-bs"><div class="cs-bs-v" style="color:${rateClr(b.s.成交率)}">${fmtRate(b.s.成交率)}</div><div class="cs-bs-l">成交率</div></div>
+            <div class="cs-bs"><div class="cs-bs-v">${fmtAmt(b.s.平均客單)}</div><div class="cs-bs-l">平均客單</div></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div style="font-size:10px;font-weight:600;color:#999;letter-spacing:.04em;margin-bottom:8px">門市 × 諮詢師</div>
+    ${storeBlocks || '<div style="padding:40px;text-align:center;color:#ccc;font-size:13px">此期間無資料</div>'}
+
+    <div style="font-size:10px;font-weight:600;color:#999;letter-spacing:.04em;margin:18px 0 8px">集團合計</div>
+    <div class="cs-total-bar">
+      <div class="cs-tb"><div class="cs-tb-v">${total.接待}</div><div class="cs-tb-l">新客接待</div></div>
+      <div class="cs-tb"><div class="cs-tb-v">${total.成交}</div><div class="cs-tb-l">成交</div></div>
+      <div class="cs-tb"><div class="cs-tb-v" style="color:${rateClr(total.成交率)}">${fmtRate(total.成交率)}</div><div class="cs-tb-l">成交率</div></div>
+      <div class="cs-tb"><div class="cs-tb-v">${fmtAmt(total.平均客單)}</div><div class="cs-tb-l">平均客單</div></div>
+    </div>
+  `;
 }
 
 // ══════════════════════════════════════════
