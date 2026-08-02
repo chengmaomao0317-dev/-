@@ -1060,15 +1060,13 @@ function buildCalChip(item, project){
     : COLORS[(typeof item.color === 'number' ? item.color : 3) % COLORS.length];
   chip.style.background = project ? colorObj.bg : colorObj.text;
 
-  if(!project){
-    chip.draggable = true;
-    chip.style.cursor = 'grab';
-    chip.title = '拖曳可移到其他日期';
-    chip.ondragstart = (e) => {
-      e.dataTransfer.setData('text/plain', item.id);
-      e.dataTransfer.effectAllowed = 'move';
-    };
-  }
+  chip.draggable = true;
+  chip.style.cursor = 'grab';
+  chip.title = '拖曳可移到其他日期';
+  chip.ondragstart = (e) => {
+    e.dataTransfer.setData('text/plain', item.id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
 
   if(project){
     const cb = document.createElement('input');
