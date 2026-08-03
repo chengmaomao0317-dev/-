@@ -416,6 +416,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .cs-seg{display:flex;border:.5px solid rgba(0,0,0,.15);border-radius:8px;overflow:hidden}
 .cs-seg-btn{font-size:12px;padding:5px 16px;background:#fff;color:#888;cursor:pointer;border:none;border-right:.5px solid rgba(0,0,0,.1);font-weight:500;transition:background .12s}
 .cs-seg-btn:last-child{border-right:none}
+.cs-custom-range{display:flex;align-items:center;padding:8px 0 4px;gap:2px}
+.cs-date-input{font-size:12px;padding:4px 8px;border:.5px solid rgba(0,0,0,.18);border-radius:6px;color:#444;background:#fafafa;cursor:pointer;outline:none}
+.cs-month-input{font-size:12px;padding:5px 10px;border:none;border-right:.5px solid rgba(0,0,0,.1);background:#fff;color:#888;cursor:pointer;font-weight:500;outline:none}
+.cs-month-input.on{background:#1a1a1a;color:#fff}
 .cs-seg-btn.on{background:#1a1a18;color:#fff}
 .cs-mo-btn{font-size:12px;padding:5px 12px;border-radius:7px;border:.5px solid rgba(0,0,0,.12);background:#fff;color:#888;cursor:pointer}
 .cs-brand-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
@@ -2640,21 +2644,41 @@ async function loadData(){
 // ══════════════════════════════════════════
 //  RENDER: 諮詢師成交
 // ══════════════════════════════════════════
-let _csMode = 'month'; // 'today' | 'month'
-let _csDate = '2026-07-04'; // 今日基準（可從資料最新日期推導）
+let _csMode = 'month'; // 'today' | 'yesterday' | 'month' | 'custom'
+let _csMonth = '';    // YYYY-MM，月份選擇器
+let _csStart = '';
+let _csEnd   = '';
 
 function renderConsultantTab(){
   const el = document.getElementById('consultant-tab-body');
   if(!el) return;
 
-  // 計算今日/本月篩選
-  const todayStr = _csDate;
-  const [cy, cm] = todayStr.split('-').map(Number);
-  const monthPrefix = `${cy}-${String(cm).padStart(2,'0')}`;
+  // 今日 / 昨日字串
+  const now = new Date();
+  const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const todayStr = fmt(now);
+  const yest = new Date(now); yest.setDate(yest.getDate()-1);
+  const yestStr = fmt(yest);
 
-  const records = CONSULTANT_RECORDS.filter(r =>
-    _csMode === 'today' ? r.date === todayStr : r.date.startsWith(monthPrefix)
-  );
+  // 月份選擇器預設為資料中最新的月份
+  if(!_csMonth){
+    const allDates = CONSULTANT_RECORDS.map(r=>r.date).sort();
+    const latest = allDates[allDates.length-1] || todayStr;
+    _csMonth = latest.slice(0,7);
+  }
+  const monthPrefix = _csMonth;
+
+  // 自訂區間預設
+  if(!_csStart) _csStart = `${_csMonth}-01`;
+  if(!_csEnd)   _csEnd   = todayStr;
+
+  const records = CONSULTANT_RECORDS.filter(r => {
+    if(_csMode==='today')     return r.date === todayStr;
+    if(_csMode==='yesterday') return r.date === yestStr;
+    if(_csMode==='month')     return r.date.startsWith(monthPrefix);
+    if(_csMode==='custom')    return r.date >= _csStart && r.date <= _csEnd;
+    return false;
+  });
 
   // 計算每筆 record 的統計
   function calcStats(recs){
@@ -2738,16 +2762,31 @@ function renderConsultantTab(){
     return storeHtml(sk, store, brand, brandKey, sr);
   }).join('');
 
-  const modeLabel = _csMode==='today' ? `${todayStr.slice(5).replace('-','/')} 當日` : `${cy}年${cm}月 累計`;
+  let modeLabel = '';
+  if(_csMode==='today')     modeLabel = todayStr.replace(/-/g,'/');
+  else if(_csMode==='yesterday') modeLabel = yestStr.replace(/-/g,'/');
+  else modeLabel = `${_csStart.slice(5).replace('-','/')} ～ ${_csEnd.slice(5).replace('-','/')}`;
+
+  const customRow = _csMode==='custom' ? `
+    <div class="cs-custom-range">
+      <input type="date" class="cs-date-input" value="${_csStart}" onchange="_csStart=this.value;renderConsultantTab()">
+      <span style="color:#aaa;margin:0 6px">～</span>
+      <input type="date" class="cs-date-input" value="${_csEnd}" onchange="_csEnd=this.value;renderConsultantTab()">
+    </div>` : '';
 
   el.innerHTML = `
     <div class="cs-top-bar">
       <div class="cs-seg">
-        <button class="cs-seg-btn${_csMode==='today'?' on':''}" onclick="_csMode='today';renderConsultantTab()">今日</button>
-        <button class="cs-seg-btn${_csMode==='month'?' on':''}" onclick="_csMode='month';renderConsultantTab()">本月</button>
+        <button class="cs-seg-btn${_csMode==='today'?' on':''}"     onclick="_csMode='today';renderConsultantTab()">今日</button>
+        <button class="cs-seg-btn${_csMode==='yesterday'?' on':''}" onclick="_csMode='yesterday';renderConsultantTab()">昨日</button>
+        <input type="month" class="cs-month-input${_csMode==='month'?' on':''}"
+               value="${_csMonth}"
+               onchange="_csMonth=this.value;_csMode='month';renderConsultantTab()">
+        <button class="cs-seg-btn${_csMode==='custom'?' on':''}"    onclick="_csMode='custom';renderConsultantTab()">自訂</button>
       </div>
-      <span class="cs-mo-btn">${modeLabel}</span>
+      ${_csMode!=='month'?`<span style="font-size:12px;color:#999;margin-left:10px">${modeLabel}</span>`:''}
     </div>
+    ${customRow}
 
     <div style="font-size:10px;font-weight:600;color:#999;letter-spacing:.04em;margin-bottom:8px">品牌</div>
     <div class="cs-brand-row">
