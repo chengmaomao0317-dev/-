@@ -337,6 +337,7 @@ tr:last-child td { border-bottom: none; }
         <option value="4">2026/05</option>
         <option value="5">2026/06</option>
         <option value="6">2026/07</option>
+        <option value="7">2026/08</option>
       </select>
     </div>
   </div></div>
@@ -640,26 +641,26 @@ function roas(v) {
 // ── KPI v2 ───────────────────────────────────────────────
 // Trend data from 年度新客目標 row 24 + 行銷新客 actuals + 2025 去年同期
 const kpiTrend = {
-  wo: { labels:['1月','2月','3月','4月','5月','6月','7月'],
-        data:   [121, 126, 249, 182, 160, 2, null],
-        prev:   [161, 140, 181, 253, 218, 151, null],
-        target: [220, 160, 200, 180, 180, 200, 230],
-        rev:    [1330203, 1708771, 3518069, 2859727, 2113528, 21749, null],
-        aov:    [10993, 13562, 14129, 15713, 13210, 10875, null],
-        spend25:[134530, 161213, 251679, 274369, 243781, 229851, null],
-        spend26:[242658, 254273, 223347, 153933, 165101, 92331, null],
-        tp:     [84, 87, 177, 127, 116, 2, null],
-        tc:     [37, 39,  72,  55,  44, 0, null] },
-  qi: { labels:['1月','2月','3月','4月','5月','6月','7月'],
-        data:   [167, 114, 147,  97, 104, 3, null],
-        prev:   [ 79,  59,  84, 101, 118,  94, null],
-        target: [130, 110,  90, 100, 100, 120, 110],
-        rev:    [5219341, 3465578, 4173471, 2534797, 2618201, 54998, null],
-        aov:    [31254, 30400, 28391, 26132, 25175, 18333, null],
-        spend25:[158597, 290593, 447667, 391339, 301972, 340071, null],
-        spend26:[358651, 339117, 376282, 266074, 272460, 142036, null],
-        tp:     [110, 86, 106, 69, 75, 3, null],
-        tc:     [ 57, 28,  41, 28, 29, 0, null] }
+  wo: { labels:['1月','2月','3月','4月','5月','6月','7月','8月'],
+        data:   [121, 126, 249, 182, 160, 2, null, null],
+        prev:   [161, 140, 181, 253, 218, 151, null, null],
+        target: [220, 160, 200, 180, 180, 200, 230, 230],
+        rev:    [1330203, 1708771, 3518069, 2859727, 2113528, 21749, null, null],
+        aov:    [10993, 13562, 14129, 15713, 13210, 10875, null, null],
+        spend25:[134530, 161213, 251679, 274369, 243781, 229851, null, null],
+        spend26:[242658, 254273, 223347, 153933, 165101, 92331, null, null],
+        tp:     [84, 87, 177, 127, 116, 2, null, null],
+        tc:     [37, 39,  72,  55,  44, 0, null, null] },
+  qi: { labels:['1月','2月','3月','4月','5月','6月','7月','8月'],
+        data:   [167, 114, 147,  97, 104, 3, null, null],
+        prev:   [ 79,  59,  84, 101, 118,  94, null, null],
+        target: [130, 110,  90, 100, 100, 120, 110, 110],
+        rev:    [5219341, 3465578, 4173471, 2534797, 2618201, 54998, null, null],
+        aov:    [31254, 30400, 28391, 26132, 25175, 18333, null, null],
+        spend25:[158597, 290593, 447667, 391339, 301972, 340071, null, null],
+        spend26:[358651, 339117, 376282, 266074, 272460, 142036, null, null],
+        tp:     [110, 86, 106, 69, 75, 3, null, null],
+        tc:     [ 57, 28,  41, 28, 29, 0, null, null] }
 };
 
 // ── Per-product 台北/台中 data ─────────────────────────────────
@@ -671,8 +672,8 @@ const GSHEET_ID = '1sdjXTUo1tW9-fLWlUaWnXqNxxdzK573YuUSJcZdWSns';
 const PREV_YEAR_SHEET_ID = '1ELPrRP7lfkcFtwgexMNzE9HQVukfLbJhL_TGYz3aIcA'; // 2025 年度新客目標
 // 各月廣告工作表名稱（依實際 Sheet 分頁名稱調整）
 const GSHEET_TABS = {
-  wo: ['1月廣告','2月廣告','3月廣告','4月廣告','5月廣告','6月廣告','7月廣告'],
-  qi: ['1月廣告','2月廣告','3月廣告','4月廣告','5月廣告','6月廣告','7月廣告'],
+  wo: ['1月廣告','2月廣告','3月廣告','4月廣告','5月廣告','6月廣告','7月廣告','8月廣告'],
+  qi: ['1月廣告','2月廣告','3月廣告','4月廣告','5月廣告','6月廣告','7月廣告','8月廣告'],
 };
 // TODO: 確認 Sheet 內兩品牌的區分方式（欄位名稱 or 區塊位置）後補上過濾邏輯
 // 固定欄位設定（依實際 Sheet 結構）
@@ -1179,8 +1180,8 @@ async function initAutoFetch() {
   if (badge) { badge.textContent = '⟳ 同步中…'; badge.style.color = '#888780'; }
 
   // 7 個月依序 fetch（gviz callback 不能並行），每個 tab 同時解析兩品牌
-  const TAB_NAMES = ['1月廣告','2月廣告','3月廣告','4月廣告','5月廣告','6月廣告','7月廣告'];
-  const MONTHLY_TABS = ['1月','2月','3月','4月','5月','6月','7月'];
+  const TAB_NAMES = ['1月廣告','2月廣告','3月廣告','4月廣告','5月廣告','6月廣告','7月廣告','8月廣告'];
+  const MONTHLY_TABS = ['1月','2月','3月','4月','5月','6月','7月','8月'];
   let anyUpdated = false;
   const errors = [];
 
@@ -1306,6 +1307,32 @@ async function initAutoFetch() {
     const v = await fetchCell('J24:J24');
     if (v != null && v > 0 && v < 1000) { kpiTrend.qi.target[6] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原綺7月目標：${e.message}`); }
+  // 8月新客＋業績（年度新客目標 Sheet，qi=J欄，wo=X欄）
+  try {
+    const v = await fetchCell('J21:J21');
+    if (v != null) { kpiTrend.qi.data[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原綺8月新客：${e.message}`); }
+  try {
+    const v = await fetchCell('J22:J22');
+    if (v != null) { kpiTrend.qi.rev[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原綺8月業績：${e.message}`); }
+  try {
+    const v = await fetchCell('X21:X21');
+    if (v != null) { kpiTrend.wo.data[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原渥8月新客：${e.message}`); }
+  try {
+    const v = await fetchCell('X22:X22');
+    if (v != null) { kpiTrend.wo.rev[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原渥8月業績：${e.message}`); }
+  // 原渥 8月新客目標：X24；原綺：K24
+  try {
+    const v = await fetchCell('X24:X24');
+    if (v != null && v > 0 && v < 1000) { kpiTrend.wo.target[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原渥8月目標：${e.message}`); }
+  try {
+    const v = await fetchCell('K24:K24');
+    if (v != null && v > 0 && v < 1000) { kpiTrend.qi.target[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原綺8月目標：${e.message}`); }
   // 去年同期新客數＋花費：從 2025 年度新客目標 Sheet 抓
   // D20:W26 → row0=新客數, row5=廣告花費; qi=cols0-6(D-J), wo=cols13-19(Q-W)
   try {
@@ -2296,7 +2323,7 @@ function switchTab(tab) {
     else renderPerfTable(perfBrand);
   }
 }
-const _defaultMi = Math.min(new Date().getMonth(), 6); // 0=Jan…6=Jul，最多7月
+const _defaultMi = Math.min(new Date().getMonth(), 7); // 0=Jan…7=Aug，最多8月
 document.getElementById('monthSel').value = String(_defaultMi);
 renderPerfGrid(_defaultMi);
 renderProductTable(_defaultMi);
@@ -3310,8 +3337,8 @@ function initKpiCharts() {
         return `<div style="flex:1;min-width:0;background:var(--surface-2,#fff);border:0.5px solid var(--border);border-radius:8px;padding:6px 5px;${isPending?'opacity:0.45;border-style:dashed;':''}"
           title="${v26!=null?'花費：$'+Math.round(v26).toLocaleString()+'　去年：$'+(v25!=null?Math.round(v25).toLocaleString():'—'):''}">
           <div style="font-size:9px;color:var(--text-muted,#888);margin-bottom:4px;font-weight:500;">${lbl}</div>
-          <div style="font-size:11px;font-weight:500;color:var(--text-primary,#222);line-height:1.2;margin-bottom:2px;word-break:break-all;">${fmt(v26)}</div>
-          <div style="font-size:10px;color:var(--text-secondary,#888);line-height:1.2;margin-bottom:4px;word-break:break-all;">${fmt(v25)}</div>
+          <div style="font-size:11px;font-weight:500;color:var(--text-primary,#222);line-height:1.2;margin-bottom:2px;word-break:break-all;"><span style="font-size:8px;color:#888;font-weight:400;margin-right:2px;">2026</span>${fmt(v26)}</div>
+          <div style="font-size:10px;color:var(--text-secondary,#888);line-height:1.2;margin-bottom:4px;word-break:break-all;"><span style="font-size:8px;color:#aaa;font-weight:400;margin-right:2px;">2025</span>${fmt(v25)}</div>
           ${yoyStr ? `<span style="font-size:9px;font-weight:500;color:${yoyColor};background:${yoyBg};border-radius:4px;padding:1px 4px;">${yoyStr}</span>` : ''}
         </div>`;
       });
