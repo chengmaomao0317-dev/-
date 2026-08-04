@@ -1307,43 +1307,43 @@ async function initAutoFetch() {
     const v = await fetchCell('J24:J24');
     if (v != null && v > 0 && v < 1000) { kpiTrend.qi.target[6] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原綺7月目標：${e.message}`); }
-  // 8月新客＋業績（年度新客目標 Sheet，qi=J欄，wo=X欄）
+  // 8月新客＋業績（年度新客目標 Sheet，qi=K欄，wo=X欄）
   try {
-    const v = await fetchCell('J21:J21');
+    const v = await fetchCell('K22:K22');
     if (v != null) { kpiTrend.qi.data[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原綺8月新客：${e.message}`); }
   try {
-    const v = await fetchCell('J22:J22');
+    const v = await fetchCell('K23:K23');
     if (v != null) { kpiTrend.qi.rev[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原綺8月業績：${e.message}`); }
   try {
-    const v = await fetchCell('X21:X21');
+    const v = await fetchCell('X22:X22');
     if (v != null) { kpiTrend.wo.data[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原渥8月新客：${e.message}`); }
   try {
-    const v = await fetchCell('X22:X22');
+    const v = await fetchCell('X23:X23');
     if (v != null) { kpiTrend.wo.rev[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原渥8月業績：${e.message}`); }
-  // 原渥 8月新客目標：X24；原綺：K24
+  // 原渥 8月新客目標：X25；原綺：K25
   try {
-    const v = await fetchCell('X24:X24');
+    const v = await fetchCell('X25:X25');
     if (v != null && v > 0 && v < 1000) { kpiTrend.wo.target[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原渥8月目標：${e.message}`); }
   try {
-    const v = await fetchCell('K24:K24');
+    const v = await fetchCell('K25:K25');
     if (v != null && v > 0 && v < 1000) { kpiTrend.qi.target[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原綺8月目標：${e.message}`); }
   // 去年同期新客數＋花費：從 2025 年度新客目標 Sheet 抓
-  // D20:W26 → row0=新客數, row5=廣告花費; qi=cols0-6(D-J), wo=cols13-19(Q-W)
+  // D20:X26 → row0=新客數, row5=廣告花費; qi=cols0-7(D-K), wo=cols13-20(Q-X)
   try {
-    const prevResp = await gvizJSONP('年度新客目標', 'D20:W26', PREV_YEAR_SHEET_ID);
+    const prevResp = await gvizJSONP('年度新客目標', 'D20:X26', PREV_YEAR_SHEET_ID);
     const rows = prevResp?.table?.rows || [];
     const nv = (row, col) => { const v = row?.c?.[col]?.v; return (v != null && !isNaN(+v)) ? +v : null; };
     const prevRow  = rows[0]; // 新客數
     const spendRow = rows[5]; // 廣告花費
     if (prevRow || spendRow) {
-      for (let mi = 0; mi < 7; mi++) {
-        // qi: cols 0-6 (D-J), wo: cols 13-19 (Q-W)
+      for (let mi = 0; mi < 8; mi++) {
+        // qi: cols 0-7 (D-K), wo: cols 13-20 (Q-X)
         const qiPrev  = prevRow  ? nv(prevRow,  mi)      : null;
         const woPrev  = prevRow  ? nv(prevRow,  mi + 13) : null;
         const qiSpend = spendRow ? nv(spendRow, mi)      : null;
@@ -1365,9 +1365,9 @@ async function initAutoFetch() {
       const tcNums = pd.tca?.['新客數']?.months   || [];
       const tpRev  = pd.tpe?.['新客業績']?.months || [];
       const tcRev  = pd.tca?.['新客業績']?.months || [];
-      if (!kpiTrend[b].revTp) kpiTrend[b].revTp = Array(7).fill(0);
-      if (!kpiTrend[b].revTc) kpiTrend[b].revTc = Array(7).fill(0);
-      for (let mi = 0; mi < 7; mi++) {
+      if (!kpiTrend[b].revTp) kpiTrend[b].revTp = Array(8).fill(0);
+      if (!kpiTrend[b].revTc) kpiTrend[b].revTc = Array(8).fill(0);
+      for (let mi = 0; mi < 8; mi++) {
         if (tpNums[mi] != null) kpiTrend[b].tp[mi] = tpNums[mi];
         if (tcNums[mi] != null) kpiTrend[b].tc[mi] = tcNums[mi];
         if (tpNums[mi] != null && tcNums[mi] != null)
@@ -1414,7 +1414,7 @@ async function initAutoFetch() {
 
   ['wo','qi'].forEach(b => {
     // 將各月 adsMonthlyData 同步進 monthlyProdSpend（供 modal 各月趨勢用）
-    for (let mi = 0; mi < 7; mi++) {
+    for (let mi = 0; mi < 8; mi++) {
       const ad = adsMonthlyData[b][mi];
       if (!ad) continue;
       if (!monthlyProdSpend[b]) monthlyProdSpend[b] = {};
@@ -2104,10 +2104,10 @@ async function fetchPerfData(brand) {
     else if (cv === '客單')                          { key = (curType||'') + '客單'; }
     else if (cv.includes('新舊') || cv.includes('業績合計') || cv.includes('總業績')) { key = '新舊業績'; }
     else                                             { key = cv; }
-    // D(idx3)=年累計, E-K(idx4-10)=1月-7月
+    // D(idx3)=年累計, E-L(idx4-11)=1月-8月
     data[curLoc][key] = {
       acc:    n(c[3]?.v),
-      months: [4,5,6,7,8,9,10].map(i => n(c[i]?.v))
+      months: [4,5,6,7,8,9,10,11].map(i => n(c[i]?.v))
     };
   }
   // 若 total 缺舊客資料，從台北 + 台中加總推算
