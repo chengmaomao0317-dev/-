@@ -159,8 +159,8 @@ tr:last-child td { border-bottom: none; }
 .mf-section { margin-top: 4px; margin-bottom: 4px; }
 .mf-brand-block { margin-bottom: 14px; }
 .mf-brand-label { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.mf-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-.mf-card { background: var(--color-background-primary, #fff); border: 0.5px solid var(--border); border-radius: 8px; padding: 9px 10px 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.mf-grid { display: flex; gap: 6px; overflow-x: auto; }
+.mf-card { background: var(--color-background-primary, #fff); border: 0.5px solid var(--border); border-radius: 8px; padding: 9px 10px 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); flex-shrink: 0; min-width: 130px; }
 .mf-month { font-size: 10px; color: var(--muted); margin-bottom: 7px; font-weight: 500; }
 .mf-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; }
 .mf-label { font-size: 10px; color: var(--muted); }
@@ -174,10 +174,10 @@ tr:last-child td { border-bottom: none; }
 .mf-bar { height: 3px; border-radius: 2px; background: var(--border); margin-top: 7px; overflow: hidden; }
 .mf-bar-fill { height: 100%; border-radius: 2px; }
 @media(max-width:780px){
-  .mf-grid { grid-template-columns: repeat(4, 1fr); }
+  .mf-grid { flex-wrap: nowrap; }
 }
 @media(max-width:480px){
-  .mf-grid { grid-template-columns: repeat(2, 1fr); }
+  .mf-grid { flex-wrap: nowrap; }
 }
 
 /* ── Per-product 台北/台中 table ── */
@@ -1132,6 +1132,7 @@ const adsMonthlyData = { wo: Array(7).fill(null), qi: Array(7).fill(null) };
 
 // 行銷新客轉換概況分頁資料 { qi: { 品項名: { book, bookRate, stayRate, cancelRate } } }
 const funnelData = { qi: {}, wo: {} };
+const funnelDataMonthly = { qi: {}, wo: {} }; // 月份別漏斗數據 { qi: { 7: { 品項: {...} } } }
 
 // 每月新客業績（月份 tab H6=台北, H9=台中），qi 已知欄位；wo 待補
 const adsRevenue = { qi: Array(6).fill(null), wo: Array(6).fill(null) };
@@ -1150,10 +1151,10 @@ const ADS_TO_FUNNEL_WO = {
 };
 
 async function fetchFunnelData() {
-  // gviz 百分比欄位為小數（0.38=38%）；文字 "-" 或空值 → null
   const toP = v => { if (v==null) return null; const n=typeof v==='number'?v:parseFloat(v); return isNaN(n)?null:Math.round(n<=1?n*100:n); };
-  function parseRows(rows, brand, start) {
-    for (let i = start; i < rows.length; i++) {
+  // 解析累計漏斗（B~H，col 0=品項, 1=詢問, 2=預約, 3=到店, 4=預約率, 5=到店率, 6=取消率）
+  function parseRows(rows, brand) {
+    for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (!row?.c) continue;
       const cv = j => row.c[j]?.v;
@@ -1167,17 +1168,48 @@ async function fetchFunnelData() {
       };
     }
   }
-  // 原綺：B3:H22（row 0 = header，row 1+ = data）
-  try { const r = await gvizJSONP('行銷新客轉換概況', 'B3:H22');  parseRows(r?.table?.rows||[], 'qi', 1); }
+  // 解析月份別漏斗（B~N，品項名在 col 0，I~N 在 col 7~12）
+  function parseMonthRows(rows, brand, mi) {
+    if (!funnelDataMonthly[brand][mi]) funnelDataMonthly[brand][mi] = {};
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row?.c) continue;
+      const cv = j => row.c[j]?.v;
+      const name = String(cv(0) || '').trim();
+      if (!name || name === '總計') continue;
+      funnelDataMonthly[brand][mi][name] = {
+        inq:  Math.round(+(cv(7)||0)),
+        book: Math.round(+(cv(8)||0)),
+        stay: Math.round(+(cv(9)||0)),
+        bookRate: toP(cv(10)), stayRate: toP(cv(11)), cancelRate: toP(cv(12)),
+      };
+    }
+  }
+  // 原綺累計：B3:H22
+  try { const r = await gvizJSONP('行銷新客轉換概況', 'B3:H22');  parseRows(r?.table?.rows||[], 'qi'); }
   catch(e) { console.warn('原綺漏斗載入失敗:', e.message); }
-  // 原渥：B24:H41（row 0 = 原渥標題，row 1 = header，row 2+ = data）
-  try { const r = await gvizJSONP('行銷新客轉換概況', 'B24:H41'); parseRows(r?.table?.rows||[], 'wo', 2); }
+  // 原渥累計：B24:H41
+  try { const r = await gvizJSONP('行銷新客轉換概況', 'B24:H41'); parseRows(r?.table?.rows||[], 'wo'); }
   catch(e) { console.warn('原渥漏斗載入失敗:', e.message); }
+  // 8月（mi=7）：B~N 一次帶品項名 + I~N 數據
+  try {
+    const r = await gvizJSONP('行銷新客轉換概況', 'B3:N22');
+    parseMonthRows(r?.table?.rows||[], 'qi', 7);
+    console.log('[漏斗] 原綺8月月別載入成功，品項數:', Object.keys(funnelDataMonthly.qi[7]||{}).length, funnelDataMonthly.qi[7]);
+  } catch(e) { console.error('[漏斗] 原綺8月漏斗載入失敗:', e.message); }
+  try {
+    const r = await gvizJSONP('行銷新客轉換概況', 'B24:N41');
+    parseMonthRows(r?.table?.rows||[], 'wo', 7);
+    console.log('[漏斗] 原渥8月月別載入成功，品項數:', Object.keys(funnelDataMonthly.wo[7]||{}).length, funnelDataMonthly.wo[7]);
+  } catch(e) { console.error('[漏斗] 原渥8月漏斗載入失敗:', e.message); }
 }
 
 async function initAutoFetch() {
   const badge = document.getElementById('sync-badge');
   if (badge) { badge.textContent = '⟳ 同步中…'; badge.style.color = '#888780'; }
+
+  // ★ 優先載入漏斗資料（月別轉換數，必須在其他大量請求前執行以避免超時）
+  try { await fetchFunnelData(); } catch(e) { console.error('漏斗資料初始載入失敗:', e.message); }
 
   // 7 個月依序 fetch（gviz callback 不能並行），每個 tab 同時解析兩品牌
   const TAB_NAMES = ['1月廣告','2月廣告','3月廣告','4月廣告','5月廣告','6月廣告','7月廣告','8月廣告'];
@@ -1309,6 +1341,14 @@ async function initAutoFetch() {
   } catch(e) { errors.push(`原綺7月目標：${e.message}`); }
   // 8月新客＋業績（年度新客目標 Sheet，qi=K欄，wo=X欄）
   try {
+    const v = await fetchCell('K20:K20');
+    if (v != null) { kpiTrend.qi.tp[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原綺8月台北：${e.message}`); }
+  try {
+    const v = await fetchCell('K21:K21');
+    if (v != null) { kpiTrend.qi.tc[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原綺8月台中：${e.message}`); }
+  try {
     const v = await fetchCell('K22:K22');
     if (v != null) { kpiTrend.qi.data[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原綺8月新客：${e.message}`); }
@@ -1316,6 +1356,14 @@ async function initAutoFetch() {
     const v = await fetchCell('K23:K23');
     if (v != null) { kpiTrend.qi.rev[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原綺8月業績：${e.message}`); }
+  try {
+    const v = await fetchCell('X20:X20');
+    if (v != null) { kpiTrend.wo.tp[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原渥8月台北：${e.message}`); }
+  try {
+    const v = await fetchCell('X21:X21');
+    if (v != null) { kpiTrend.wo.tc[7] = v; anyUpdated = true; }
+  } catch(e) { errors.push(`原渥8月台中：${e.message}`); }
   try {
     const v = await fetchCell('X22:X22');
     if (v != null) { kpiTrend.wo.data[7] = v; anyUpdated = true; }
@@ -1383,9 +1431,6 @@ async function initAutoFetch() {
       if (perfBrand === b && document.getElementById('tab-perf')?.style.display !== 'none') renderPerfTable(b);
     } catch(e) { errors.push(`${b} 績效：${e.message}`); }
   }
-
-  // 行銷新客轉換概況（目前只有 qi，原渥待補）
-  try { await fetchFunnelData(); } catch(e) { errors.push(`漏斗資料：${e.message}`); }
 
   // 更新圖表資料（在 renderTrendCharts 之前先刷新 Chart.js 圖表）
   refreshKpiCharts();
@@ -1457,7 +1502,7 @@ function renderMonthlyFunnel() {
   const container = document.getElementById('monthly-funnel-section');
   if (!container) return;
 
-  const MONTHS = ['1月','2月','3月','4月','5月','6月','7月'];
+  const MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月'];
   const BRANDS = [
     { key:'wo', label:'原渥', color:'#378ADD', tagClass:'tag-wo', rateTarget:25 },
     { key:'qi', label:'原綺', color:'#D4537E', tagClass:'tag-qi', rateTarget:15 },
@@ -2325,6 +2370,7 @@ function switchTab(tab) {
 }
 const _defaultMi = Math.min(new Date().getMonth(), 7); // 0=Jan…7=Aug，最多8月
 document.getElementById('monthSel').value = String(_defaultMi);
+_currentAdsMi = _defaultMi; // 確保初始值與 selector 一致，開 modal 時抓到正確的月份漏斗
 renderPerfGrid(_defaultMi);
 renderProductTable(_defaultMi);
 renderTrendCharts();
@@ -2431,7 +2477,7 @@ function renderAdsSpendSummary(mi) {
 // mi = NaN → 全部月份加總
 function syncAdsToMonth(mi) {
   _currentAdsMi = mi;
-  const MONTH_LABELS = ['1月','2月','3月','4月','5月','6月','7月'];
+  const MONTH_LABELS = ['1月','2月','3月','4月','5月','6月','7月','8月'];
   const isAll = isNaN(mi);
   const title = document.querySelector('#tab-ads .sec-title');
   if (title) title.textContent = `📊 各品項廣告指標（${isAll ? '2026 全部' : MONTH_LABELS[mi] || ''}）`;
@@ -2779,7 +2825,7 @@ const REPORT_GROUPS = {
 };
 
 function openReportModal(b) {
-  const MONTH_LABELS = ['1月','2月','3月','4月','5月','6月','7月'];
+  const MONTH_LABELS = ['1月','2月','3月','4月','5月','6月','7月','8月'];
   const mi = _currentAdsMi;
   const isAll = isNaN(mi);
   const monthLabel = isAll ? '全期' : (MONTH_LABELS[mi] || '');
@@ -2792,14 +2838,16 @@ function openReportModal(b) {
   const allRows = adsExt[b].rows || [];
   const hasData = r => !r.isVendor && ((r.inq||0)+(r.inq2||0) > 0 || (r.clients||0) > 0);
 
-  // 是否有漏斗資料
-  const hasFunnel = Object.keys(funnelData[b]).length > 0;
+  // 是否有漏斗資料（月份別優先，其次累計）
+  const monthFunnel = (funnelDataMonthly[b][mi] && Object.keys(funnelDataMonthly[b][mi]).length > 0) ? funnelDataMonthly[b][mi] : null;
+  const hasFunnel = monthFunnel ? true : Object.keys(funnelData[b]).length > 0;
+  const activeFunnel = monthFunnel || funnelData[b];
 
   // 取漏斗資料（廣告品項名 → 漏斗品項名，依品牌選用對照表）
   function getFunnel(name) {
     if (!hasFunnel || !name) return null;
     const map = b === 'qi' ? ADS_TO_FUNNEL_QI : ADS_TO_FUNNEL_WO;
-    return funnelData[b][map[name] || name] || null;
+    return activeFunnel[map[name] || name] || null;
   }
 
   // Chip 函式（配色邏輯）
@@ -2828,14 +2876,20 @@ function openReportModal(b) {
 
   groups.forEach(g => {
     const members = allRows.filter(r => g.members.has(r.name) && hasData(r));
-    if (!members.length) return;
+    // 漏斗群組：計算時需含「廣告無流量但有漏斗到訪數」的成員（如小腿）
+    const allGroupRows = allRows.filter(r => g.members.has(r.name));
+    const funnelOnlyRows = hasFunnel ? allGroupRows.filter(r => !hasData(r) && (() => { const f=getFunnel(r.name); return f&&(f.book>0||f.stay>0); })()) : [];
+    if (!members.length && !funnelOnlyRows.length) return;
     const gInq = members.reduce((s,r) => s+(r.inq||0)+(r.inq2||0), 0);
     const gCli = members.reduce((s,r) => s+(r.clients||0), 0);
-    const subs  = [...members].filter(r => !g.hiddenSubs?.has(r.name)).sort((a,z) => (z.clients||0) - (a.clients||0));
-    // 漏斗群組加總
+    // subs：廣告有流量的成員 + 漏斗有數據的無廣告成員（均排除 hiddenSubs）
+    const subs = [...members, ...funnelOnlyRows]
+      .filter(r => !g.hiddenSubs?.has(r.name))
+      .sort((a,z) => (z.clients||0) - (a.clients||0));
+    // 漏斗群組加總（含無廣告流量成員）
     let gFInq=0, gFBook=0, gFStay=0;
     if (hasFunnel) {
-      for (const r of members) {
+      for (const r of allGroupRows) {
         const f = getFunnel(r.name);
         if (f) { gFInq += f.inq||0; gFBook += f.book||0; gFStay += f.stay||0; }
       }
@@ -2847,8 +2901,19 @@ function openReportModal(b) {
       fCancelRate: (gFBook>0 ? (gFBook-gFStay)/gFBook*100 : null) });
   });
 
-  // 原渥有漏斗資料時強制顯示「產品/暖宮」即使廣告無流量
-  const forceShow = (b === 'wo' && hasFunnel) ? new Set(['產品/暖宮']) : new Set();
+  // 有月別漏斗數據的品項（即使廣告無流量）強制顯示（原綺：皮秒/音波；原渥：肌肉管理等）
+  const forceShow = new Set();
+  if (hasFunnel) {
+    const adsToFunnelMap = b === 'wo' ? ADS_TO_FUNNEL_WO : ADS_TO_FUNNEL_QI;
+    const funnelToAds = Object.fromEntries(Object.entries(adsToFunnelMap).map(([a,f])=>[f,a]));
+    Object.entries(activeFunnel).forEach(([fName, f]) => {
+      if (f && (f.book > 0 || f.stay > 0)) {
+        forceShow.add(funnelToAds[fName] || fName);
+        forceShow.add(fName);
+      }
+    });
+    if (b === 'wo') forceShow.add('產品/暖宮'); // 產品/暖宮 永遠顯示
+  }
   allRows
     .filter(r => !r.isVendor && !groupedNames.has(r.name) && (hasData(r) || forceShow.has(r.name)))
     .forEach(r => displayItems.push({ isGroup:false, row:r, inq:(r.inq||0)+(r.inq2||0), clients:r.clients||0, sortInq:(r.inq||0)+(r.inq2||0) }));
@@ -2977,6 +3042,7 @@ function openReportModal(b) {
       <div style="background:#1C1C1E;padding:14px 18px;display:flex;align-items:center;gap:10px;">
         <span style="background:${brandBg};color:${brandColor};font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;">${brandName}</span>
         <span style="color:#fff;font-size:14.5px;font-weight:500;flex:1;">${monthLabel}廣告成效摘要</span>
+        ${hasFunnel && monthFunnel ? `<span style="background:#1e4d2b;color:#7fe09b;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;flex-shrink:0;">月別漏斗</span>` : hasFunnel ? `<span style="background:#3d2a00;color:#f0b040;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;flex-shrink:0;">累計漏斗</span>` : ''}
         <button onclick="closeReportModal()" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;">✕</button>
       </div>
       <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
@@ -3327,6 +3393,7 @@ function initKpiCharts() {
       const el = document.getElementById('spend-row-' + b);
       if (!el) return;
       const fmt = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
+      const color26 = brandColors[b];
       const cards = td.labels.map((lbl, i) => {
         const v26 = td.spend26[i], v25 = td.spend25[i];
         const isPending = v26 == null;
@@ -3334,11 +3401,10 @@ function initKpiCharts() {
         const yoyColor = yoyNum == null ? 'var(--text-muted)' : yoyNum >= 0 ? '#27500A' : '#791F1F';
         const yoyBg   = yoyNum == null ? 'transparent' : yoyNum >= 0 ? '#EAF3DE' : '#FCEBEB';
         const yoyStr  = yoyNum == null ? '' : (yoyNum >= 0 ? '+' : '') + yoyNum + '%';
-        return `<div style="flex:1;min-width:0;background:var(--surface-2,#fff);border:0.5px solid var(--border);border-radius:8px;padding:6px 5px;${isPending?'opacity:0.45;border-style:dashed;':''}"
-          title="${v26!=null?'花費：$'+Math.round(v26).toLocaleString()+'　去年：$'+(v25!=null?Math.round(v25).toLocaleString():'—'):''}">
+        return `<div style="flex-shrink:0;width:96px;background:var(--surface-2,#fff);border:0.5px solid var(--border);border-radius:8px;padding:6px 8px;${isPending?'opacity:0.45;border-style:dashed;':''}">
           <div style="font-size:9px;color:var(--text-muted,#888);margin-bottom:4px;font-weight:500;">${lbl}</div>
-          <div style="font-size:11px;font-weight:500;color:var(--text-primary,#222);line-height:1.2;margin-bottom:2px;word-break:break-all;"><span style="font-size:8px;color:#888;font-weight:400;margin-right:2px;">2026</span>${fmt(v26)}</div>
-          <div style="font-size:10px;color:var(--text-secondary,#888);line-height:1.2;margin-bottom:4px;word-break:break-all;"><span style="font-size:8px;color:#aaa;font-weight:400;margin-right:2px;">2025</span>${fmt(v25)}</div>
+          <div style="font-size:11px;font-weight:500;color:${color26};line-height:1.2;margin-bottom:2px;white-space:nowrap;">${fmt(v26)}</div>
+          <div style="font-size:10px;color:var(--text-muted,#aaa);line-height:1.2;margin-bottom:4px;white-space:nowrap;">${fmt(v25)}</div>
           ${yoyStr ? `<span style="font-size:9px;font-weight:500;color:${yoyColor};background:${yoyBg};border-radius:4px;padding:1px 4px;">${yoyStr}</span>` : ''}
         </div>`;
       });
@@ -3349,7 +3415,11 @@ function initKpiCharts() {
             <span style="writing-mode:vertical-lr;font-size:8.5px;font-weight:700;color:#fff;letter-spacing:0.06em;white-space:nowrap;">廣告花費</span>
           </div>
         </div>
-        ${cards.join('')}`;
+        <div style="overflow-x:auto;flex:1;display:flex;gap:4px;">${cards.join('')}</div>
+        <div style="flex-shrink:0;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;padding-left:8px;">
+          <span style="font-size:9px;color:var(--text-secondary);display:flex;align-items:center;gap:3px;white-space:nowrap;"><span style="display:inline-block;width:7px;height:7px;background:${color26};border-radius:2px;"></span>2026</span>
+          <span style="font-size:9px;color:var(--text-muted);display:flex;align-items:center;gap:3px;white-space:nowrap;"><span style="display:inline-block;width:7px;height:7px;background:#bbb;border-radius:2px;"></span>2025</span>
+        </div>`;
     });
   }
   renderSpendRows();
