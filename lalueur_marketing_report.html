@@ -979,6 +979,7 @@ const NAME_MAP = {
   '產品':               '產品/暖宮/美膚',
   '暖宮':               '產品/暖宮/美膚',
   '美膚':               '產品/暖宮/美膚',
+  '奇蹟爆水':           '爆水奇蹟',       // 同一品項兩種寫法，統一為爆水奇蹟
 };
 
 function parseProdFromGviz(json) {
@@ -1188,8 +1189,8 @@ async function fetchFunnelData() {
   // 原綺累計：B3:H22
   try { const r = await gvizJSONP('行銷新客轉換概況', 'B3:H22');  parseRows(r?.table?.rows||[], 'qi'); }
   catch(e) { console.warn('原綺漏斗載入失敗:', e.message); }
-  // 原渥累計：B24:H41
-  try { const r = await gvizJSONP('行銷新客轉換概況', 'B24:H41'); parseRows(r?.table?.rows||[], 'wo'); }
+  // 原渥累計：B24:H52（含7月起新增品項）
+  try { const r = await gvizJSONP('行銷新客轉換概況', 'B24:H52'); parseRows(r?.table?.rows||[], 'wo'); }
   catch(e) { console.warn('原渥漏斗載入失敗:', e.message); }
   // 8月（mi=7）：B~N 一次帶品項名 + I~N 數據
   try {
@@ -1198,7 +1199,7 @@ async function fetchFunnelData() {
     console.log('[漏斗] 原綺8月月別載入成功，品項數:', Object.keys(funnelDataMonthly.qi[7]||{}).length, funnelDataMonthly.qi[7]);
   } catch(e) { console.error('[漏斗] 原綺8月漏斗載入失敗:', e.message); }
   try {
-    const r = await gvizJSONP('行銷新客轉換概況', 'B24:N41');
+    const r = await gvizJSONP('行銷新客轉換概況', 'B24:N52');
     parseMonthRows(r?.table?.rows||[], 'wo', 7);
     console.log('[漏斗] 原渥8月月別載入成功，品項數:', Object.keys(funnelDataMonthly.wo[7]||{}).length, funnelDataMonthly.wo[7]);
   } catch(e) { console.error('[漏斗] 原渥8月漏斗載入失敗:', e.message); }
@@ -1464,7 +1465,7 @@ async function initAutoFetch() {
       if (!ad) continue;
       if (!monthlyProdSpend[b]) monthlyProdSpend[b] = {};
       Object.entries(ad.products).forEach(([name, p]) => {
-        if (!monthlyProdSpend[b][name]) monthlyProdSpend[b][name] = Array(7).fill(null);
+        if (!monthlyProdSpend[b][name]) monthlyProdSpend[b][name] = Array(8).fill(null);
         monthlyProdSpend[b][name][mi] = {
           tpe: p.tpe, tca: p.tca,
           inq: (p.inq||0)+(p.inq2||0),
@@ -2393,9 +2394,10 @@ const adsExt = {
       { name:'液態皮秒',     tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
       { name:'杏仁酸',       tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
       { name:'無針水光',     tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
-      { name:'奇蹟爆水',     tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
-      { name:'肌肉管理',     tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
-      { name:'產品/暖宮',    tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
+      { name:'爆水奇蹟',     tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
+      { name:'肌肉管理',       tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
+      { name:'超肌因水拉提',   tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
+      { name:'產品/暖宮',      tpe:0, tca:0, tpe2:0, tca2:0, inq:0, inq2:0, tp:0, tc:0, spend:0, clients:0, cpl:0, roas:0, rate:0 },
     ],
     media: [
       { name:'Meta',   tpe:98000, tca:65000, total:163000 },
@@ -2721,7 +2723,7 @@ function buildAdsSummary(b) {
 
 function openProdModal(b, name) {
   const baseMonthly = (monthlyProdSpend[b]||{})[name] || [];
-  const labels = ['1月','2月','3月','4月','5月','6月','7月'];
+  const labels = ['1月','2月','3月','4月','5月','6月','7月','8月'];
 
   // 若此品項屬於 REPORT_GROUPS 群組，將 tp/tc/clients 改為群組所有成員加總
   const group = (REPORT_GROUPS[b]||[]).find(g => g.members.has(name));
