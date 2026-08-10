@@ -1129,7 +1129,7 @@ const PROD_TO_ADS = { '超玩美/電波/無雙':'電波', '超玩美/人中':'�
 const ADS_TO_PROD = Object.fromEntries(Object.entries(PROD_TO_ADS).map(([k,v])=>[v,k]));
 
 // 每月廣告成效指標快取 { wo: [null,…], qi: [null,…] }
-const adsMonthlyData = { wo: Array(7).fill(null), qi: Array(7).fill(null) };
+const adsMonthlyData = { wo: Array(8).fill(null), qi: Array(8).fill(null) };
 
 // 行銷新客轉換概況分頁資料 { qi: { 品項名: { book, bookRate, stayRate, cancelRate } } }
 const funnelData = { qi: {}, wo: {} };
