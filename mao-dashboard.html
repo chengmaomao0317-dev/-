@@ -155,6 +155,60 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .add-proj-btn:hover{background:#ececea;color:#1a1a18;}
 .add-cat-btn{background:#fff;color:#1a1a18;border:1px dashed rgba(0,0,0,.2);border-radius:6px;padding:4px 12px;cursor:pointer;font-size:11.5px;font-weight:500;}
 .add-cat-btn:hover{background:#f5f4f0;}
+.report-link-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:.5px solid rgba(0,0,0,.07);border-radius:8px;margin-bottom:6px;transition:box-shadow .1s;}
+.report-link-row.drop-before{box-shadow:0 -2px 0 #378ADD;}
+.report-link-row.drop-after{box-shadow:0 2px 0 #378ADD;}
+.report-link-drag{cursor:grab;color:#c9c8c2;font-size:11px;flex-shrink:0;user-select:none;}
+.report-link-drag:active{cursor:grabbing;}
+.report-link-name{font-size:12.5px;font-weight:600;color:#1a1a18;flex:1;min-width:0;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.report-link-open{font-size:14px;color:#9a9990;flex-shrink:0;text-decoration:none;}
+.report-link-open:hover{color:#185FA5;}
+.report-link-del{background:none;border:none;color:#c9c8c2;cursor:pointer;font-size:12px;flex-shrink:0;}
+.report-link-del:hover{color:#A32D2D;}
+.report-empty-hint{font-size:11px;color:#b0afa9;padding:4px 2px 8px;}
+.stock-holdings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.stock-hold-card{background:#fff;border:.5px solid rgba(0,0,0,.1);border-radius:12px;padding:12px 14px;cursor:pointer;}
+.stock-hold-name{font-size:11px;color:#9a9990;}
+.stock-hold-price{font-size:17px;font-weight:600;color:#1a1a18;margin:2px 0;}
+.stock-hold-chg{font-size:11px;font-weight:600;}
+.stock-hold-chg.up{color:#3B6D11;}
+.stock-hold-chg.down{color:#A32D2D;}
+.stock-hold-chg.flat{color:#9a9990;}
+.stock-hold-meta{margin-top:8px;padding-top:8px;border-top:1px solid #ececea;font-size:10.5px;color:#9a9990;}
+.stock-hold-pl{font-size:12px;font-weight:600;}
+.stock-hold-pl.up{color:#3B6D11;}
+.stock-hold-pl.down{color:#A32D2D;}
+.stock-month-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start;}
+.stock-tx-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:.5px solid rgba(0,0,0,.07);border-radius:8px;margin-bottom:6px;cursor:pointer;}
+.stock-tx-date{font-size:11px;color:#9a9990;width:40px;flex-shrink:0;}
+.stock-tx-name{font-size:12px;font-weight:600;color:#1a1a18;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.stock-tx-tag{padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:600;flex-shrink:0;}
+.stock-tx-tag.buy{background:#FCEBEB;color:#A32D2D;}
+.stock-tx-tag.sell{background:#EAF3DE;color:#3B6D11;}
+.stock-tx-qty{font-size:11px;color:#5f5e5a;width:78px;text-align:right;flex-shrink:0;}
+.stock-tx-amt{font-size:11px;color:#1a1a18;font-weight:600;width:64px;text-align:right;flex-shrink:0;}
+.stock-empty-hint{font-size:11px;color:#b0afa9;padding:8px 2px;}
+.stock-overview-box{margin-bottom:14px;}
+.stock-metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:10px;}
+.stock-metric-card{background:#fff;border:.5px solid rgba(0,0,0,.1);border-radius:12px;padding:12px 14px;}
+.stock-metric-label{font-size:11px;color:#9a9990;margin-bottom:4px;}
+.stock-metric-value{font-size:19px;font-weight:600;color:#1a1a18;}
+.stock-metric-value.up{color:#3B6D11;}
+.stock-metric-value.down{color:#A32D2D;}
+.stock-alloc-card{background:#fff;border:.5px solid rgba(0,0,0,.1);border-radius:12px;padding:14px 16px;}
+.stock-alloc-title{font-size:11.5px;font-weight:600;color:#1a1a18;margin-bottom:10px;}
+.stock-alloc-bar{display:flex;border-radius:8px;overflow:hidden;height:22px;margin-bottom:10px;}
+.stock-alloc-legend{display:flex;flex-wrap:wrap;gap:10px 16px;}
+.stock-alloc-legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:#5f5e5a;}
+.stock-alloc-dot{width:8px;height:8px;border-radius:2px;display:inline-block;flex-shrink:0;}
+.sub-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:.5px solid rgba(0,0,0,.07);border-radius:8px;margin-bottom:6px;cursor:pointer;}
+.sub-row.cancelled{opacity:.55;}
+.sub-row-name{font-size:12px;font-weight:600;color:#1a1a18;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sub-row-cycle{font-size:10px;color:#9a9990;width:38px;flex-shrink:0;}
+.sub-row-cost{font-size:11px;color:#1a1a18;width:56px;text-align:right;flex-shrink:0;}
+.sub-row-next{font-size:10px;color:#9a9990;width:82px;text-align:right;flex-shrink:0;}
+.sub-row-next.soon{color:#B5501C;font-weight:600;}
+.sub-cat-summary{font-size:10px;color:#9a9990;}
 .item-collab{font-size:9.5px;font-weight:600;padding:1px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
 .collab-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:.5px solid rgba(0,0,0,.08);border-radius:8px;background:#faf9f7;transition:box-shadow .1s;}
 .collab-row.drop-before{box-shadow:0 -2px 0 #378ADD;}
@@ -284,6 +338,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
     <div class="tab-bar">
       <button class="tab-btn active" id="tabCalBtn" onclick="switchTab('calendar')">📅 CALENDAR</button>
       <button class="tab-btn" id="tabMeetingBtn" onclick="switchTab('meeting')">📝 MEETINGS</button>
+      <button class="tab-btn" id="tabReportBtn" onclick="switchTab('report')">📊 REPORTS</button>
+      <button class="tab-btn" id="tabStockBtn" onclick="switchTab('stock')">📈 STOCKS</button>
+      <button class="tab-btn" id="tabSubBtn" onclick="switchTab('sub')">💳 SUBS</button>
     </div>
   </div>
   <div class="header-bar-wrap"><div class="header-bar">
@@ -335,6 +392,55 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
       </div>
       <div class="meeting-filter-hint">點擊標籤可切換篩選，都不勾＝顯示全部</div>
       <div id="meetingList"></div>
+    </div>
+  </div>
+
+  <div id="reportPage" style="display:none;">
+    <div class="section">
+      <div class="sec-title">📊 REPORTS<span style="display:flex;gap:6px;"><button class="add-cat-btn" id="addReportCatBtn">+ 新增分類</button></span></div>
+      <div class="cat-grid" id="reportGrid"></div>
+    </div>
+  </div>
+
+  <div id="stockPage" style="display:none;">
+    <div class="section">
+      <div class="sec-title">📈 持股總覽<span style="display:flex;align-items:center;gap:10px;">
+        <span class="sync-status" id="stockSyncStatus" style="font-size:10.5px;font-weight:500;">☁️ 尚未讀取股價</span>
+        <button class="add-cat-btn" id="manageStockOpeningBtn">⚙️ 起始持股</button>
+      </span></div>
+      <div id="stockOverviewBox" class="stock-overview-box"></div>
+      <div id="stockHoldingsGrid" class="stock-holdings-grid"></div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">🧾 買賣明細<span style="display:flex;align-items:center;gap:8px;">
+        <select class="month-select" id="stockTxYearSel" onchange="onStockTxYearChange(this.value)" style="font-size:11.5px;padding:4px 8px;"></select>
+        <button class="add-cat-btn" id="addStockTxBtn">+ 新增交易</button>
+      </span></div>
+      <div id="stockTxList" class="stock-month-grid"></div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">💰 股利明細<span style="display:flex;align-items:center;gap:8px;">
+        <select class="month-select" id="stockDivYearSel" onchange="onStockDivYearChange(this.value)" style="font-size:11.5px;padding:4px 8px;"></select>
+        <button class="add-cat-btn" id="addStockDivBtn">+ 新增股利</button>
+      </span></div>
+      <div id="stockDivList" class="stock-month-grid"></div>
+    </div>
+  </div>
+
+  <div id="subPage" style="display:none;">
+    <div class="section">
+      <div class="sec-title">💳 SUBSCRIPTIONS<span style="display:flex;gap:6px;"><button class="add-cat-btn" id="addSubCatBtn">+ 新增分類</button></span></div>
+      <div id="subOverviewBox" class="stock-metric-grid" style="margin-bottom:14px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="scope-pick" id="subStatusPick">
+          <span class="scope-pick-btn" data-status="active">訂閱中</span>
+          <span class="scope-pick-btn" data-status="cancelled">已取消</span>
+        </div>
+        <button class="add-cat-btn" id="addSubscriptionBtn">+ 新增訂閱</button>
+      </div>
+      <div class="cat-grid" id="subGrid"></div>
     </div>
   </div>
 
@@ -525,6 +631,215 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
   </div>
 </div>
 
+<div class="modal-overlay" id="reportLinkModalOverlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="reportLinkModalTitle">新增報表連結</span>
+      <button class="modal-close" id="reportLinkModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">報表名稱</div>
+        <input type="text" id="reportLinkModalName" class="modal-input" placeholder="輸入報表名稱">
+      </div>
+      <div>
+        <div class="modal-label">連結網址</div>
+        <input type="text" id="reportLinkModalUrl" class="modal-input" placeholder="https://…">
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="reportLinkModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="reportLinkModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="stockTxModalOverlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="stockTxModalTitle">新增交易</span>
+      <button class="modal-close" id="stockTxModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">日期</div>
+        <input type="date" id="stockTxModalDate" class="modal-input">
+      </div>
+      <div>
+        <div class="modal-label">股票名稱</div>
+        <input type="text" id="stockTxModalName" class="modal-input" placeholder="例如：台積電">
+      </div>
+      <div>
+        <div class="modal-label">代號</div>
+        <input type="text" id="stockTxModalCode" class="modal-input" placeholder="例如：2330">
+      </div>
+      <div>
+        <div class="modal-label">買進／賣出</div>
+        <div class="scope-pick" id="stockTxModalActionPick">
+          <span class="scope-pick-btn" data-action="buy">買進</span>
+          <span class="scope-pick-btn" data-action="sell">賣出</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div class="modal-label">價格</div>
+          <input type="number" step="0.01" id="stockTxModalPrice" class="modal-input" placeholder="0">
+        </div>
+        <div style="flex:1;">
+          <div class="modal-label">股數</div>
+          <input type="number" step="1" id="stockTxModalQty" class="modal-input" placeholder="0">
+        </div>
+        <div style="flex:1;">
+          <div class="modal-label">手續費</div>
+          <input type="number" step="1" id="stockTxModalFee" class="modal-input" placeholder="0">
+        </div>
+      </div>
+      <div style="font-size:10.5px;color:#b0afa9;">應收付會自動計算：買進＝－(價格×股數＋手續費)，賣出＝＋(價格×股數－手續費)</div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="stockTxModalDeleteBtn" style="display:none;color:#A32D2D;">刪除</button>
+      <button class="modal-btn-cancel" id="stockTxModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="stockTxModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="stockDivModalOverlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="stockDivModalTitle">新增股利</span>
+      <button class="modal-close" id="stockDivModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">日期</div>
+        <input type="date" id="stockDivModalDate" class="modal-input">
+      </div>
+      <div>
+        <div class="modal-label">股票名稱</div>
+        <input type="text" id="stockDivModalName" class="modal-input" placeholder="例如：元大台灣50">
+      </div>
+      <div>
+        <div class="modal-label">代號</div>
+        <input type="text" id="stockDivModalCode" class="modal-input" placeholder="例如：0050">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div class="modal-label">現金股利</div>
+          <input type="number" step="1" id="stockDivModalCash" class="modal-input" placeholder="0">
+        </div>
+        <div style="flex:1;">
+          <div class="modal-label">股票股利</div>
+          <input type="number" step="1" id="stockDivModalStock" class="modal-input" placeholder="0">
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="stockDivModalDeleteBtn" style="display:none;color:#A32D2D;">刪除</button>
+      <button class="modal-btn-cancel" id="stockDivModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="stockDivModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="stockOpeningModalOverlay" style="display:none;z-index:10000;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span>⚙️ 起始持股（開始記帳前既有的股票）</span>
+      <button class="modal-close" id="stockOpeningModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:10.5px;color:#b0afa9;">如果某檔股票在買賣明細開始記錄之前你就已經持有（例如舊帳戶的持股），可以在這裡設定當時的股數與平均成本，這樣持股總覽的損益才會正確。</div>
+      <div id="stockOpeningManageList" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <button class="add-proj-btn" id="addStockOpeningBtn">+ 新增起始持股</button>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-save" id="stockOpeningModalDoneBtn">完成</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="stockOpeningFormModalOverlay" style="display:none;z-index:10001;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="stockOpeningFormModalTitle">新增起始持股</span>
+      <button class="modal-close" id="stockOpeningFormModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">股票名稱</div>
+        <input type="text" id="stockOpeningFormName" class="modal-input" placeholder="例如：元大台灣50">
+      </div>
+      <div>
+        <div class="modal-label">代號</div>
+        <input type="text" id="stockOpeningFormCode" class="modal-input" placeholder="例如：0050">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div class="modal-label">股數</div>
+          <input type="number" step="1" id="stockOpeningFormQty" class="modal-input" placeholder="0">
+        </div>
+        <div style="flex:1;">
+          <div class="modal-label">平均成本（每股）</div>
+          <input type="number" step="0.01" id="stockOpeningFormCost" class="modal-input" placeholder="0">
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="stockOpeningFormDeleteBtn" style="display:none;color:#A32D2D;">刪除</button>
+      <button class="modal-btn-cancel" id="stockOpeningFormCancelBtn">取消</button>
+      <button class="modal-btn-save" id="stockOpeningFormSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="subscriptionModalOverlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="subscriptionModalTitle">新增訂閱</span>
+      <button class="modal-close" id="subscriptionModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">訂閱服務名稱</div>
+        <input type="text" id="subscriptionModalName" class="modal-input" placeholder="例如：Netflix">
+      </div>
+      <div>
+        <div class="modal-label">標籤</div>
+        <select id="subscriptionModalCategory" class="modal-input"></select>
+      </div>
+      <div>
+        <div class="modal-label">訂閱平台</div>
+        <input type="text" id="subscriptionModalPlatform" class="modal-input" placeholder="例如：App Store、官網">
+      </div>
+      <div>
+        <div class="modal-label">訂閱週期</div>
+        <div class="scope-pick" id="subscriptionModalCyclePick">
+          <span class="scope-pick-btn" data-cycle="monthly">每月</span>
+          <span class="scope-pick-btn" data-cycle="yearly">每年</span>
+          <span class="scope-pick-btn" data-cycle="onetime">買斷</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div class="modal-label">費用</div>
+          <input type="number" step="1" id="subscriptionModalCost" class="modal-input" placeholder="0">
+        </div>
+        <div style="flex:1;">
+          <div class="modal-label">訂閱開始日</div>
+          <input type="date" id="subscriptionModalStartDate" class="modal-input">
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="subscriptionModalDeleteBtn" style="display:none;color:#A32D2D;">刪除</button>
+      <button class="modal-btn-cancel" id="subscriptionModalToggleBtn" style="display:none;">取消訂閱</button>
+      <button class="modal-btn-cancel" id="subscriptionModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="subscriptionModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 // ── Firebase 雲端同步（即時同步用，讀寫失敗會自動 fallback 回本機資料）─────────────────────────────
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
@@ -583,6 +898,10 @@ function getMeetingCat(catId){
   return STATE.meetingCategories.find(c => c.id === catId) || null;
 }
 
+function getReportCat(catId){
+  return STATE.reportCategories.find(c => c.id === catId) || null;
+}
+
 // 協同人員的預設清單（僅在第一次建立資料 / 舊資料補欄位時使用，之後使用者可自由新增/刪除/排序）
 const DEFAULT_COLLABORATORS = [
   {id:'alice',  name:'Alice',  color:0},
@@ -596,7 +915,114 @@ function getCollaborator(collabId){
   return STATE.collaborators.find(c => c.id === collabId) || null;
 }
 
+// 從 Notion「2026買賣明細」／「2026股利明細」匯入的歷史資料（僅在第一次遇到空資料時匯入一次，之後由 stockImportedV1 旗標避免重複匯入）
+const IMPORTED_STOCK_TRANSACTIONS = [
+  {date:'2026-01-05', name:'元大台灣50', code:'0050', price:68.8, qty:150, action:'sell', fee:0, amount:5068},
+  {date:'2026-01-06', name:'元大台灣50', code:'0050', price:69.5, qty:200, action:'sell', fee:0, amount:6908},
+  {date:'2026-01-15', name:'元大台灣50', code:'0050', price:70.5, qty:150, action:'sell', fee:0, amount:5355},
+  {date:'2026-01-27', name:'元大台灣50', code:'0050', price:72.5, qty:300, action:'sell', fee:0, amount:11426},
+  {date:'2026-02-04', name:'永豐美國500大', code:'00858', price:32.84, qty:100, action:'buy', fee:0, amount:-3286},
+  {date:'2026-03-04', name:'元大台灣價值高息', code:'00940', price:9.51, qty:100, action:'buy', fee:0, amount:-952},
+  {date:'2026-03-09', name:'台積電', code:'2330', price:1795, qty:1, action:'buy', fee:0, amount:-1796},
+  {date:'2026-03-23', name:'台積電', code:'2330', price:1805, qty:1, action:'buy', fee:0, amount:-1806},
+  {date:'2026-03-30', name:'台積電', code:'2330', price:1795, qty:1, action:'buy', fee:0, amount:-1796},
+  {date:'2026-03-30', name:'永豐美國500大', code:'00858', price:30.79, qty:50, action:'buy', fee:0, amount:-1540},
+  {date:'2026-05-12', name:'元大台灣價值高息', code:'00940', price:11.21, qty:100, action:'buy', fee:0, amount:-1122},
+  {date:'2026-05-13', name:'台積電', code:'2330', price:2220, qty:1, action:'buy', fee:0, amount:-2221},
+  {date:'2026-06-02', name:'主動統一升級50', code:'00403A', price:10.71, qty:100, action:'buy', fee:0, amount:-1072},
+  {date:'2026-06-08', name:'主動統一升級50', code:'00403A', price:9.9, qty:100, action:'buy', fee:0, amount:-991},
+  {date:'2026-06-08', name:'元大台灣50', code:'0050', price:99.5, qty:10, action:'buy', fee:0, amount:-996},
+  {date:'2026-06-22', name:'永豐美國500大', code:'00858', price:36.11, qty:150, action:'sell', fee:0, amount:5408},
+  {date:'2026-07-06', name:'國巨', code:'2327', price:1006, qty:1, action:'buy', fee:0, amount:-1006},
+  {date:'2026-07-08', name:'國巨', code:'2327', price:866, qty:1, action:'buy', fee:0, amount:-866},
+  {date:'2026-07-14', name:'國巨', code:'2327', price:777, qty:1, action:'buy', fee:0, amount:-777},
+  {date:'2026-07-14', name:'國巨', code:'2327', price:748, qty:1, action:'buy', fee:0, amount:-748},
+  {date:'2026-07-17', name:'台積電', code:'2330', price:2396, qty:1, action:'buy', fee:0, amount:-2396},
+  {date:'2026-07-17', name:'國巨', code:'2327', price:700, qty:1, action:'buy', fee:0, amount:-700},
+  {date:'2026-07-17', name:'群益ESG', code:'00937B', price:1480, qty:100, action:'buy', fee:0, amount:-1480},
+  {date:'2026-07-20', name:'國巨', code:'2327', price:631, qty:1, action:'buy', fee:0, amount:-631},
+  {date:'2026-07-28', name:'元大50', code:'0050', price:97, qty:10, action:'buy', fee:0, amount:-977},
+  {date:'2026-07-28', name:'國巨', code:'2327', price:563, qty:1, action:'buy', fee:0, amount:-564},
+  {date:'2026-07-29', name:'元大50', code:'0050', price:94, qty:10, action:'buy', fee:0, amount:-941},
+  {date:'2026-08-07', name:'國巨', code:'2327', price:551, qty:1, action:'buy', fee:0, amount:-551},
+];
+const IMPORTED_STOCK_DIVIDENDS = [
+  {date:'2026-01-02', name:'元大台灣價值高息', code:'00940', cash:49, stock:0},
+  {date:'2026-01-07', name:'台積電', code:'2330', cash:15, stock:0},
+  {date:'2026-01-13', name:'復華台灣科技優息', code:'00929', cash:8, stock:0},
+  {date:'2026-02-02', name:'元大台灣價值高息', code:'00940', cash:4, stock:0},
+  {date:'2026-02-11', name:'元大台灣50', code:'0050', cash:2990, stock:0},
+  {date:'2026-02-11', name:'元大高股息', code:'0056', cash:424, stock:0},
+  {date:'2026-03-02', name:'元大台灣價值高息', code:'00940', cash:3, stock:0},
+  {date:'2026-03-11', name:'復華台灣科技優息', code:'00929', cash:40, stock:0},
+  {date:'2026-03-20', name:'富邦特選高股息30', code:'00900', cash:6, stock:0},
+  {date:'2026-03-27', name:'復華台灣科技優息', code:'00929', cash:10, stock:0},
+  {date:'2026-04-01', name:'元大台灣價值高息', code:'00940', cash:8, stock:0},
+  {date:'2026-04-09', name:'台積電', code:'2330', cash:25, stock:0},
+  {date:'2026-04-15', name:'復華台灣科技優息', code:'00929', cash:12, stock:0},
+  {date:'2026-05-04', name:'元大台灣價值高息', code:'00940', cash:8, stock:0},
+  {date:'2026-05-14', name:'元大高股息', code:'0056', cash:490, stock:0},
+  {date:'2026-05-15', name:'富邦特選高股息30', code:'00900', cash:6, stock:0},
+  {date:'2026-05-18', name:'復華台灣科技優息', code:'00929', cash:16, stock:0},
+  {date:'2026-06-01', name:'元大台灣價值高息', code:'00940', cash:8, stock:0},
+  {date:'2026-06-15', name:'復華台灣科技優息', code:'00929', cash:16, stock:0},
+  {date:'2026-07-01', name:'元大台灣價值高息', code:'00940', cash:16, stock:0},
+  {date:'2026-07-09', name:'台積電', code:'2330', cash:43, stock:0},
+  {date:'2026-07-09', name:'富邦特選高股息30', code:'00900', cash:6, stock:0},
+  {date:'2026-07-14', name:'復華台灣科技優息', code:'00929', cash:42, stock:0},
+  {date:'2026-07-23', name:'台新乙特', code:'2887Z1', cash:2, stock:0},
+  {date:'2026-08-03', name:'元大台灣價值高息', code:'00940', cash:16, stock:0},
+  {date:'2026-08-10', name:'元大高股息', code:'0056', cash:665, stock:0},
+  {date:'2026-08-10', name:'元大台灣50', code:'0050', cash:1616, stock:0},
+];
+// 從你券商 App 截圖的「均價／總股數」回推出的起始持股（開始記帳前就已持有的部分）。
+// 0050 的起始成本是用目前均價回推估算的（因為已賣出的舊股票成本無法從畫面直接看到），其餘都是直接對照畫面上的舊成交紀錄算出來的，如果不準可以到「⚙️ 起始持股」自行修改。
+const IMPORTED_STOCK_OPENING_POSITIONS = [
+  {code:'2887Z1', name:'台新新光己特', qty:19, avgCost:0},
+  {code:'2330', name:'台積電', qty:4, avgCost:954.5},
+  {code:'00940', name:'元大台灣價值高息', qty:300, avgCost:9.17},
+  {code:'00929', name:'復華台灣科技優息', qty:200, avgCost:18.65},
+  {code:'00900', name:'富邦特選高股息30', qty:100, avgCost:13.07},
+  {code:'0056', name:'元大高股息', qty:500, avgCost:34.22},
+  {code:'0050', name:'元大台灣50', qty:3500, avgCost:32.89},
+];
+
+// 從 Notion「訂閱服務」資料庫匯入的訂閱明細（僅第一次遇到空資料時匯入一次，之後由 subImportedV1 旗標避免重複匯入）
+const IMPORTED_SUB_CATEGORIES = [
+  {name:'生活', color:8},
+  {name:'串流平台', color:2},
+  {name:'休閒娛樂', color:5},
+  {name:'教育學習', color:6},
+  {name:'工作', color:0},
+];
+const IMPORTED_SUBSCRIPTIONS = [
+  {catName:'生活', name:'iCloud+', platform:'App Store', cycle:'monthly', cost:91, startDate:'2020-05-12', status:'active'},
+  {catName:'串流平台', name:'Spotify', platform:'官網', cycle:'monthly', cost:231, startDate:'2023-05-26', status:'active'},
+  {catName:'生活', name:'中華電信', platform:'官網', cycle:'monthly', cost:599, startDate:'2023-12-10', status:'active'},
+  {catName:'生活', name:'Foodpanda', platform:'官網', cycle:'monthly', cost:119, startDate:'2024-03-05', status:'active'},
+  {catName:'休閒娛樂', name:'美圖秀秀', platform:'App Store', cycle:'yearly', cost:1309, startDate:'2024-07-03', status:'cancelled'},
+  {catName:'串流平台', name:'YouTube Premium', platform:'App Store', cycle:'monthly', cost:264, startDate:'2025-08-08', status:'active'},
+  {catName:'串流平台', name:'Netfilx', platform:'官網', cycle:'monthly', cost:386, startDate:'2025-12-12', status:'active'},
+  {catName:'串流平台', name:'愛奇藝', platform:'App Store', cycle:'monthly', cost:244, startDate:'2026-01-24', status:'cancelled'},
+  {catName:'串流平台', name:'Hami Video', platform:'官網', cycle:'onetime', cost:699, startDate:'2026-02-08', status:'active'},
+  {catName:'教育學習', name:'Duolingo', platform:'App Store', cycle:'yearly', cost:1786, startDate:'2026-04-16', status:'active'},
+  {catName:'教育學習', name:'MARU日文假名', platform:'App Store', cycle:'onetime', cost:608, startDate:'2026-04-24', status:'active'},
+  {catName:'休閒娛樂', name:'美圖秀秀', platform:'App Store', cycle:'yearly', cost:700, startDate:'2026-05-22', status:'active'},
+  {catName:'工作', name:'Claude', platform:'官網', cycle:'monthly', cost:639, startDate:'2026-05-25', status:'active'},
+  {catName:'串流平台', name:'Disney+', platform:'官網', cycle:'monthly', cost:289, startDate:'2026-06-01', status:'active'},
+  {catName:'生活', name:'喝水時間', platform:'App Store', cycle:'onetime', cost:497, startDate:'2026-07-07', status:'active'},
+];
+
 function uid(){ return Math.random().toString(36).slice(2,10); }
+function dedupeByKey(arr, keyFn){
+  const seen = new Set();
+  return arr.filter(item => {
+    const k = keyFn(item);
+    if(seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
 function pad2(n){ return String(n).padStart(2,'0'); }
 function dateStr(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
 function todayStr(){ const t=new Date(); return dateStr(t.getFullYear(), t.getMonth(), t.getDate()); }
@@ -703,6 +1129,19 @@ function defaultState(){
     meetingFilter: [], // 勾選中的會議類別 id，空陣列＝顯示全部（＝「全部」）
     meetingMonthCollapsed: {}, // {'YYYY-MM': true/false}，key 不存在時預設為收合
     collaborators: DEFAULT_COLLABORATORS.map(c => ({...c})), // 協同人員名單，使用者可自由新增/刪除/拖曳排序
+    reportCategories: [], // 報表連結分類，使用者可自由新增/刪除/拖曳排序
+    reportLinks: [], // 報表連結，掛在 reportCategories 底下
+    stockTransactions: [], // 台股買賣明細
+    stockDividends: [], // 台股股利明細
+    stockPriceCache: {}, // {code: {price, change, updatedAt}}，即時股價快取（讀取失敗時顯示上次快取值）
+    stockTxYear: t.getFullYear(),
+    stockDivYear: t.getFullYear(),
+    stockTxMonthCollapsed: {}, // {'YYYY-MM': true/false}，key 不存在時預設為收合
+    stockDivMonthCollapsed: {},
+    stockOpeningPositions: [], // 開始記帳前既有的持股（{id,code,name,qty,avgCost}），用來讓損益計算正確
+    subCategories: [], // 訂閱標籤分類，使用者可自由新增/刪除/拖曳排序
+    subscriptions: [], // 訂閱項目（{id,categoryId,name,platform,cycle,cost,startDate,status}）
+    subStatusFilter: 'active', // 'active' | 'cancelled'
     currentYear: t.getFullYear(),
     currentMonth: t.getMonth(), // 0-indexed，自動抓今天所在月份
     currentScope: 'all', // 'all' | 'work' | 'personal'，行事曆／專案清單的顯示範圍
@@ -726,6 +1165,51 @@ function normalizeState(s){
   if(!Array.isArray(s.meetingFilter)) s.meetingFilter = [];
   if(!s.meetingMonthCollapsed || typeof s.meetingMonthCollapsed !== 'object') s.meetingMonthCollapsed = {};
   if(!Array.isArray(s.collaborators)) s.collaborators = DEFAULT_COLLABORATORS.map(c => ({...c}));
+  if(!Array.isArray(s.reportCategories)) s.reportCategories = [];
+  if(!Array.isArray(s.reportLinks)) s.reportLinks = [];
+  s.reportCategories.forEach(c => { if(typeof c.collapsed !== 'boolean') c.collapsed = false; });
+  if(!Array.isArray(s.stockTransactions)) s.stockTransactions = [];
+  if(!Array.isArray(s.stockDividends)) s.stockDividends = [];
+  if(!s.stockPriceCache || typeof s.stockPriceCache !== 'object') s.stockPriceCache = {};
+  if(typeof s.stockTxYear !== 'number') s.stockTxYear = def.stockTxYear;
+  if(typeof s.stockDivYear !== 'number') s.stockDivYear = def.stockDivYear;
+  if(!s.stockTxMonthCollapsed || typeof s.stockTxMonthCollapsed !== 'object') s.stockTxMonthCollapsed = {};
+  if(!s.stockDivMonthCollapsed || typeof s.stockDivMonthCollapsed !== 'object') s.stockDivMonthCollapsed = {};
+  s.stockTransactions.forEach(tx => { if(typeof tx.fee !== 'number') tx.fee = 0; });
+  if(!Array.isArray(s.stockOpeningPositions)) s.stockOpeningPositions = [];
+  if(!s.stockOpeningImportedV1){
+    s.stockOpeningPositions = IMPORTED_STOCK_OPENING_POSITIONS.map(op => ({id:uid(), ...op})).concat(s.stockOpeningPositions);
+    s.stockOpeningImportedV1 = true;
+  }
+  // 保險去重：如果雲端資料在補齊預設欄位的過程中，曾經因為沒即時寫回而重複匯入過，這裡把完全相同的紀錄去掉（只留第一筆）
+  s.stockTransactions = dedupeByKey(s.stockTransactions, tx => [tx.date,tx.code,tx.price,tx.qty,tx.action,tx.amount].join('|'));
+  s.stockDividends = dedupeByKey(s.stockDividends, d => [d.date,d.code,d.cash,d.stock].join('|'));
+  s.stockOpeningPositions = dedupeByKey(s.stockOpeningPositions, op => [op.code,op.qty,op.avgCost].join('|'));
+  if(!Array.isArray(s.subCategories)) s.subCategories = [];
+  if(!Array.isArray(s.subscriptions)) s.subscriptions = [];
+  if(typeof s.subStatusFilter !== 'string') s.subStatusFilter = 'active';
+  s.subCategories.forEach(c => { if(typeof c.collapsed !== 'boolean') c.collapsed = false; });
+  s.subscriptions.forEach(sub => { if(typeof sub.status !== 'string') sub.status = 'active'; });
+  if(!s.subImportedV1){
+    const catIdByName = {};
+    IMPORTED_SUB_CATEGORIES.forEach(c => {
+      let cat = s.subCategories.find(x => x.name === c.name);
+      if(!cat){ cat = {id:uid(), name:c.name, color:c.color, collapsed:false}; s.subCategories.push(cat); }
+      catIdByName[c.name] = cat.id;
+    });
+    const newSubs = IMPORTED_SUBSCRIPTIONS.map(sub => ({
+      id:uid(), categoryId:catIdByName[sub.catName], name:sub.name, platform:sub.platform,
+      cycle:sub.cycle, cost:sub.cost, startDate:sub.startDate, status:sub.status,
+    }));
+    s.subscriptions = newSubs.concat(s.subscriptions);
+    s.subImportedV1 = true;
+  }
+  s.subscriptions = dedupeByKey(s.subscriptions, sub => [sub.name,sub.startDate,sub.cost,sub.cycle].join('|'));
+  if(!s.stockImportedV1){
+    s.stockTransactions = IMPORTED_STOCK_TRANSACTIONS.map(tx => ({id:uid(), ...tx})).concat(s.stockTransactions);
+    s.stockDividends = IMPORTED_STOCK_DIVIDENDS.map(d => ({id:uid(), ...d})).concat(s.stockDividends);
+    s.stockImportedV1 = true;
+  }
   s.projects.forEach(p => {
     if(typeof p.desc !== 'string') p.desc = '';
     p.items.forEach(it => {
@@ -1535,23 +2019,29 @@ function buildItemRow(item, proj){
 
 let categoryEditId = null;
 let categorySelectedColor = 0;
-let categoryModalKind = 'project'; // 'project' | 'meeting'
+let categoryModalKind = 'project'; // 'project' | 'meeting' | 'report'
 let categorySelectedScope = 'work';
+
+function getCategoryListByKind(kind){
+  if(kind === 'meeting') return STATE.meetingCategories;
+  if(kind === 'report') return STATE.reportCategories;
+  if(kind === 'sub') return STATE.subCategories;
+  return STATE.categories;
+}
 
 function openCategoryModal(cat, kind){
   categoryModalKind = kind || 'project';
-  const isMeeting = categoryModalKind === 'meeting';
-  const list = isMeeting ? STATE.meetingCategories : STATE.categories;
+  const isProject = categoryModalKind === 'project';
+  const list = getCategoryListByKind(categoryModalKind);
+  const titleMap = {project:'分類', meeting:'會議類別', report:'報表分類', sub:'訂閱標籤'};
   categoryEditId = cat ? cat.id : null;
-  document.getElementById('categoryModalTitle').textContent = cat
-    ? (isMeeting ? '編輯會議類別' : '編輯分類')
-    : (isMeeting ? '新增會議類別' : '新增分類');
+  document.getElementById('categoryModalTitle').textContent = (cat ? '編輯' : '新增') + titleMap[categoryModalKind];
   document.getElementById('categoryModalName').value = cat ? cat.name : '';
   categorySelectedColor = cat ? cat.color % COLORS.length : (list.length % COLORS.length);
   renderCategoryColorSwatches();
 
-  document.getElementById('categoryScopeRow').style.display = isMeeting ? 'none' : '';
-  if(!isMeeting){
+  document.getElementById('categoryScopeRow').style.display = isProject ? '' : 'none';
+  if(isProject){
     categorySelectedScope = cat
       ? (cat.scope || 'work')
       : (STATE.currentScope !== 'all' ? STATE.currentScope : 'work');
@@ -1590,17 +2080,18 @@ function closeCategoryModal(){
 function saveCategoryModal(){
   const name = document.getElementById('categoryModalName').value.trim();
   if(!name){ alert('請輸入分類名稱'); return; }
-  const isMeeting = categoryModalKind === 'meeting';
-  const list = isMeeting ? STATE.meetingCategories : STATE.categories;
+  const isProject = categoryModalKind === 'project';
+  const list = getCategoryListByKind(categoryModalKind);
   if(categoryEditId){
     const cat = list.find(c => c.id === categoryEditId);
     if(cat){
       cat.name = name; cat.color = categorySelectedColor;
-      if(!isMeeting) cat.scope = categorySelectedScope;
+      if(isProject) cat.scope = categorySelectedScope;
     }
   }else{
     const newCat = {id:uid(), name, color:categorySelectedColor};
-    if(!isMeeting) newCat.scope = categorySelectedScope;
+    if(isProject) newCat.scope = categorySelectedScope;
+    if(categoryModalKind === 'report' || categoryModalKind === 'sub') newCat.collapsed = false;
     list.push(newCat);
   }
   saveState();
@@ -1610,6 +2101,14 @@ function saveCategoryModal(){
 
 function addCategory(){
   openCategoryModal(null, 'project');
+}
+
+function addReportCategory(){
+  openCategoryModal(null, 'report');
+}
+
+function addSubCategory(){
+  openCategoryModal(null, 'sub');
 }
 
 // ── 專案新增／編輯彈出視窗 ─────────────────────────────
@@ -1767,6 +2266,1272 @@ function closeCollaboratorModal(){
   document.getElementById('collaboratorModalOverlay').style.display = 'none';
 }
 
+// ── 報表連結 ─────────────────────────────
+function reorderReportCategory(draggedId, targetId, insertBefore){
+  const draggedIdx = STATE.reportCategories.findIndex(c => c.id === draggedId);
+  if(draggedIdx === -1) return;
+  const dragged = STATE.reportCategories.splice(draggedIdx, 1)[0];
+  const targetIdx = STATE.reportCategories.findIndex(c => c.id === targetId);
+  if(targetIdx === -1){
+    STATE.reportCategories.push(dragged);
+  }else{
+    const insertAt = insertBefore ? targetIdx : targetIdx + 1;
+    STATE.reportCategories.splice(insertAt, 0, dragged);
+  }
+  saveState();
+  renderReportCategories();
+}
+
+function deleteReportCategory(cat){
+  if(!confirm(`確定刪除分類「${cat.name}」？底下的報表連結也會一併刪除。`)) return;
+  STATE.reportCategories = STATE.reportCategories.filter(c => c.id !== cat.id);
+  STATE.reportLinks = STATE.reportLinks.filter(l => l.categoryId !== cat.id);
+  saveState();
+  renderReportCategories();
+}
+
+function reorderReportLink(draggedId, targetId, insertBefore){
+  const draggedIdx = STATE.reportLinks.findIndex(l => l.id === draggedId);
+  if(draggedIdx === -1) return;
+  const dragged = STATE.reportLinks.splice(draggedIdx, 1)[0];
+  const targetIdx = STATE.reportLinks.findIndex(l => l.id === targetId);
+  if(targetIdx === -1){
+    STATE.reportLinks.push(dragged);
+  }else{
+    dragged.categoryId = STATE.reportLinks[targetIdx].categoryId;
+    const insertAt = insertBefore ? targetIdx : targetIdx + 1;
+    STATE.reportLinks.splice(insertAt, 0, dragged);
+  }
+  saveState();
+  renderReportCategories();
+}
+
+function moveReportLinkToCategory(draggedId, categoryId){
+  const draggedIdx = STATE.reportLinks.findIndex(l => l.id === draggedId);
+  if(draggedIdx === -1) return;
+  const dragged = STATE.reportLinks.splice(draggedIdx, 1)[0];
+  dragged.categoryId = categoryId;
+  STATE.reportLinks.push(dragged);
+  saveState();
+  renderReportCategories();
+}
+
+function deleteReportLink(link){
+  if(!confirm(`確定刪除報表連結「${link.name}」？`)) return;
+  STATE.reportLinks = STATE.reportLinks.filter(l => l.id !== link.id);
+  saveState();
+  renderReportCategories();
+}
+
+let reportLinkModalCat = null;
+let reportLinkModalEditId = null;
+
+function openReportLinkModal(cat, link){
+  reportLinkModalCat = cat;
+  reportLinkModalEditId = link ? link.id : null;
+  document.getElementById('reportLinkModalTitle').textContent = link ? '編輯報表連結' : '新增報表連結';
+  document.getElementById('reportLinkModalName').value = link ? link.name : '';
+  document.getElementById('reportLinkModalUrl').value = link ? link.url : '';
+  document.getElementById('reportLinkModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('reportLinkModalName').focus(), 0);
+}
+
+function closeReportLinkModal(){
+  document.getElementById('reportLinkModalOverlay').style.display = 'none';
+  reportLinkModalCat = null;
+  reportLinkModalEditId = null;
+}
+
+function saveReportLinkModal(){
+  const name = document.getElementById('reportLinkModalName').value.trim();
+  let url = document.getElementById('reportLinkModalUrl').value.trim();
+  if(!name){ alert('請輸入報表名稱'); return; }
+  if(!url){ alert('請輸入連結網址'); return; }
+  if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  if(reportLinkModalEditId){
+    const link = STATE.reportLinks.find(l => l.id === reportLinkModalEditId);
+    if(link){ link.name = name; link.url = url; }
+  }else if(reportLinkModalCat){
+    STATE.reportLinks.push({id:uid(), categoryId:reportLinkModalCat.id, name, url});
+  }
+  saveState();
+  closeReportLinkModal();
+  renderReportCategories();
+}
+
+function buildReportLinkRow(link){
+  const row = document.createElement('div');
+  row.className = 'report-link-row';
+  row.dataset.linkId = link.id;
+
+  row.addEventListener('dragover', e => {
+    if(!e.dataTransfer.types.includes('application/x-report-link-id')) return;
+    e.preventDefault();
+    const rect = row.getBoundingClientRect();
+    const before = (e.clientY - rect.top) < rect.height / 2;
+    row.classList.toggle('drop-before', before);
+    row.classList.toggle('drop-after', !before);
+  });
+  row.addEventListener('dragleave', () => {
+    row.classList.remove('drop-before', 'drop-after');
+  });
+  row.addEventListener('drop', e => {
+    if(!e.dataTransfer.types.includes('application/x-report-link-id')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = row.getBoundingClientRect();
+    const before = (e.clientY - rect.top) < rect.height / 2;
+    row.classList.remove('drop-before', 'drop-after');
+    const draggedId = e.dataTransfer.getData('application/x-report-link-id');
+    if(draggedId && draggedId !== link.id) reorderReportLink(draggedId, link.id, before);
+  });
+
+  const drag = document.createElement('span');
+  drag.className = 'report-link-drag';
+  drag.textContent = '⠿';
+  drag.title = '拖曳可調整順序或移到其他分類';
+  drag.draggable = true;
+  drag.ondragstart = (e) => {
+    e.dataTransfer.setData('application/x-report-link-id', link.id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+  row.appendChild(drag);
+
+  const name = document.createElement('span');
+  name.className = 'report-link-name';
+  name.textContent = link.name;
+  name.title = link.url + '（點擊可編輯）';
+  name.onclick = () => openReportLinkModal(getReportCat(link.categoryId), link);
+  row.appendChild(name);
+
+  const open = document.createElement('a');
+  open.className = 'report-link-open';
+  open.href = link.url;
+  open.target = '_blank';
+  open.rel = 'noopener noreferrer';
+  open.title = '在新分頁開啟';
+  open.textContent = '↗';
+  open.onclick = (e) => e.stopPropagation();
+  row.appendChild(open);
+
+  const del = document.createElement('button');
+  del.className = 'report-link-del';
+  del.textContent = '✕';
+  del.title = '刪除這筆連結';
+  del.onclick = () => deleteReportLink(link);
+  row.appendChild(del);
+
+  return row;
+}
+
+function renderReportCategories(){
+  const wrap = document.getElementById('reportGrid');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+
+  STATE.reportCategories.forEach(cat => {
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    card.dataset.catId = cat.id;
+    const color = COLORS[cat.color % COLORS.length];
+
+    card.addEventListener('dragover', e => {
+      if(e.dataTransfer.types.includes('application/x-report-cat-id')){
+        e.preventDefault();
+        const rect = card.getBoundingClientRect();
+        const before = (e.clientY - rect.top) < rect.height / 2;
+        card.classList.toggle('cat-drop-before', before);
+        card.classList.toggle('cat-drop-after', !before);
+      }else if(e.dataTransfer.types.includes('application/x-report-link-id')){
+        e.preventDefault();
+        card.classList.add('cat-dragover');
+      }
+    });
+    card.addEventListener('dragleave', () => {
+      card.classList.remove('cat-dragover', 'cat-drop-before', 'cat-drop-after');
+    });
+    card.addEventListener('drop', e => {
+      if(e.dataTransfer.types.includes('application/x-report-cat-id')){
+        e.preventDefault();
+        const rect = card.getBoundingClientRect();
+        const before = (e.clientY - rect.top) < rect.height / 2;
+        card.classList.remove('cat-drop-before', 'cat-drop-after');
+        const draggedId = e.dataTransfer.getData('application/x-report-cat-id');
+        if(draggedId && draggedId !== cat.id) reorderReportCategory(draggedId, cat.id, before);
+      }else if(e.dataTransfer.types.includes('application/x-report-link-id')){
+        e.preventDefault();
+        card.classList.remove('cat-dragover');
+        const draggedId = e.dataTransfer.getData('application/x-report-link-id');
+        if(draggedId) moveReportLinkToCategory(draggedId, cat.id);
+      }
+    });
+
+    const hdr = document.createElement('div');
+    hdr.className = 'cat-hdr';
+
+    const hdrLeft = document.createElement('div');
+    hdrLeft.className = 'cat-hdr-l';
+
+    const dragHandle = document.createElement('span');
+    dragHandle.className = 'cat-drag-handle';
+    dragHandle.textContent = '⠿';
+    dragHandle.title = '拖曳可調整分類順序';
+    dragHandle.draggable = true;
+    dragHandle.ondragstart = (e) => {
+      e.dataTransfer.setData('application/x-report-cat-id', cat.id);
+      e.dataTransfer.effectAllowed = 'move';
+    };
+    hdrLeft.appendChild(dragHandle);
+
+    const chev = document.createElement('span');
+    chev.className = 'cat-chev' + (cat.collapsed ? '' : ' open');
+    chev.textContent = '▾';
+    hdrLeft.appendChild(chev);
+
+    const tag = document.createElement('span');
+    tag.className = 'cat-tag';
+    tag.style.background = color.bg; tag.style.color = color.text;
+    tag.textContent = cat.name;
+    tag.title = '點擊編輯名稱與顏色';
+    tag.onclick = () => openCategoryModal(cat, 'report');
+    hdrLeft.appendChild(tag);
+
+    hdr.appendChild(hdrLeft);
+
+    const del = document.createElement('button');
+    del.className = 'cat-del'; del.textContent = '✕';
+    del.title = '刪除分類（含底下所有連結）';
+    del.onclick = () => deleteReportCategory(cat);
+    hdr.appendChild(del);
+
+    hdr.onclick = (e) => {
+      if(e.target === tag || e.target === del || e.target === dragHandle) return;
+      cat.collapsed = !cat.collapsed;
+      saveState(); renderReportCategories();
+    };
+    hdr.style.cursor = 'pointer';
+
+    card.appendChild(hdr);
+
+    const catBody = document.createElement('div');
+    catBody.className = 'cat-body' + (cat.collapsed ? '' : ' open');
+
+    const links = STATE.reportLinks.filter(l => l.categoryId === cat.id);
+    if(links.length === 0){
+      const hint = document.createElement('div');
+      hint.className = 'report-empty-hint';
+      hint.textContent = '尚無報表連結';
+      catBody.appendChild(hint);
+    }
+    links.forEach(link => catBody.appendChild(buildReportLinkRow(link)));
+
+    const addLinkBtn = document.createElement('button');
+    addLinkBtn.className = 'add-proj-btn';
+    addLinkBtn.textContent = '+ 新增連結';
+    addLinkBtn.onclick = () => openReportLinkModal(cat, null);
+    catBody.appendChild(addLinkBtn);
+
+    card.appendChild(catBody);
+
+    wrap.appendChild(card);
+  });
+}
+
+// ── 台股買賣／股利／持股總覽 ─────────────────────────────
+function stockYearsAvailable(){
+  const years = new Set();
+  STATE.stockTransactions.forEach(tx => years.add(tx.date.slice(0,4)));
+  STATE.stockDividends.forEach(d => years.add(d.date.slice(0,4)));
+  years.add(String(STATE.stockTxYear));
+  years.add(String(STATE.stockDivYear));
+  return [...years].sort((a,b) => b.localeCompare(a));
+}
+
+function onStockTxYearChange(v){
+  STATE.stockTxYear = Number(v);
+  saveState();
+  renderStockTxList();
+}
+function onStockDivYearChange(v){
+  STATE.stockDivYear = Number(v);
+  saveState();
+  renderStockDivList();
+}
+
+function computeHoldings(){
+  const map = {};
+  STATE.stockOpeningPositions.forEach(op => {
+    const qty = Number(op.qty) || 0;
+    if(qty <= 0) return;
+    map[op.code] = {code:op.code, name:op.name, qty, costTotal: qty * (Number(op.avgCost) || 0), realizedPL:0};
+  });
+  const sorted = [...STATE.stockTransactions].sort((a,b) => a.date.localeCompare(b.date));
+  sorted.forEach(tx => {
+    if(!map[tx.code]) map[tx.code] = {code:tx.code, name:tx.name, qty:0, costTotal:0, realizedPL:0};
+    const h = map[tx.code];
+    h.name = tx.name;
+    const qty = Number(tx.qty) || 0;
+    const amount = Number(tx.amount) || 0;
+    // 用「應收付」金額（amount）當作真正成本／收入依據，而不是重新算 price*qty，
+    // 避免價格欄位手動輸入誤差（例如小數點打錯）影響到損益計算
+    if(tx.action === 'buy'){
+      h.costTotal += -amount;
+      h.qty += qty;
+    }else{
+      const avgCost = h.qty > 0 ? h.costTotal / h.qty : 0;
+      const soldCost = avgCost * qty;
+      const proceeds = amount;
+      h.realizedPL += proceeds - soldCost;
+      h.costTotal -= soldCost;
+      h.qty -= qty;
+    }
+  });
+  return Object.values(map).filter(h => h.qty > 0.0001);
+}
+
+function setStockSyncStatus(kind){
+  const el = document.getElementById('stockSyncStatus');
+  if(!el) return;
+  if(kind === 'loading') el.textContent = '☁️ 讀取股價中…';
+  else if(kind === 'ok') el.textContent = '☁️ 股價已更新（TWSE 收盤價）';
+  else el.textContent = '⚠️ 無法讀取即時股價，顯示上次快取';
+}
+
+// TWSE 開放資料 API 本身不允許瀏覽器跨網域直接讀取（沒有 CORS 標頭），
+// 直接 fetch 一定會失敗，所以改用 r.jina.ai 這個公開的「網頁讀取代理」繞過限制。
+// 這是共用的免費服務，不保證永遠可用；失敗時會保留上一次抓到的快取價格。
+const TWSE_STOCK_DAY_ALL_URL = 'https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL';
+
+async function fetchTwseStockDayAll(){
+  // 先直接嘗試（萬一未來瀏覽器環境允許，就不用繞代理）
+  try{
+    const res = await fetch(TWSE_STOCK_DAY_ALL_URL);
+    if(res.ok){
+      const data = await res.json();
+      if(Array.isArray(data)) return data;
+    }
+  }catch(e){ /* 預期會失敗（CORS 被擋），改走代理 */ }
+
+  // 透過 r.jina.ai 代理讀取，回傳格式是「標頭文字 + Markdown Content:\n + 原始 JSON」，要先把標頭切掉
+  const res = await fetch('https://r.jina.ai/' + TWSE_STOCK_DAY_ALL_URL);
+  if(!res.ok) throw new Error('proxy 讀取失敗：' + res.status);
+  const txt = await res.text();
+  const marker = 'Markdown Content:\n';
+  const idx = txt.indexOf(marker);
+  if(idx === -1) throw new Error('proxy 回傳格式不符預期');
+  const data = JSON.parse(txt.slice(idx + marker.length));
+  if(!Array.isArray(data)) throw new Error('proxy 回傳不是股價陣列');
+  return data;
+}
+
+async function fetchStockPrices(){
+  const holdings = computeHoldings();
+  if(holdings.length === 0){ renderStockHoldings(); return; }
+  setStockSyncStatus('loading');
+  try{
+    const data = await fetchTwseStockDayAll();
+    const map = {};
+    data.forEach(row => { map[row.Code] = row; });
+    const now = Date.now();
+    let hitCount = 0;
+    holdings.forEach(h => {
+      const row = map[h.code];
+      if(row){
+        const close = parseFloat(row.ClosingPrice);
+        const change = parseFloat(row.Change);
+        if(!isNaN(close)){
+          STATE.stockPriceCache[h.code] = {price: close, change: isNaN(change) ? 0 : change, updatedAt: now};
+          hitCount++;
+        }
+      }
+    });
+    saveState();
+    setStockSyncStatus(hitCount > 0 ? 'ok' : 'error');
+  }catch(e){
+    console.warn('讀取股價失敗', e);
+    setStockSyncStatus('error');
+  }
+  renderStockOverview();
+  renderStockHoldings();
+}
+
+function renderStockHoldings(){
+  const wrap = document.getElementById('stockHoldingsGrid');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  const holdings = computeHoldings().sort((a,b) => b.costTotal - a.costTotal);
+  if(holdings.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'stock-empty-hint';
+    empty.textContent = '目前沒有持股，新增買賣明細後這裡會顯示即時損益。';
+    wrap.appendChild(empty);
+    return;
+  }
+  holdings.forEach(h => {
+    const cache = STATE.stockPriceCache[h.code];
+    const avgCost = h.qty > 0 ? h.costTotal / h.qty : 0;
+    const card = document.createElement('div');
+    card.className = 'stock-hold-card';
+    card.onclick = () => openStockTxModal(null, h);
+
+    const name = document.createElement('div');
+    name.className = 'stock-hold-name';
+    name.textContent = `${h.name} ${h.code}`;
+    card.appendChild(name);
+
+    const priceEl = document.createElement('div');
+    priceEl.className = 'stock-hold-price';
+    priceEl.textContent = cache ? `$${cache.price.toLocaleString()}` : '－';
+    card.appendChild(priceEl);
+
+    const chg = document.createElement('div');
+    if(cache){
+      const dir = cache.change > 0 ? 'up' : (cache.change < 0 ? 'down' : 'flat');
+      const pct = cache.price - cache.change !== 0 ? (cache.change / (cache.price - cache.change) * 100) : 0;
+      chg.className = 'stock-hold-chg ' + dir;
+      chg.textContent = (dir === 'up' ? '▲ +' : dir === 'down' ? '▼ ' : '－ ') + pct.toFixed(1) + '%';
+    }else{
+      chg.className = 'stock-hold-chg flat';
+      chg.textContent = '尚無報價';
+    }
+    card.appendChild(chg);
+
+    const meta = document.createElement('div');
+    meta.className = 'stock-hold-meta';
+    meta.textContent = `持有 ${h.qty.toLocaleString()} 股・成本 $${avgCost.toFixed(1)} 平均`;
+    card.appendChild(meta);
+
+    if(cache){
+      const marketValue = cache.price * h.qty;
+      const pl = marketValue - h.costTotal;
+      const plPct = h.costTotal > 0 ? (pl / h.costTotal * 100) : 0;
+      const plEl = document.createElement('div');
+      plEl.className = 'stock-hold-pl ' + (pl >= 0 ? 'up' : 'down');
+      plEl.textContent = `損益 ${pl >= 0 ? '+' : ''}$${Math.round(pl).toLocaleString()} (${pl >= 0 ? '+' : ''}${plPct.toFixed(1)}%)`;
+      card.appendChild(plEl);
+    }
+
+    wrap.appendChild(card);
+  });
+}
+
+function renderStockOverview(){
+  const wrap = document.getElementById('stockOverviewBox');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  const holdings = computeHoldings();
+  if(holdings.length === 0) return;
+
+  let totalValue = 0, totalCost = 0, hasAnyPrice = false;
+  const rows = holdings.map((h, idx) => {
+    const cache = STATE.stockPriceCache[h.code];
+    const value = cache ? cache.price * h.qty : h.costTotal; // 沒抓到報價就先用成本代替，避免總覽整個消失
+    if(cache) hasAnyPrice = true;
+    totalValue += value;
+    totalCost += h.costTotal;
+    return {code:h.code, name:h.name, value, color: COLORS[idx % COLORS.length]};
+  });
+
+  const metricGrid = document.createElement('div');
+  metricGrid.className = 'stock-metric-grid';
+  const totalPL = totalValue - totalCost;
+  const totalPLPct = totalCost > 0 ? (totalPL / totalCost * 100) : 0;
+  [
+    {label:'總市值', value:`$${Math.round(totalValue).toLocaleString()}`, cls:''},
+    {label:'總成本', value:`$${Math.round(totalCost).toLocaleString()}`, cls:''},
+    {label:'總損益', value:`${totalPL >= 0 ? '+' : ''}$${Math.round(totalPL).toLocaleString()}`, cls: totalPL >= 0 ? 'up' : 'down'},
+    {label:'總報酬率', value:`${totalPLPct >= 0 ? '+' : ''}${totalPLPct.toFixed(1)}%`, cls: totalPLPct >= 0 ? 'up' : 'down'},
+  ].forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'stock-metric-card';
+    card.innerHTML = `<div class="stock-metric-label">${m.label}</div><div class="stock-metric-value ${m.cls}">${m.value}</div>`;
+    metricGrid.appendChild(card);
+  });
+  wrap.appendChild(metricGrid);
+
+  if(!hasAnyPrice || totalValue <= 0) return; // 還沒抓到任何報價時，占比圖先不顯示，避免用成本硬湊出誤導的比例
+
+  const allocCard = document.createElement('div');
+  allocCard.className = 'stock-alloc-card';
+  const title = document.createElement('div');
+  title.className = 'stock-alloc-title';
+  title.textContent = '持股占比（依市值）';
+  allocCard.appendChild(title);
+
+  const bar = document.createElement('div');
+  bar.className = 'stock-alloc-bar';
+  const legend = document.createElement('div');
+  legend.className = 'stock-alloc-legend';
+
+  [...rows].sort((a,b) => b.value - a.value).forEach(r => {
+    const pct = totalValue > 0 ? (r.value / totalValue * 100) : 0;
+    const seg = document.createElement('div');
+    seg.style.width = pct + '%';
+    seg.style.background = r.color.text;
+    seg.title = `${r.name} ${pct.toFixed(1)}%`;
+    bar.appendChild(seg);
+
+    const item = document.createElement('div');
+    item.className = 'stock-alloc-legend-item';
+    const dot = document.createElement('span');
+    dot.className = 'stock-alloc-dot';
+    dot.style.background = r.color.text;
+    item.appendChild(dot);
+    item.appendChild(document.createTextNode(`${r.name} ${pct.toFixed(1)}%`));
+    legend.appendChild(item);
+  });
+  allocCard.appendChild(bar);
+  allocCard.appendChild(legend);
+  wrap.appendChild(allocCard);
+}
+
+function renderStockPage(){
+  const years = stockYearsAvailable();
+  const txSel = document.getElementById('stockTxYearSel');
+  const divSel = document.getElementById('stockDivYearSel');
+  if(txSel){
+    txSel.innerHTML = years.map(y => `<option value="${y}">${y}年</option>`).join('');
+    txSel.value = String(STATE.stockTxYear);
+  }
+  if(divSel){
+    divSel.innerHTML = years.map(y => `<option value="${y}">${y}年</option>`).join('');
+    divSel.value = String(STATE.stockDivYear);
+  }
+  renderStockOverview();
+  renderStockHoldings();
+  renderStockTxList();
+  renderStockDivList();
+}
+
+function renderStockTxList(){
+  const wrap = document.getElementById('stockTxList');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  const filtered = STATE.stockTransactions.filter(tx => tx.date.slice(0,4) === String(STATE.stockTxYear));
+  if(filtered.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'stock-empty-hint';
+    empty.textContent = '這一年沒有買賣紀錄。';
+    wrap.appendChild(empty);
+    return;
+  }
+  const monthKeys = [...new Set(filtered.map(tx => tx.date.slice(0,7)))].sort((a,b) => b.localeCompare(a));
+  monthKeys.forEach(mk => {
+    wrap.appendChild(buildStockTxMonthCard(mk, filtered.filter(tx => tx.date.slice(0,7) === mk)));
+  });
+}
+
+function buildStockTxMonthCard(monthKey, monthTx){
+  const [y, mm] = monthKey.split('-');
+  const isOpen = STATE.stockTxMonthCollapsed[monthKey] === false;
+
+  const card = document.createElement('div');
+  card.className = 'meeting-month-card';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'meeting-month-hdr';
+  hdr.style.borderBottom = isOpen ? '.5px solid rgba(0,0,0,.08)' : 'none';
+
+  const left = document.createElement('div');
+  left.className = 'meeting-month-hdr-l';
+  const chev = document.createElement('span');
+  chev.className = 'meeting-month-chev' + (isOpen ? ' open' : '');
+  chev.textContent = '▸';
+  left.appendChild(chev);
+  const label = document.createElement('span');
+  label.className = 'meeting-month-label';
+  label.textContent = `${Number(mm)}月`;
+  left.appendChild(label);
+  hdr.appendChild(left);
+
+  const buyTotal = monthTx.filter(t => t.action === 'buy').reduce((s,t) => s + Math.abs(Number(t.amount) || 0), 0);
+  const sellTotal = monthTx.filter(t => t.action === 'sell').reduce((s,t) => s + (Number(t.amount) || 0), 0);
+  const net = sellTotal - buyTotal;
+
+  const right = document.createElement('span');
+  right.style.display = 'flex';
+  right.style.alignItems = 'center';
+  right.style.gap = '8px';
+
+  const count = document.createElement('span');
+  count.className = 'meeting-month-count';
+  count.textContent = `${monthTx.length} 筆`;
+  right.appendChild(count);
+
+  const stats = document.createElement('span');
+  stats.style.fontSize = '10px';
+  stats.style.color = '#9a9990';
+  stats.style.whiteSpace = 'nowrap';
+  stats.innerHTML = `買 $${Math.round(buyTotal).toLocaleString()}・賣 $${Math.round(sellTotal).toLocaleString()}・當月收支 <span style="font-weight:600;color:${net >= 0 ? '#3B6D11' : '#A32D2D'};">${net >= 0 ? '+' : '-'}$${Math.abs(Math.round(net)).toLocaleString()}</span>`;
+  right.appendChild(stats);
+
+  hdr.appendChild(right);
+
+  hdr.onclick = () => {
+    STATE.stockTxMonthCollapsed[monthKey] = isOpen;
+    saveState();
+    renderStockTxList();
+  };
+  card.appendChild(hdr);
+
+  const body = document.createElement('div');
+  body.className = 'meeting-month-body' + (isOpen ? ' open' : '');
+  if(isOpen){
+    const sorted = [...monthTx].sort((a,b) => b.date.localeCompare(a.date));
+    sorted.forEach(tx => body.appendChild(buildStockTxRow(tx)));
+  }
+  card.appendChild(body);
+  return card;
+}
+
+function buildStockTxRow(tx){
+  const row = document.createElement('div');
+  row.className = 'stock-tx-row';
+  row.onclick = () => openStockTxModal(tx);
+
+  const date = document.createElement('span');
+  date.className = 'stock-tx-date';
+  date.textContent = tx.date.slice(5).replace('-', '/');
+  row.appendChild(date);
+
+  const name = document.createElement('span');
+  name.className = 'stock-tx-name';
+  name.textContent = `${tx.name} ${tx.code}`;
+  row.appendChild(name);
+
+  const tag = document.createElement('span');
+  tag.className = 'stock-tx-tag ' + tx.action;
+  tag.textContent = tx.action === 'buy' ? '買進' : '賣出';
+  row.appendChild(tag);
+
+  const qty = document.createElement('span');
+  qty.className = 'stock-tx-qty';
+  qty.textContent = `${tx.qty}股 @${tx.price}`;
+  row.appendChild(qty);
+
+  const amt = document.createElement('span');
+  amt.className = 'stock-tx-amt';
+  amt.textContent = (tx.amount >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(tx.amount)).toLocaleString();
+  row.appendChild(amt);
+
+  return row;
+}
+
+function renderStockDivList(){
+  const wrap = document.getElementById('stockDivList');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  const filtered = STATE.stockDividends.filter(d => d.date.slice(0,4) === String(STATE.stockDivYear));
+  if(filtered.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'stock-empty-hint';
+    empty.textContent = '這一年沒有股利紀錄。';
+    wrap.appendChild(empty);
+    return;
+  }
+  const monthKeys = [...new Set(filtered.map(d => d.date.slice(0,7)))].sort((a,b) => b.localeCompare(a));
+  monthKeys.forEach(mk => {
+    wrap.appendChild(buildStockDivMonthCard(mk, filtered.filter(d => d.date.slice(0,7) === mk)));
+  });
+}
+
+function buildStockDivMonthCard(monthKey, monthDivs){
+  const [y, mm] = monthKey.split('-');
+  const isOpen = STATE.stockDivMonthCollapsed[monthKey] === false;
+
+  const card = document.createElement('div');
+  card.className = 'meeting-month-card';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'meeting-month-hdr';
+  hdr.style.borderBottom = isOpen ? '.5px solid rgba(0,0,0,.08)' : 'none';
+
+  const left = document.createElement('div');
+  left.className = 'meeting-month-hdr-l';
+  const chev = document.createElement('span');
+  chev.className = 'meeting-month-chev' + (isOpen ? ' open' : '');
+  chev.textContent = '▸';
+  left.appendChild(chev);
+  const label = document.createElement('span');
+  label.className = 'meeting-month-label';
+  label.textContent = `${Number(mm)}月`;
+  left.appendChild(label);
+  hdr.appendChild(left);
+
+  const cashTotal = monthDivs.reduce((s,d) => s + (Number(d.cash)||0), 0);
+  const count = document.createElement('span');
+  count.className = 'meeting-month-count';
+  count.textContent = `${monthDivs.length} 筆・現金 $${Math.round(cashTotal).toLocaleString()}`;
+  hdr.appendChild(count);
+
+  hdr.onclick = () => {
+    STATE.stockDivMonthCollapsed[monthKey] = isOpen;
+    saveState();
+    renderStockDivList();
+  };
+  card.appendChild(hdr);
+
+  const body = document.createElement('div');
+  body.className = 'meeting-month-body' + (isOpen ? ' open' : '');
+  if(isOpen){
+    const sorted = [...monthDivs].sort((a,b) => b.date.localeCompare(a.date));
+    sorted.forEach(d => body.appendChild(buildStockDivRow(d)));
+  }
+  card.appendChild(body);
+  return card;
+}
+
+function buildStockDivRow(d){
+  const row = document.createElement('div');
+  row.className = 'stock-tx-row';
+  row.onclick = () => openStockDivModal(d);
+
+  const date = document.createElement('span');
+  date.className = 'stock-tx-date';
+  date.textContent = d.date.slice(5).replace('-', '/');
+  row.appendChild(date);
+
+  const name = document.createElement('span');
+  name.className = 'stock-tx-name';
+  name.textContent = `${d.name} ${d.code}`;
+  row.appendChild(name);
+
+  const amt = document.createElement('span');
+  amt.className = 'stock-tx-amt';
+  amt.style.width = 'auto';
+  const parts = [];
+  if(d.cash) parts.push(`現金 $${Math.round(d.cash).toLocaleString()}`);
+  if(d.stock) parts.push(`股票 ${d.stock}股`);
+  amt.textContent = parts.join('・') || '－';
+  row.appendChild(amt);
+
+  return row;
+}
+
+let stockTxModalEditId = null;
+let stockTxModalAction = 'buy';
+
+function openStockTxModal(tx, holdingHint){
+  stockTxModalEditId = tx ? tx.id : null;
+  document.getElementById('stockTxModalTitle').textContent = tx ? '編輯交易' : '新增交易';
+  document.getElementById('stockTxModalDate').value = tx ? tx.date : todayStr();
+  document.getElementById('stockTxModalName').value = tx ? tx.name : (holdingHint ? holdingHint.name : '');
+  document.getElementById('stockTxModalCode').value = tx ? tx.code : (holdingHint ? holdingHint.code : '');
+  document.getElementById('stockTxModalPrice').value = tx ? tx.price : '';
+  document.getElementById('stockTxModalQty').value = tx ? tx.qty : '';
+  document.getElementById('stockTxModalFee').value = tx ? tx.fee : '';
+  stockTxModalAction = tx ? tx.action : 'buy';
+  renderStockTxActionPicker();
+  document.getElementById('stockTxModalDeleteBtn').style.display = tx ? '' : 'none';
+  document.getElementById('stockTxModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('stockTxModalName').focus(), 0);
+}
+
+function renderStockTxActionPicker(){
+  document.querySelectorAll('#stockTxModalActionPick .scope-pick-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.action === stockTxModalAction);
+    btn.onclick = () => { stockTxModalAction = btn.dataset.action; renderStockTxActionPicker(); };
+  });
+}
+
+function closeStockTxModal(){
+  document.getElementById('stockTxModalOverlay').style.display = 'none';
+  stockTxModalEditId = null;
+}
+
+function saveStockTxModal(){
+  const date = document.getElementById('stockTxModalDate').value;
+  const name = document.getElementById('stockTxModalName').value.trim();
+  const code = document.getElementById('stockTxModalCode').value.trim();
+  const price = parseFloat(document.getElementById('stockTxModalPrice').value);
+  const qty = parseFloat(document.getElementById('stockTxModalQty').value);
+  const fee = parseFloat(document.getElementById('stockTxModalFee').value) || 0;
+  if(!date){ alert('請選擇日期'); return; }
+  if(!name){ alert('請輸入股票名稱'); return; }
+  if(!code){ alert('請輸入代號'); return; }
+  if(isNaN(price) || isNaN(qty)){ alert('請輸入價格與股數'); return; }
+  const amount = stockTxModalAction === 'buy' ? -(price * qty + fee) : (price * qty - fee);
+  if(stockTxModalEditId){
+    const tx = STATE.stockTransactions.find(t => t.id === stockTxModalEditId);
+    if(tx){ Object.assign(tx, {date, name, code, price, qty, fee, action:stockTxModalAction, amount}); }
+  }else{
+    STATE.stockTransactions.push({id:uid(), date, name, code, price, qty, fee, action:stockTxModalAction, amount});
+  }
+  saveState();
+  closeStockTxModal();
+  renderStockPage();
+  fetchStockPrices();
+}
+
+function deleteStockTxModal(){
+  if(!stockTxModalEditId) return;
+  if(!confirm('確定刪除這筆交易？')) return;
+  STATE.stockTransactions = STATE.stockTransactions.filter(t => t.id !== stockTxModalEditId);
+  saveState();
+  closeStockTxModal();
+  renderStockPage();
+}
+
+let stockDivModalEditId = null;
+
+function openStockDivModal(d){
+  stockDivModalEditId = d ? d.id : null;
+  document.getElementById('stockDivModalTitle').textContent = d ? '編輯股利' : '新增股利';
+  document.getElementById('stockDivModalDate').value = d ? d.date : todayStr();
+  document.getElementById('stockDivModalName').value = d ? d.name : '';
+  document.getElementById('stockDivModalCode').value = d ? d.code : '';
+  document.getElementById('stockDivModalCash').value = d ? d.cash : '';
+  document.getElementById('stockDivModalStock').value = d ? d.stock : '';
+  document.getElementById('stockDivModalDeleteBtn').style.display = d ? '' : 'none';
+  document.getElementById('stockDivModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('stockDivModalName').focus(), 0);
+}
+
+function closeStockDivModal(){
+  document.getElementById('stockDivModalOverlay').style.display = 'none';
+  stockDivModalEditId = null;
+}
+
+function saveStockDivModal(){
+  const date = document.getElementById('stockDivModalDate').value;
+  const name = document.getElementById('stockDivModalName').value.trim();
+  const code = document.getElementById('stockDivModalCode').value.trim();
+  const cash = parseFloat(document.getElementById('stockDivModalCash').value) || 0;
+  const stock = parseFloat(document.getElementById('stockDivModalStock').value) || 0;
+  if(!date){ alert('請選擇日期'); return; }
+  if(!name){ alert('請輸入股票名稱'); return; }
+  if(!code){ alert('請輸入代號'); return; }
+  if(stockDivModalEditId){
+    const d = STATE.stockDividends.find(x => x.id === stockDivModalEditId);
+    if(d){ Object.assign(d, {date, name, code, cash, stock}); }
+  }else{
+    STATE.stockDividends.push({id:uid(), date, name, code, cash, stock});
+  }
+  saveState();
+  closeStockDivModal();
+  renderStockPage();
+}
+
+function deleteStockDivModal(){
+  if(!stockDivModalEditId) return;
+  if(!confirm('確定刪除這筆股利紀錄？')) return;
+  STATE.stockDividends = STATE.stockDividends.filter(x => x.id !== stockDivModalEditId);
+  saveState();
+  closeStockDivModal();
+  renderStockPage();
+}
+
+function openStockOpeningModal(){
+  renderStockOpeningManageList();
+  document.getElementById('stockOpeningModalOverlay').style.display = 'flex';
+}
+function closeStockOpeningModal(){
+  document.getElementById('stockOpeningModalOverlay').style.display = 'none';
+}
+
+function renderStockOpeningManageList(){
+  const wrap = document.getElementById('stockOpeningManageList');
+  wrap.innerHTML = '';
+  if(STATE.stockOpeningPositions.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'stock-empty-hint';
+    empty.textContent = '目前沒有設定起始持股。';
+    wrap.appendChild(empty);
+  }
+  STATE.stockOpeningPositions.forEach(op => {
+    const row = document.createElement('div');
+    row.className = 'stock-tx-row';
+    row.style.cursor = 'pointer';
+    row.onclick = () => openStockOpeningFormModal(op);
+
+    const name = document.createElement('span');
+    name.className = 'stock-tx-name';
+    name.textContent = `${op.name} ${op.code}`;
+    row.appendChild(name);
+
+    const meta = document.createElement('span');
+    meta.className = 'stock-tx-qty';
+    meta.style.width = 'auto';
+    meta.textContent = `${op.qty}股・均價$${op.avgCost}`;
+    row.appendChild(meta);
+
+    wrap.appendChild(row);
+  });
+}
+
+let stockOpeningFormEditId = null;
+function openStockOpeningFormModal(op){
+  stockOpeningFormEditId = op ? op.id : null;
+  document.getElementById('stockOpeningFormModalTitle').textContent = op ? '編輯起始持股' : '新增起始持股';
+  document.getElementById('stockOpeningFormName').value = op ? op.name : '';
+  document.getElementById('stockOpeningFormCode').value = op ? op.code : '';
+  document.getElementById('stockOpeningFormQty').value = op ? op.qty : '';
+  document.getElementById('stockOpeningFormCost').value = op ? op.avgCost : '';
+  document.getElementById('stockOpeningFormDeleteBtn').style.display = op ? '' : 'none';
+  document.getElementById('stockOpeningFormModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('stockOpeningFormName').focus(), 0);
+}
+function closeStockOpeningFormModal(){
+  document.getElementById('stockOpeningFormModalOverlay').style.display = 'none';
+  stockOpeningFormEditId = null;
+}
+function saveStockOpeningFormModal(){
+  const name = document.getElementById('stockOpeningFormName').value.trim();
+  const code = document.getElementById('stockOpeningFormCode').value.trim();
+  const qty = parseFloat(document.getElementById('stockOpeningFormQty').value);
+  const avgCost = parseFloat(document.getElementById('stockOpeningFormCost').value) || 0;
+  if(!name){ alert('請輸入股票名稱'); return; }
+  if(!code){ alert('請輸入代號'); return; }
+  if(isNaN(qty) || qty <= 0){ alert('請輸入股數'); return; }
+  if(stockOpeningFormEditId){
+    const op = STATE.stockOpeningPositions.find(o => o.id === stockOpeningFormEditId);
+    if(op){ Object.assign(op, {name, code, qty, avgCost}); }
+  }else{
+    STATE.stockOpeningPositions.push({id:uid(), name, code, qty, avgCost});
+  }
+  saveState();
+  closeStockOpeningFormModal();
+  renderStockOpeningManageList();
+  renderStockPage();
+  fetchStockPrices();
+}
+function deleteStockOpeningFormModal(){
+  if(!stockOpeningFormEditId) return;
+  if(!confirm('確定刪除這筆起始持股？')) return;
+  STATE.stockOpeningPositions = STATE.stockOpeningPositions.filter(o => o.id !== stockOpeningFormEditId);
+  saveState();
+  closeStockOpeningFormModal();
+  renderStockOpeningManageList();
+  renderStockPage();
+}
+
+// ── 訂閱明細 ─────────────────────────────
+function getSubCat(catId){
+  return STATE.subCategories.find(c => c.id === catId) || null;
+}
+
+// 依訂閱開始日跟週期，算出「上次扣款日」跟「下次扣款日」（買斷型沒有下次扣款）
+function computeSubCharges(startDateStr, cycle){
+  if(!startDateStr) return {last:null, next:null};
+  const start = new Date(startDateStr + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  if(cycle === 'onetime') return {last:startDateStr, next:null};
+  const addInterval = (d, n) => {
+    const nd = new Date(d);
+    if(cycle === 'yearly') nd.setFullYear(nd.getFullYear() + n);
+    else nd.setMonth(nd.getMonth() + n);
+    return nd;
+  };
+  if(start > today){
+    return {last:null, next:dateStr(start.getFullYear(), start.getMonth(), start.getDate())};
+  }
+  let n = 0;
+  while(addInterval(start, n + 1) <= today) n++;
+  const last = addInterval(start, n);
+  const next = addInterval(start, n + 1);
+  return {
+    last: dateStr(last.getFullYear(), last.getMonth(), last.getDate()),
+    next: dateStr(next.getFullYear(), next.getMonth(), next.getDate()),
+  };
+}
+
+function subMonthlyCost(sub){
+  const cost = Number(sub.cost) || 0;
+  if(sub.cycle === 'monthly') return cost;
+  if(sub.cycle === 'yearly') return cost / 12;
+  return 0;
+}
+function subYearlyCost(sub){
+  const cost = Number(sub.cost) || 0;
+  if(sub.cycle === 'monthly') return cost * 12;
+  if(sub.cycle === 'yearly') return cost;
+  return 0;
+}
+
+function reorderSubCategory(draggedId, targetId, insertBefore){
+  const draggedIdx = STATE.subCategories.findIndex(c => c.id === draggedId);
+  if(draggedIdx === -1) return;
+  const dragged = STATE.subCategories.splice(draggedIdx, 1)[0];
+  const targetIdx = STATE.subCategories.findIndex(c => c.id === targetId);
+  if(targetIdx === -1){
+    STATE.subCategories.push(dragged);
+  }else{
+    const insertAt = insertBefore ? targetIdx : targetIdx + 1;
+    STATE.subCategories.splice(insertAt, 0, dragged);
+  }
+  saveState();
+  renderSubCategories();
+}
+
+function deleteSubCategory(cat){
+  if(!confirm(`確定刪除標籤「${cat.name}」？底下的訂閱項目也會一併刪除。`)) return;
+  STATE.subCategories = STATE.subCategories.filter(c => c.id !== cat.id);
+  STATE.subscriptions = STATE.subscriptions.filter(s => s.categoryId !== cat.id);
+  saveState();
+  renderSubPage();
+}
+
+function setSubStatusFilter(status){
+  STATE.subStatusFilter = status;
+  saveState();
+  renderSubStatusPicker();
+  renderSubCategories();
+}
+function renderSubStatusPicker(){
+  document.querySelectorAll('#subStatusPick .scope-pick-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.status === STATE.subStatusFilter);
+    btn.onclick = () => setSubStatusFilter(btn.dataset.status);
+  });
+}
+
+let subscriptionModalEditId = null;
+let subscriptionModalCycle = 'monthly';
+let subscriptionModalDefaultCat = null;
+
+function renderSubscriptionCategorySelect(){
+  const sel = document.getElementById('subscriptionModalCategory');
+  sel.innerHTML = STATE.subCategories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+}
+function renderSubscriptionCyclePicker(){
+  document.querySelectorAll('#subscriptionModalCyclePick .scope-pick-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cycle === subscriptionModalCycle);
+    btn.onclick = () => { subscriptionModalCycle = btn.dataset.cycle; renderSubscriptionCyclePicker(); };
+  });
+}
+
+function openSubscriptionModal(sub, defaultCat){
+  if(STATE.subCategories.length === 0){ alert('請先新增一個標籤分類'); return; }
+  subscriptionModalEditId = sub ? sub.id : null;
+  subscriptionModalDefaultCat = defaultCat || null;
+  document.getElementById('subscriptionModalTitle').textContent = sub ? '編輯訂閱' : '新增訂閱';
+  document.getElementById('subscriptionModalName').value = sub ? sub.name : '';
+  document.getElementById('subscriptionModalPlatform').value = sub ? (sub.platform || '') : '';
+  document.getElementById('subscriptionModalCost').value = sub ? sub.cost : '';
+  document.getElementById('subscriptionModalStartDate').value = sub ? sub.startDate : todayStr();
+  renderSubscriptionCategorySelect();
+  document.getElementById('subscriptionModalCategory').value = sub ? sub.categoryId : (defaultCat ? defaultCat.id : STATE.subCategories[0].id);
+  subscriptionModalCycle = sub ? sub.cycle : 'monthly';
+  renderSubscriptionCyclePicker();
+  document.getElementById('subscriptionModalDeleteBtn').style.display = sub ? '' : 'none';
+  const toggleBtn = document.getElementById('subscriptionModalToggleBtn');
+  toggleBtn.style.display = sub ? '' : 'none';
+  toggleBtn.textContent = sub && sub.status === 'cancelled' ? '恢復訂閱' : '取消訂閱';
+  document.getElementById('subscriptionModalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('subscriptionModalName').focus(), 0);
+}
+function closeSubscriptionModal(){
+  document.getElementById('subscriptionModalOverlay').style.display = 'none';
+  subscriptionModalEditId = null;
+  subscriptionModalDefaultCat = null;
+}
+function saveSubscriptionModal(){
+  const name = document.getElementById('subscriptionModalName').value.trim();
+  const platform = document.getElementById('subscriptionModalPlatform').value.trim();
+  const categoryId = document.getElementById('subscriptionModalCategory').value;
+  const cost = parseFloat(document.getElementById('subscriptionModalCost').value) || 0;
+  const startDate = document.getElementById('subscriptionModalStartDate').value;
+  if(!name){ alert('請輸入訂閱服務名稱'); return; }
+  if(!startDate){ alert('請選擇訂閱開始日'); return; }
+  if(subscriptionModalEditId){
+    const sub = STATE.subscriptions.find(s => s.id === subscriptionModalEditId);
+    if(sub){ Object.assign(sub, {name, platform, categoryId, cycle:subscriptionModalCycle, cost, startDate}); }
+  }else{
+    STATE.subscriptions.push({id:uid(), name, platform, categoryId, cycle:subscriptionModalCycle, cost, startDate, status:'active'});
+  }
+  saveState();
+  closeSubscriptionModal();
+  renderSubPage();
+}
+function deleteSubscriptionModal(){
+  if(!subscriptionModalEditId) return;
+  if(!confirm('確定刪除這筆訂閱？')) return;
+  STATE.subscriptions = STATE.subscriptions.filter(s => s.id !== subscriptionModalEditId);
+  saveState();
+  closeSubscriptionModal();
+  renderSubPage();
+}
+function toggleSubscriptionModalStatus(){
+  if(!subscriptionModalEditId) return;
+  const sub = STATE.subscriptions.find(s => s.id === subscriptionModalEditId);
+  if(!sub) return;
+  sub.status = sub.status === 'cancelled' ? 'active' : 'cancelled';
+  saveState();
+  closeSubscriptionModal();
+  renderSubPage();
+}
+
+function buildSubscriptionRow(sub){
+  const row = document.createElement('div');
+  row.className = 'sub-row' + (sub.status === 'cancelled' ? ' cancelled' : '');
+  row.onclick = () => openSubscriptionModal(sub);
+
+  const name = document.createElement('span');
+  name.className = 'sub-row-name';
+  name.textContent = sub.name + (sub.platform ? `（${sub.platform}）` : '');
+  row.appendChild(name);
+
+  const cycle = document.createElement('span');
+  cycle.className = 'sub-row-cycle';
+  cycle.textContent = sub.cycle === 'monthly' ? '每月' : sub.cycle === 'yearly' ? '每年' : '買斷';
+  row.appendChild(cycle);
+
+  const cost = document.createElement('span');
+  cost.className = 'sub-row-cost';
+  cost.textContent = `$${Math.round(Number(sub.cost) || 0).toLocaleString()}`;
+  row.appendChild(cost);
+
+  const next = document.createElement('span');
+  const charges = computeSubCharges(sub.startDate, sub.cycle);
+  if(charges.next){
+    const days = Math.round((new Date(charges.next + 'T00:00:00') - new Date(todayStr() + 'T00:00:00')) / 86400000);
+    next.className = 'sub-row-next' + (sub.status === 'active' && days <= 7 ? ' soon' : '');
+    next.textContent = `${charges.next.slice(5).replace('-','/')} 扣款`;
+  }else{
+    next.className = 'sub-row-next';
+    next.textContent = '買斷無續訂';
+  }
+  row.appendChild(next);
+
+  return row;
+}
+
+function renderSubOverview(){
+  const wrap = document.getElementById('subOverviewBox');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  const active = STATE.subscriptions.filter(s => s.status === 'active');
+  const monthlyTotal = active.reduce((sum,s) => sum + subMonthlyCost(s), 0);
+  const yearlyTotal = active.reduce((sum,s) => sum + subYearlyCost(s), 0);
+  [
+    {label:'每月總費用', value:`$${Math.round(monthlyTotal).toLocaleString()}`},
+    {label:'每年總費用', value:`$${Math.round(yearlyTotal).toLocaleString()}`},
+    {label:'訂閱中', value:`${active.length} 項`},
+  ].forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'stock-metric-card';
+    card.innerHTML = `<div class="stock-metric-label">${m.label}</div><div class="stock-metric-value">${m.value}</div>`;
+    wrap.appendChild(card);
+  });
+}
+
+function renderSubCategories(){
+  const wrap = document.getElementById('subGrid');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+
+  STATE.subCategories.forEach(cat => {
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    card.dataset.catId = cat.id;
+    const color = COLORS[cat.color % COLORS.length];
+
+    card.addEventListener('dragover', e => {
+      if(!e.dataTransfer.types.includes('application/x-sub-cat-id')) return;
+      e.preventDefault();
+      const rect = card.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height / 2;
+      card.classList.toggle('cat-drop-before', before);
+      card.classList.toggle('cat-drop-after', !before);
+    });
+    card.addEventListener('dragleave', () => {
+      card.classList.remove('cat-drop-before', 'cat-drop-after');
+    });
+    card.addEventListener('drop', e => {
+      if(!e.dataTransfer.types.includes('application/x-sub-cat-id')) return;
+      e.preventDefault();
+      const rect = card.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height / 2;
+      card.classList.remove('cat-drop-before', 'cat-drop-after');
+      const draggedId = e.dataTransfer.getData('application/x-sub-cat-id');
+      if(draggedId && draggedId !== cat.id) reorderSubCategory(draggedId, cat.id, before);
+    });
+
+    const hdr = document.createElement('div');
+    hdr.className = 'cat-hdr';
+
+    const hdrLeft = document.createElement('div');
+    hdrLeft.className = 'cat-hdr-l';
+
+    const dragHandle = document.createElement('span');
+    dragHandle.className = 'cat-drag-handle';
+    dragHandle.textContent = '⠿';
+    dragHandle.title = '拖曳可調整分類順序';
+    dragHandle.draggable = true;
+    dragHandle.ondragstart = (e) => {
+      e.dataTransfer.setData('application/x-sub-cat-id', cat.id);
+      e.dataTransfer.effectAllowed = 'move';
+    };
+    hdrLeft.appendChild(dragHandle);
+
+    const chev = document.createElement('span');
+    chev.className = 'cat-chev' + (cat.collapsed ? '' : ' open');
+    chev.textContent = '▾';
+    hdrLeft.appendChild(chev);
+
+    const tag = document.createElement('span');
+    tag.className = 'cat-tag';
+    tag.style.background = color.bg; tag.style.color = color.text;
+    tag.textContent = cat.name;
+    tag.title = '點擊編輯名稱與顏色';
+    tag.onclick = () => openCategoryModal(cat, 'sub');
+    hdrLeft.appendChild(tag);
+
+    const subsInCat = STATE.subscriptions.filter(s => s.categoryId === cat.id && s.status === STATE.subStatusFilter);
+    const summary = document.createElement('span');
+    summary.className = 'sub-cat-summary';
+    const monthlyTotal = subsInCat.reduce((sum,s) => sum + subMonthlyCost(s), 0);
+    summary.textContent = `${subsInCat.length}項・每月$${Math.round(monthlyTotal).toLocaleString()}`;
+    hdrLeft.appendChild(summary);
+
+    hdr.appendChild(hdrLeft);
+
+    const del = document.createElement('button');
+    del.className = 'cat-del'; del.textContent = '✕';
+    del.title = '刪除標籤（含底下所有訂閱）';
+    del.onclick = () => deleteSubCategory(cat);
+    hdr.appendChild(del);
+
+    hdr.onclick = (e) => {
+      if(e.target === tag || e.target === del || e.target === dragHandle) return;
+      cat.collapsed = !cat.collapsed;
+      saveState(); renderSubCategories();
+    };
+    hdr.style.cursor = 'pointer';
+
+    card.appendChild(hdr);
+
+    const catBody = document.createElement('div');
+    catBody.className = 'cat-body' + (cat.collapsed ? '' : ' open');
+
+    if(subsInCat.length === 0){
+      const hint = document.createElement('div');
+      hint.className = 'report-empty-hint';
+      hint.textContent = STATE.subStatusFilter === 'active' ? '這個標籤還沒有訂閱中的項目' : '這個標籤沒有已取消的項目';
+      catBody.appendChild(hint);
+    }
+    [...subsInCat].sort((a,b) => {
+      const ca = computeSubCharges(a.startDate, a.cycle).next || '9999';
+      const cb = computeSubCharges(b.startDate, b.cycle).next || '9999';
+      return ca.localeCompare(cb);
+    }).forEach(sub => catBody.appendChild(buildSubscriptionRow(sub)));
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-proj-btn';
+    addBtn.textContent = '+ 新增訂閱';
+    addBtn.onclick = () => openSubscriptionModal(null, cat);
+    catBody.appendChild(addBtn);
+
+    card.appendChild(catBody);
+    wrap.appendChild(card);
+  });
+}
+
+function renderSubPage(){
+  renderSubOverview();
+  renderSubStatusPicker();
+  renderSubCategories();
+}
+
 // ── 匯出 / 匯入 ─────────────────────────────
 function exportData(){
   const blob = new Blob([JSON.stringify(STATE, null, 2)], {type:'application/json'});
@@ -1808,17 +3573,31 @@ function renderAll(){
   renderCategories();
   renderMeetingFilters();
   renderMeetingList();
+  renderReportCategories();
+  renderStockPage();
+  renderSubPage();
 }
 
 // ── 分頁切換 ─────────────────────────────
 function switchTab(tab){
   const isCal = tab === 'calendar';
+  const isMeeting = tab === 'meeting';
+  const isReport = tab === 'report';
+  const isStock = tab === 'stock';
+  const isSub = tab === 'sub';
   document.getElementById('calendarPage').style.display = isCal ? 'flex' : 'none';
-  document.getElementById('meetingPage').style.display = isCal ? 'none' : 'block';
+  document.getElementById('meetingPage').style.display = isMeeting ? 'block' : 'none';
+  document.getElementById('reportPage').style.display = isReport ? 'block' : 'none';
+  document.getElementById('stockPage').style.display = isStock ? 'block' : 'none';
+  document.getElementById('subPage').style.display = isSub ? 'block' : 'none';
   document.getElementById('calNavControls').style.display = isCal ? 'flex' : 'none';
   document.getElementById('scopeToggleWrap').style.display = isCal ? 'flex' : 'none';
   document.getElementById('tabCalBtn').classList.toggle('active', isCal);
-  document.getElementById('tabMeetingBtn').classList.toggle('active', !isCal);
+  document.getElementById('tabMeetingBtn').classList.toggle('active', isMeeting);
+  document.getElementById('tabReportBtn').classList.toggle('active', isReport);
+  document.getElementById('tabStockBtn').classList.toggle('active', isStock);
+  document.getElementById('tabSubBtn').classList.toggle('active', isSub);
+  if(isStock) fetchStockPrices();
 }
 
 // ── 工作／個人範圍切換 ─────────────────────────────
@@ -2229,7 +4008,7 @@ function saveItemModal(){
 function clearTouchDragIndicators(){
   const sel = '.cal-cell.dragover, .cat-card.cat-dragover, .cat-card.cat-drop-before, .cat-card.cat-drop-after, '
     + '.proj-blk.drop-before, .proj-blk.drop-after, .meeting-chip-manage.drop-before, .meeting-chip-manage.drop-after, '
-    + '.collab-row.drop-before, .collab-row.drop-after';
+    + '.collab-row.drop-before, .collab-row.drop-after, .report-link-row.drop-before, .report-link-row.drop-after';
   document.querySelectorAll(sel).forEach(el => {
     el.classList.remove('dragover','cat-dragover','cat-drop-before','cat-drop-after','drop-before','drop-after');
   });
@@ -2340,6 +4119,23 @@ document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape' && document.getElementById('projectModalOverlay').style.display !== 'none'){
     closeProjectModal();
   }
+  if(e.key === 'Escape' && document.getElementById('reportLinkModalOverlay').style.display !== 'none'){
+    closeReportLinkModal();
+  }
+  if(e.key === 'Escape' && document.getElementById('stockTxModalOverlay').style.display !== 'none'){
+    closeStockTxModal();
+  }
+  if(e.key === 'Escape' && document.getElementById('stockDivModalOverlay').style.display !== 'none'){
+    closeStockDivModal();
+  }
+  if(e.key === 'Escape' && document.getElementById('stockOpeningFormModalOverlay').style.display !== 'none'){
+    closeStockOpeningFormModal();
+  }else if(e.key === 'Escape' && document.getElementById('stockOpeningModalOverlay').style.display !== 'none'){
+    closeStockOpeningModal();
+  }
+  if(e.key === 'Escape' && document.getElementById('subscriptionModalOverlay').style.display !== 'none'){
+    closeSubscriptionModal();
+  }
 });
 
 document.getElementById('projectModalCloseBtn').onclick = closeProjectModal;
@@ -2358,6 +4154,64 @@ document.getElementById('collaboratorModalDoneBtn').onclick = closeCollaboratorM
 document.getElementById('addCollaboratorBtn').onclick = addCollaboratorPrompt;
 document.getElementById('collaboratorModalOverlay').onclick = (e) => {
   if(e.target.id === 'collaboratorModalOverlay') closeCollaboratorModal();
+};
+
+document.getElementById('addReportCatBtn').onclick = addReportCategory;
+document.getElementById('reportLinkModalCloseBtn').onclick = closeReportLinkModal;
+document.getElementById('reportLinkModalCancelBtn').onclick = closeReportLinkModal;
+document.getElementById('reportLinkModalSaveBtn').onclick = saveReportLinkModal;
+document.getElementById('reportLinkModalOverlay').onclick = (e) => {
+  if(e.target.id === 'reportLinkModalOverlay') closeReportLinkModal();
+};
+document.getElementById('reportLinkModalName').onkeydown = (e) => {
+  if(e.key === 'Enter'){ e.preventDefault(); saveReportLinkModal(); }
+};
+
+document.getElementById('addStockTxBtn').onclick = () => openStockTxModal(null);
+document.getElementById('stockTxModalCloseBtn').onclick = closeStockTxModal;
+document.getElementById('stockTxModalCancelBtn').onclick = closeStockTxModal;
+document.getElementById('stockTxModalSaveBtn').onclick = saveStockTxModal;
+document.getElementById('stockTxModalDeleteBtn').onclick = deleteStockTxModal;
+document.getElementById('stockTxModalOverlay').onclick = (e) => {
+  if(e.target.id === 'stockTxModalOverlay') closeStockTxModal();
+};
+
+document.getElementById('addStockDivBtn').onclick = () => openStockDivModal(null);
+document.getElementById('stockDivModalCloseBtn').onclick = closeStockDivModal;
+document.getElementById('stockDivModalCancelBtn').onclick = closeStockDivModal;
+document.getElementById('stockDivModalSaveBtn').onclick = saveStockDivModal;
+document.getElementById('stockDivModalDeleteBtn').onclick = deleteStockDivModal;
+document.getElementById('stockDivModalOverlay').onclick = (e) => {
+  if(e.target.id === 'stockDivModalOverlay') closeStockDivModal();
+};
+
+document.getElementById('manageStockOpeningBtn').onclick = openStockOpeningModal;
+document.getElementById('stockOpeningModalCloseBtn').onclick = closeStockOpeningModal;
+document.getElementById('stockOpeningModalDoneBtn').onclick = closeStockOpeningModal;
+document.getElementById('addStockOpeningBtn').onclick = () => openStockOpeningFormModal(null);
+document.getElementById('stockOpeningModalOverlay').onclick = (e) => {
+  if(e.target.id === 'stockOpeningModalOverlay') closeStockOpeningModal();
+};
+document.getElementById('stockOpeningFormModalCloseBtn').onclick = closeStockOpeningFormModal;
+document.getElementById('stockOpeningFormCancelBtn').onclick = closeStockOpeningFormModal;
+document.getElementById('stockOpeningFormSaveBtn').onclick = saveStockOpeningFormModal;
+document.getElementById('stockOpeningFormDeleteBtn').onclick = deleteStockOpeningFormModal;
+document.getElementById('stockOpeningFormModalOverlay').onclick = (e) => {
+  if(e.target.id === 'stockOpeningFormModalOverlay') closeStockOpeningFormModal();
+};
+
+document.getElementById('addSubCatBtn').onclick = addSubCategory;
+document.getElementById('addSubscriptionBtn').onclick = () => openSubscriptionModal(null);
+document.getElementById('subscriptionModalCloseBtn').onclick = closeSubscriptionModal;
+document.getElementById('subscriptionModalCancelBtn').onclick = closeSubscriptionModal;
+document.getElementById('subscriptionModalSaveBtn').onclick = saveSubscriptionModal;
+document.getElementById('subscriptionModalDeleteBtn').onclick = deleteSubscriptionModal;
+document.getElementById('subscriptionModalToggleBtn').onclick = toggleSubscriptionModalStatus;
+document.getElementById('subscriptionModalOverlay').onclick = (e) => {
+  if(e.target.id === 'subscriptionModalOverlay') closeSubscriptionModal();
+};
+document.getElementById('subscriptionModalName').onkeydown = (e) => {
+  if(e.key === 'Enter'){ e.preventDefault(); saveSubscriptionModal(); }
 };
 
 document.getElementById('addMeetingBtn').onclick = () => openMeetingModal('add', null);
@@ -2465,7 +4319,15 @@ function bootApp(){
     }
     try{
       STATE = normalizeState(JSON.parse(json));
-      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); }catch(e){}
+      const normalizedJson = JSON.stringify(STATE);
+      try{ localStorage.setItem(STORAGE_KEY, normalizedJson); }catch(e){}
+      // normalizeState 可能補了預設欄位或做了一次性資料匯入／去重，
+      // 如果補完之後內容跟雲端原本存的不一樣，要馬上寫回去，
+      // 否則下次任何裝置讀到雲端這份「還沒補過」的舊資料時，會又補一次造成重複資料
+      if(normalizedJson !== json){
+        lastPushedCloudJson = normalizedJson;
+        window.__fb.setDoc(window.__fb.docRef, {data: normalizedJson, updatedAt: Date.now()}).catch(() => {});
+      }
     }catch(e){
       console.warn('雲端資料解析失敗，改用本機資料', e);
       loadState();
