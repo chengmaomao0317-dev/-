@@ -1005,6 +1005,7 @@ const NAME_MAP = {
   '暖宮':               '產品/暖宮/美膚',
   '美膚':               '產品/暖宮/美膚',
   '奇蹟爆水':           '爆水奇蹟',       // 同一品項兩種寫法，統一為爆水奇蹟
+  '超肌因水啦提':       '超肌因水拉提',   // 廣告tab若有啦提寫法，統一為拉提
 };
 
 function parseProdFromGviz(json) {
@@ -1178,14 +1179,17 @@ const ADS_TO_FUNNEL_WO = {
 
 async function fetchFunnelData() {
   const toP = v => { if (v==null) return null; const n=typeof v==='number'?v:parseFloat(v); return isNaN(n)?null:Math.round(n<=1?n*100:n); };
+  // sheet 品項名寫法差異正規化（啦→拉 等）
+  const FUNNEL_NAME_NORM = { '超肌因水啦提': '超肌因水拉提' };
   // 解析累計漏斗（B~H，col 0=品項, 1=詢問, 2=預約, 3=到店, 4=預約率, 5=到店率, 6=取消率）
   function parseRows(rows, brand) {
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (!row?.c) continue;
       const cv = j => row.c[j]?.v;
-      const name = String(cv(0) || '').trim();
-      if (!name || name === '總計') continue;
+      const rawName = String(cv(0) || '').trim();
+      if (!rawName || rawName === '總計') continue;
+      const name = FUNNEL_NAME_NORM[rawName] || rawName;
       funnelData[brand][name] = {
         inq:  Math.round(+(cv(1)||0)),
         book: Math.round(+(cv(2)||0)),
@@ -1201,14 +1205,29 @@ async function fetchFunnelData() {
       const row = rows[i];
       if (!row?.c) continue;
       const cv = j => row.c[j]?.v;
-      const name = String(cv(0) || '').trim();
-      if (!name || name === '總計') continue;
-      funnelDataMonthly[brand][mi][name] = {
-        inq:  Math.round(+(cv(7)||0)),
-        book: Math.round(+(cv(8)||0)),
-        stay: Math.round(+(cv(9)||0)),
-        bookRate: toP(cv(10)), stayRate: toP(cv(11)), cancelRate: toP(cv(12)),
-      };
+      const rawName = String(cv(0) || '').trim();
+      if (!rawName || rawName === '總計') continue;
+      const name = FUNNEL_NAME_NORM[rawName] || rawName;
+      const newInq  = Math.round(+(cv(7)||0));
+      const newBook = Math.round(+(cv(8)||0));
+      const newStay = Math.round(+(cv(9)||0));
+      if (funnelDataMonthly[brand][mi][name]) {
+        // 同一品項不同寫法 → 合併累加
+        const ex = funnelDataMonthly[brand][mi][name];
+        ex.inq  += newInq;
+        ex.book += newBook;
+        ex.stay += newStay;
+        ex.bookRate   = ex.inq  > 0 ? Math.round(ex.book/ex.inq*100)           : null;
+        ex.stayRate   = ex.book > 0 ? Math.round(ex.stay/ex.book*100)           : null;
+        ex.cancelRate = ex.book > 0 ? Math.round((ex.book-ex.stay)/ex.book*100) : null;
+      } else {
+        funnelDataMonthly[brand][mi][name] = {
+          inq:  newInq,
+          book: newBook,
+          stay: newStay,
+          bookRate: toP(cv(10)), stayRate: toP(cv(11)), cancelRate: toP(cv(12)),
+        };
+      }
     }
   }
   // 原綺累計：B3:H22
