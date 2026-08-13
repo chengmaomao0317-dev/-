@@ -1302,12 +1302,12 @@ function normalizeState(s){
   s.categories.forEach(c => { if(typeof c.scope !== 'string') c.scope = /個人/.test(c.name) ? 'personal' : 'work'; });
   // 一次性把所有分類/專案改為預設收合，避免手機上一打開整頁全部展開太擠；
   // 之後使用者自己展開/收合都照常運作，不會被這裡再蓋掉
-  if(!s.allCollapsedDefaultV1){
+  if(!s.allCollapsedDefaultV2){
     s.categories.forEach(c => { c.collapsed = true; });
     s.reportCategories.forEach(c => { c.collapsed = true; });
     s.subCategories.forEach(c => { c.collapsed = true; });
     s.projects.forEach(p => { p.collapsed = true; });
-    s.allCollapsedDefaultV1 = true;
+    s.allCollapsedDefaultV2 = true;
   }
   s.quickEvents.forEach(e => {
     if(typeof e.scope !== 'string') e.scope = 'personal';
