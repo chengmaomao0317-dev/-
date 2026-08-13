@@ -304,14 +304,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .note-textarea:focus{border-color:#378ADD;}
 @media(max-width:768px){
   :root{--note-w:min(92vw,420px);}
-  /* 手機版改用真正的版面配置(flex)保留 NOTE 分頁籤的寬度，
-     而不是用 position:fixed 疊在內容上方——這樣就不可能蓋到任何內容，
-     因為瀏覽器排版時就會自動幫內容讓出空間，不需要手動猜測 padding。 */
+  /* 手機版：用一個「佔位用」的 spacer 元素(真正參與版面排版)保留 NOTE 分頁籤寬度，
+     這樣瀏覽器排版時會自動幫內容讓出空間，不需要手動猜測 padding。
+     分頁籤本身仍用 position:fixed 顯示(這樣捲動再深也一定會固定在畫面右側)，
+     寬度跟 spacer 同步收合/展開，兩者疊在一起視覺上完全一致。 */
   body{display:flex;align-items:stretch;}
   #pageWrap{flex:1 1 auto;min-width:0;}
   .page-wrap.note-open{margin-right:0;}
-  .note-panel{position:sticky;top:0;align-self:flex-start;right:auto;height:100vh;flex:0 0 28px;width:28px;overflow:hidden;transform:none;transition:flex-basis .25s ease,width .25s ease;}
-  .note-panel.open{flex:0 0 var(--note-w);width:var(--note-w);overflow:visible;}
+  .note-spacer{flex:0 0 28px;width:28px;transition:flex-basis .25s ease,width .25s ease;}
+  .note-spacer.open{flex:0 0 var(--note-w);width:var(--note-w);}
+  .note-panel{position:fixed;top:0;right:0;height:100vh;width:28px;overflow:hidden;transform:none;transition:width .25s ease;}
+  .note-panel.open{width:var(--note-w);overflow:visible;}
   .note-body{min-width:0;}
 }
 
@@ -515,6 +518,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 <footer class="site-footer">Created by MAO</footer>
 </div>
 
+<div class="note-spacer" id="noteSpacer"></div>
 <div class="note-panel" id="notePanel">
   <div class="note-tab" id="noteTab">NOTE</div>
   <div class="note-body">
@@ -4393,6 +4397,8 @@ const noteTextareaEl = document.getElementById('noteTextarea');
 document.getElementById('noteTab').onclick = () => {
   document.getElementById('notePanel').classList.toggle('open');
   document.getElementById('pageWrap').classList.toggle('note-open');
+  const spacer = document.getElementById('noteSpacer');
+  if(spacer) spacer.classList.toggle('open');
 };
 noteTextareaEl.oninput = () => {
   STATE.scratchNote = noteTextareaEl.value;
