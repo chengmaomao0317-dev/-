@@ -302,15 +302,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .note-title{font-size:12px;font-weight:600;color:#1a1a18;margin-bottom:8px;letter-spacing:.05em;}
 .note-textarea{flex:1;resize:none;border:.5px solid rgba(0,0,0,.12);border-radius:8px;padding:10px;font-size:12.5px;font-family:inherit;outline:none;min-height:200px;}
 .note-textarea:focus{border-color:#378ADD;}
+.note-mobile-hdr-btn{display:none;}
 @media(max-width:768px){
-  /* 手機版：不再用側邊固定分頁籤(這個做法在真機上一直有問題)，
-     改成一顆右下角圓形按鈕，點了用「全螢幕彈窗」顯示筆記——
-     彈窗跟 App 裡其他彈窗(modal-overlay)是同一種、inset:0 蓋滿全螢幕，
-     不會有「疊在部分內容上」這種需要計算間距的情況，不可能再蓋到東西。 */
+  /* 手機版：不再用側邊固定分頁籤(這個做法在真機上一直有問題，包含浮動圓形按鈕
+     也曾被 Safari 底部工具列蓋住)，改成放進最上面那排一定看得到、會橫向捲動的
+     工具列按鈕，跟「匯出備份」同一排、同一種普通按鈕，不用任何 position:fixed。
+     點了用「全螢幕彈窗」顯示筆記，彈窗 inset:0 蓋滿全螢幕，不會疊在部分內容上。 */
   .note-spacer,.note-panel{display:none !important;}
-  .note-mobile-btn{display:flex;}
+  .note-mobile-hdr-btn{display:inline-block;}
 }
-.note-mobile-btn{display:none;position:fixed;right:16px;bottom:20px;width:48px;height:48px;border-radius:50%;background:#1a1a18;color:#fff;border:none;box-shadow:0 4px 14px rgba(0,0,0,.3);font-size:20px;align-items:center;justify-content:center;cursor:pointer;z-index:200;}
 .note-mobile-textarea{flex:1;resize:none;border:.5px solid rgba(0,0,0,.15);border-radius:8px;padding:10px;font-size:13px;font-family:inherit;outline:none;min-height:50vh;}
 
 .site-footer{text-align:center;padding:18px 0 22px;font-size:11px;font-weight:500;color:#b0b8c1;background:#f5f7fa;border-top:1px solid #e8edf2;letter-spacing:1.5px;margin-top:20px;}
@@ -407,6 +407,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
     </span>
     <div style="flex:1;"></div>
     <span class="sync-status" id="syncStatus">☁️ 連線中…</span>
+    <button class="hdr-btn note-mobile-hdr-btn" id="noteMobileBtn">📝 NOTE</button>
     <button class="hdr-btn" onclick="exportData()">匯出備份</button>
     <button class="hdr-btn" onclick="document.getElementById('importFile').click()">匯入備份</button>
     <input type="file" id="importFile" accept="application/json" style="display:none">
@@ -522,7 +523,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
   </div>
 </div>
 
-<button class="note-mobile-btn" id="noteMobileBtn">📝</button>
 <div class="modal-overlay" id="noteMobileModalOverlay" style="display:none;">
   <div class="modal-box" style="width:92vw;max-width:460px;">
     <div class="modal-hdr">
@@ -1300,6 +1300,15 @@ function normalizeState(s){
   if(typeof s.scratchNote !== 'string') s.scratchNote = '';
   if(typeof s.currentScope !== 'string') s.currentScope = 'all';
   s.categories.forEach(c => { if(typeof c.scope !== 'string') c.scope = /個人/.test(c.name) ? 'personal' : 'work'; });
+  // 一次性把所有分類/專案改為預設收合，避免手機上一打開整頁全部展開太擠；
+  // 之後使用者自己展開/收合都照常運作，不會被這裡再蓋掉
+  if(!s.allCollapsedDefaultV1){
+    s.categories.forEach(c => { c.collapsed = true; });
+    s.reportCategories.forEach(c => { c.collapsed = true; });
+    s.subCategories.forEach(c => { c.collapsed = true; });
+    s.projects.forEach(p => { p.collapsed = true; });
+    s.allCollapsedDefaultV1 = true;
+  }
   s.quickEvents.forEach(e => {
     if(typeof e.scope !== 'string') e.scope = 'personal';
     if(!Array.isArray(e.collaboratorIds)) e.collaboratorIds = [];
