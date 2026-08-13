@@ -304,6 +304,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .note-textarea:focus{border-color:#378ADD;}
 @media(max-width:768px){
   :root{--note-w:min(92vw,420px);}
+  /* iOS Safari 對 position:fixed + transform 位移超出視窗的元素常會撐大可捲動範圍，
+     改用 width 收合(而非 transform 位移)，讓收合時的元素本身就不超出螢幕寬度 */
+  .note-panel{width:28px;overflow:hidden;transform:none;transition:width .25s ease;}
+  .note-panel.open{width:var(--note-w);overflow:visible;}
+  .note-body{min-width:0;}
 }
 
 .site-footer{text-align:center;padding:18px 0 22px;font-size:11px;font-weight:500;color:#b0b8c1;background:#f5f7fa;border-top:1px solid #e8edf2;letter-spacing:1.5px;margin-top:20px;}
