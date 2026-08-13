@@ -304,10 +304,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .note-textarea:focus{border-color:#378ADD;}
 @media(max-width:768px){
   :root{--note-w:min(92vw,420px);}
-  /* iOS Safari 對 position:fixed + transform 位移超出視窗的元素常會撐大可捲動範圍，
-     改用 width 收合(而非 transform 位移)，讓收合時的元素本身就不超出螢幕寬度 */
-  .note-panel{width:28px;overflow:hidden;transform:none;transition:width .25s ease;}
-  .note-panel.open{width:var(--note-w);overflow:visible;}
+  /* 手機版改用真正的版面配置(flex)保留 NOTE 分頁籤的寬度，
+     而不是用 position:fixed 疊在內容上方——這樣就不可能蓋到任何內容，
+     因為瀏覽器排版時就會自動幫內容讓出空間，不需要手動猜測 padding。 */
+  body{display:flex;align-items:stretch;}
+  #pageWrap{flex:1 1 auto;min-width:0;}
+  .page-wrap.note-open{margin-right:0;}
+  .note-panel{position:sticky;top:0;align-self:flex-start;right:auto;height:100vh;flex:0 0 28px;width:28px;overflow:hidden;transform:none;transition:flex-basis .25s ease,width .25s ease;}
+  .note-panel.open{flex:0 0 var(--note-w);width:var(--note-w);overflow:visible;}
   .note-body{min-width:0;}
 }
 
