@@ -303,20 +303,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .note-textarea{flex:1;resize:none;border:.5px solid rgba(0,0,0,.12);border-radius:8px;padding:10px;font-size:12.5px;font-family:inherit;outline:none;min-height:200px;}
 .note-textarea:focus{border-color:#378ADD;}
 @media(max-width:768px){
-  :root{--note-w:min(92vw,420px);}
-  /* 手機版：用一個「佔位用」的 spacer 元素(真正參與版面排版)保留 NOTE 分頁籤寬度，
-     這樣瀏覽器排版時會自動幫內容讓出空間，不需要手動猜測 padding。
-     分頁籤本身仍用 position:fixed 顯示(這樣捲動再深也一定會固定在畫面右側)，
-     寬度跟 spacer 同步收合/展開，兩者疊在一起視覺上完全一致。 */
-  body{display:flex;align-items:stretch;}
-  #pageWrap{flex:1 1 auto;min-width:0;}
-  .page-wrap.note-open{margin-right:0;}
-  .note-spacer{flex:0 0 28px;width:28px;transition:flex-basis .25s ease,width .25s ease;}
-  .note-spacer.open{flex:0 0 var(--note-w);width:var(--note-w);}
-  .note-panel{position:fixed;top:0;right:0;height:100vh;width:28px;overflow:hidden;transform:none;transition:width .25s ease;}
-  .note-panel.open{width:var(--note-w);overflow:visible;}
-  .note-body{min-width:0;}
+  /* 手機版：不再用側邊固定分頁籤(這個做法在真機上一直有問題)，
+     改成一顆右下角圓形按鈕，點了用「全螢幕彈窗」顯示筆記——
+     彈窗跟 App 裡其他彈窗(modal-overlay)是同一種、inset:0 蓋滿全螢幕，
+     不會有「疊在部分內容上」這種需要計算間距的情況，不可能再蓋到東西。 */
+  .note-spacer,.note-panel{display:none !important;}
+  .note-mobile-btn{display:flex;}
 }
+.note-mobile-btn{display:none;position:fixed;right:16px;bottom:20px;width:48px;height:48px;border-radius:50%;background:#1a1a18;color:#fff;border:none;box-shadow:0 4px 14px rgba(0,0,0,.3);font-size:20px;align-items:center;justify-content:center;cursor:pointer;z-index:200;}
+.note-mobile-textarea{flex:1;resize:none;border:.5px solid rgba(0,0,0,.15);border-radius:8px;padding:10px;font-size:13px;font-family:inherit;outline:none;min-height:50vh;}
 
 .site-footer{text-align:center;padding:18px 0 22px;font-size:11px;font-weight:500;color:#b0b8c1;background:#f5f7fa;border-top:1px solid #e8edf2;letter-spacing:1.5px;margin-top:20px;}
 
@@ -524,6 +519,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
   <div class="note-body">
     <div class="note-title">NOTE</div>
     <textarea class="note-textarea" id="noteTextarea" placeholder="隨手記點什麼…"></textarea>
+  </div>
+</div>
+
+<button class="note-mobile-btn" id="noteMobileBtn">📝</button>
+<div class="modal-overlay" id="noteMobileModalOverlay" style="display:none;">
+  <div class="modal-box" style="width:92vw;max-width:460px;">
+    <div class="modal-hdr">
+      <span>NOTE</span>
+      <button class="modal-close" id="noteMobileModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <textarea class="note-mobile-textarea" id="noteMobileTextarea" placeholder="隨手記點什麼…"></textarea>
+    </div>
   </div>
 </div>
 
@@ -4402,6 +4410,23 @@ document.getElementById('noteTab').onclick = () => {
 };
 noteTextareaEl.oninput = () => {
   STATE.scratchNote = noteTextareaEl.value;
+  saveState();
+};
+
+const noteMobileTextareaEl = document.getElementById('noteMobileTextarea');
+document.getElementById('noteMobileBtn').onclick = () => {
+  noteMobileTextareaEl.value = STATE.scratchNote || '';
+  document.getElementById('noteMobileModalOverlay').style.display = 'flex';
+};
+document.getElementById('noteMobileModalCloseBtn').onclick = () => {
+  document.getElementById('noteMobileModalOverlay').style.display = 'none';
+};
+document.getElementById('noteMobileModalOverlay').onclick = (e) => {
+  if(e.target.id === 'noteMobileModalOverlay') document.getElementById('noteMobileModalOverlay').style.display = 'none';
+};
+noteMobileTextareaEl.oninput = () => {
+  STATE.scratchNote = noteMobileTextareaEl.value;
+  noteTextareaEl.value = noteMobileTextareaEl.value;
   saveState();
 };
 
