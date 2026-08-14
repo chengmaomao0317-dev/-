@@ -4301,9 +4301,14 @@ const TIMELINE_SOURCE_STYLE = {
   stay: {dot: '#2F6B1F', bg: '#E3F3E0', text: '#2F6B1F', label: '住宿'},
   flight: {dot: '#185FA5', bg: '#E6F1FB', text: '#185FA5', label: '航班'},
 };
+function padTimeStr(t){
+  const m = (t || '').match(/^(\d{1,2}):([0-5]\d)$/);
+  if(!m) return t || '';
+  return m[1].padStart(2, '0') + ':' + m[2];
+}
 function guessTimeFromText(str){
   const m = (str || '').match(/([01]?\d|2[0-3]):[0-5]\d/);
-  return m ? m[0] : '';
+  return m ? padTimeStr(m[0]) : '';
 }
 function buildTripTimelineEvents(trip){
   const events = [];
@@ -4361,7 +4366,7 @@ function buildTripTimelineSection(trip){
     group.appendChild(badge);
     const items = document.createElement('div');
     items.className = 'trip-day-items';
-    const dayEvents = byDate[dateKey].sort((a,b) => (a.time||'').localeCompare(b.time||''));
+    const dayEvents = byDate[dateKey].sort((a,b) => padTimeStr(a.time).localeCompare(padTimeStr(b.time)));
     dayEvents.forEach((ev, idx) => {
       const row = document.createElement('div');
       row.className = 'trip-timeline-row';
