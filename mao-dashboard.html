@@ -241,6 +241,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .trip-day-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#5f5e5a;cursor:pointer;}
 .trip-day-item-time{color:#185FA5;font-weight:600;flex-shrink:0;}
 .trip-day-item-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.trip-timeline-row{display:flex;gap:8px;}
+.trip-timeline-dot-col{display:flex;flex-direction:column;align-items:center;width:14px;flex-shrink:0;}
+.trip-timeline-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.trip-timeline-line{flex:1;width:1.5px;background:rgba(0,0,0,.1);margin-top:2px;min-height:10px;}
+.trip-timeline-body{padding-bottom:14px;flex:1;min-width:0;cursor:pointer;}
+.trip-timeline-row:last-child .trip-timeline-body{padding-bottom:0;}
+.trip-timeline-title{font-size:12px;color:#5f5e5a;line-height:1.5;}
+.trip-timeline-time{font-weight:700;color:#1a1a18;}
+.trip-timeline-src-tag{font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:4px;white-space:nowrap;}
 .trip-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:640px){.trip-two-col{grid-template-columns:1fr;}}
 .trip-check-row{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:12px;}
@@ -4269,59 +4278,8 @@ function buildTripCard(trip){
     return {date: dateTxt, name: r.name, address: r.address, bookedBy: r.bookedBy, paymentStatus: r.paymentStatus};
   }));
 
-  // 行程規劃
-  const itinSec = document.createElement('div');
-  const itinTitle = document.createElement('div');
-  itinTitle.className = 'trip-subsec-title';
-  itinTitle.innerHTML = '<span>🗓 行程規劃</span>';
-  const addItinBtn = document.createElement('button');
-  addItinBtn.className = 'trip-add-mini';
-  addItinBtn.textContent = '+ 新增';
-  addItinBtn.onclick = () => openItineraryModal(trip, null);
-  itinTitle.appendChild(addItinBtn);
-  itinSec.appendChild(itinTitle);
-  if(trip.itinerary.length === 0){
-    const empty = document.createElement('div');
-    empty.className = 'trip-empty-hint';
-    empty.textContent = '尚未規劃行程';
-    itinSec.appendChild(empty);
-  }else{
-    const byDate = {};
-    trip.itinerary.forEach(it => {
-      const key = it.date || '未定日期';
-      if(!byDate[key]) byDate[key] = [];
-      byDate[key].push(it);
-    });
-    Object.keys(byDate).sort().forEach(dateKey => {
-      const group = document.createElement('div');
-      group.className = 'trip-day-group';
-      const badge = document.createElement('span');
-      badge.className = 'trip-day-badge';
-      badge.textContent = dateKey === '未定日期' ? dateKey : dateKey.slice(5).replace('-', '/');
-      group.appendChild(badge);
-      const items = document.createElement('div');
-      items.className = 'trip-day-items';
-      byDate[dateKey].sort((a,b) => (a.time||'').localeCompare(b.time||'')).forEach(it => {
-        const row = document.createElement('div');
-        row.className = 'trip-day-item';
-        row.onclick = () => openItineraryModal(trip, it);
-        if(it.time){
-          const t = document.createElement('span');
-          t.className = 'trip-day-item-time';
-          t.textContent = it.time;
-          row.appendChild(t);
-        }
-        const title = document.createElement('span');
-        title.className = 'trip-day-item-title';
-        title.textContent = it.title;
-        row.appendChild(title);
-        items.appendChild(row);
-      });
-      group.appendChild(items);
-      itinSec.appendChild(group);
-    });
-  }
-  body.appendChild(itinSec);
+  // 行程規劃（整合時間軸：itinerary + 當天餐廳訂位 + 住宿入住/退房 + 航班）
+  body.appendChild(buildTripTimelineSection(trip));
 
   // 待辦／購物清單
   const twoCol = document.createElement('div');
@@ -4335,6 +4293,119 @@ function buildTripCard(trip){
 
   card.appendChild(body);
   return card;
+}
+
+const TIMELINE_SOURCE_STYLE = {
+  itinerary: {dot: '#1a1a18'},
+  restaurant: {dot: '#993556', bg: '#FBEAF0', text: '#993556', label: '餐廳'},
+  stay: {dot: '#2F6B1F', bg: '#E3F3E0', text: '#2F6B1F', label: '住宿'},
+  flight: {dot: '#185FA5', bg: '#E6F1FB', text: '#185FA5', label: '航班'},
+};
+function guessTimeFromText(str){
+  const m = (str || '').match(/([01]?\d|2[0-3]):[0-5]\d/);
+  return m ? m[0] : '';
+}
+function buildTripTimelineEvents(trip){
+  const events = [];
+  trip.itinerary.forEach(it => {
+    if(!it.date) return;
+    events.push({date: it.date, time: it.time || '', title: it.title, source: 'itinerary', onClick: () => openItineraryModal(trip, it)});
+  });
+  trip.restaurants.forEach(r => {
+    if(!r.date) return;
+    events.push({date: r.date, time: r.time || '', title: r.name, source: 'restaurant', onClick: () => openRestaurantModal(trip, r)});
+  });
+  trip.stays.forEach(s => {
+    if(s.startDate) events.push({date: s.startDate, time: '', title: s.name + '（入住）', source: 'stay', onClick: () => openStayModal(trip, s)});
+    if(s.endDate) events.push({date: s.endDate, time: '', title: s.name + '（退房）', source: 'stay', onClick: () => openStayModal(trip, s)});
+  });
+  trip.flights.forEach(f => {
+    if(!f.date) return;
+    const title = (f.direction === 'return' ? '回程機票' : '去程機票') + (f.flightNo ? '・' + f.flightNo : '') + (f.from || f.to ? '　' + (f.from || '') + ' → ' + (f.to || '') : '');
+    events.push({date: f.date, time: guessTimeFromText(f.from) || guessTimeFromText(f.to), title, source: 'flight', onClick: () => openFlightModal(trip, f)});
+  });
+  return events;
+}
+function buildTripTimelineSection(trip){
+  const sec = document.createElement('div');
+  const title = document.createElement('div');
+  title.className = 'trip-subsec-title';
+  title.innerHTML = '<span>🗓 行程規劃</span>';
+  const addBtn = document.createElement('button');
+  addBtn.className = 'trip-add-mini';
+  addBtn.textContent = '+ 新增';
+  addBtn.onclick = () => openItineraryModal(trip, null);
+  title.appendChild(addBtn);
+  sec.appendChild(title);
+
+  const events = buildTripTimelineEvents(trip);
+  if(events.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'trip-empty-hint';
+    empty.textContent = '尚未規劃行程';
+    sec.appendChild(empty);
+    return sec;
+  }
+
+  const byDate = {};
+  events.forEach(ev => {
+    if(!byDate[ev.date]) byDate[ev.date] = [];
+    byDate[ev.date].push(ev);
+  });
+  Object.keys(byDate).sort().forEach(dateKey => {
+    const group = document.createElement('div');
+    group.className = 'trip-day-group';
+    const badge = document.createElement('span');
+    badge.className = 'trip-day-badge';
+    badge.textContent = dateKey.slice(5).replace('-', '/');
+    group.appendChild(badge);
+    const items = document.createElement('div');
+    items.className = 'trip-day-items';
+    const dayEvents = byDate[dateKey].sort((a,b) => (a.time||'').localeCompare(b.time||''));
+    dayEvents.forEach((ev, idx) => {
+      const row = document.createElement('div');
+      row.className = 'trip-timeline-row';
+      const dotCol = document.createElement('div');
+      dotCol.className = 'trip-timeline-dot-col';
+      const dot = document.createElement('span');
+      dot.className = 'trip-timeline-dot';
+      dot.style.background = TIMELINE_SOURCE_STYLE[ev.source].dot;
+      dotCol.appendChild(dot);
+      if(idx < dayEvents.length - 1){
+        const line = document.createElement('span');
+        line.className = 'trip-timeline-line';
+        dotCol.appendChild(line);
+      }
+      row.appendChild(dotCol);
+      const bodyEl = document.createElement('div');
+      bodyEl.className = 'trip-timeline-body';
+      bodyEl.onclick = ev.onClick;
+      const titleLine = document.createElement('div');
+      titleLine.className = 'trip-timeline-title';
+      if(ev.time){
+        const t = document.createElement('span');
+        t.className = 'trip-timeline-time';
+        t.textContent = ev.time + ' ';
+        titleLine.appendChild(t);
+      }
+      titleLine.appendChild(document.createTextNode(ev.title));
+      if(ev.source !== 'itinerary'){
+        const style = TIMELINE_SOURCE_STYLE[ev.source];
+        const tag = document.createElement('span');
+        tag.className = 'trip-timeline-src-tag';
+        tag.style.background = style.bg;
+        tag.style.color = style.text;
+        tag.textContent = style.label;
+        titleLine.appendChild(tag);
+      }
+      bodyEl.appendChild(titleLine);
+      row.appendChild(bodyEl);
+      items.appendChild(row);
+    });
+    group.appendChild(items);
+    sec.appendChild(group);
+  });
+  return sec;
 }
 
 function buildTripListSection(trip, titleTxt, items, onRowClick, onAdd, mapFn){
