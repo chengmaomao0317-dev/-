@@ -1093,18 +1093,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
         <div class="modal-label">訂單編號（選填）</div>
         <input type="text" id="stayModalOrderNo" class="modal-input" placeholder="訂房確認碼">
       </div>
-      <div style="display:flex;gap:10px;">
-        <div style="flex:1;">
-          <div class="modal-label">預定者（選填）</div>
-          <input type="text" id="stayModalBookedBy" class="modal-input" placeholder="例如：Mao">
-        </div>
-        <div style="flex:1;">
-          <div class="modal-label">付款狀態</div>
-          <div class="scope-pick" id="stayModalPayStatusPick">
-            <span class="scope-pick-btn" data-status="unpaid">未付款</span>
-            <span class="scope-pick-btn" data-status="deposit">已付訂金</span>
-            <span class="scope-pick-btn" data-status="paid">已付清</span>
-          </div>
+      <div>
+        <div class="modal-label">預定者（選填）</div>
+        <input type="text" id="stayModalBookedBy" class="modal-input" placeholder="例如：Mao">
+      </div>
+      <div>
+        <div class="modal-label">付款狀態</div>
+        <div class="scope-pick" id="stayModalPayStatusPick" style="flex-wrap:wrap;">
+          <span class="scope-pick-btn" data-status="unpaid">未付款</span>
+          <span class="scope-pick-btn" data-status="deposit">已付訂金</span>
+          <span class="scope-pick-btn" data-status="paid">已付清</span>
         </div>
       </div>
     </div>
@@ -1145,18 +1143,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
         <div class="modal-label">備註（選填）</div>
         <input type="text" id="restaurantModalNote" class="modal-input" placeholder="訂位資訊等">
       </div>
-      <div style="display:flex;gap:10px;">
-        <div style="flex:1;">
-          <div class="modal-label">預定者（選填）</div>
-          <input type="text" id="restaurantModalBookedBy" class="modal-input" placeholder="例如：Mao">
-        </div>
-        <div style="flex:1;">
-          <div class="modal-label">付款狀態</div>
-          <div class="scope-pick" id="restaurantModalPayStatusPick">
-            <span class="scope-pick-btn" data-status="unpaid">未付款</span>
-            <span class="scope-pick-btn" data-status="deposit">已付訂金</span>
-            <span class="scope-pick-btn" data-status="paid">已付清</span>
-          </div>
+      <div>
+        <div class="modal-label">預定者（選填）</div>
+        <input type="text" id="restaurantModalBookedBy" class="modal-input" placeholder="例如：Mao">
+      </div>
+      <div>
+        <div class="modal-label">付款狀態</div>
+        <div class="scope-pick" id="restaurantModalPayStatusPick" style="flex-wrap:wrap;">
+          <span class="scope-pick-btn" data-status="unpaid">未付款</span>
+          <span class="scope-pick-btn" data-status="deposit">已付訂金</span>
+          <span class="scope-pick-btn" data-status="paid">已付清</span>
         </div>
       </div>
     </div>
