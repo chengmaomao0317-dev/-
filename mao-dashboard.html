@@ -259,6 +259,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .trip-expense-amt{font-weight:700;width:76px;text-align:right;flex-shrink:0;}
 .trip-expense-total-row{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;padding:8px 4px 0;margin-top:2px;}
 .trip-empty-hint{font-size:11px;color:#b0afa9;padding:4px;}
+.pay-status{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
+.pay-status.unpaid{background:#E9E9E6;color:#5f5e5a;}
+.pay-status.deposit{background:#FAEEDA;color:#854F0B;}
+.pay-status.paid{background:#EAF3DE;color:#27500A;}
+.trip-booked-by{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:99px;background:#E9E9E6;color:#5f5e5a;white-space:nowrap;flex-shrink:0;}
+.trip-split-row{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:.5px solid rgba(0,0,0,.06);font-size:12px;}
+.trip-split-row:last-child{border-bottom:none;}
+.trip-split-row input[type="text"]{flex:1;font-size:12px;border:.5px solid rgba(0,0,0,.15);border-radius:6px;padding:6px 8px;outline:none;font-family:inherit;min-width:0;}
+.trip-split-row input[type="number"]{width:76px;font-size:12px;border:.5px solid rgba(0,0,0,.15);border-radius:6px;padding:6px 8px;outline:none;font-family:inherit;}
+.trip-split-row input:focus{border-color:#378ADD;}
+.trip-split-settled-btn{font-size:9.5px;font-weight:700;padding:5px 9px;border-radius:99px;border:1.5px solid rgba(0,0,0,.12);background:#f5f4f0;color:#9a9990;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.trip-split-settled-btn.on{background:#EAF3DE;color:#27500A;border-color:#EAF3DE;}
+.trip-split-del{background:none;border:none;color:#c9c8c2;cursor:pointer;font-size:11px;flex-shrink:0;}
 .item-collab{font-size:9.5px;font-weight:600;padding:1px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
 .collab-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:.5px solid rgba(0,0,0,.08);border-radius:8px;background:#faf9f7;transition:box-shadow .1s;}
 .collab-row.drop-before{box-shadow:0 -2px 0 #378ADD;}
@@ -1080,6 +1093,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
         <div class="modal-label">訂單編號（選填）</div>
         <input type="text" id="stayModalOrderNo" class="modal-input" placeholder="訂房確認碼">
       </div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div class="modal-label">預定者（選填）</div>
+          <input type="text" id="stayModalBookedBy" class="modal-input" placeholder="例如：Mao">
+        </div>
+        <div style="flex:1;">
+          <div class="modal-label">付款狀態</div>
+          <div class="scope-pick" id="stayModalPayStatusPick">
+            <span class="scope-pick-btn" data-status="unpaid">未付款</span>
+            <span class="scope-pick-btn" data-status="deposit">已付訂金</span>
+            <span class="scope-pick-btn" data-status="paid">已付清</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="modal-ftr">
       <button class="modal-btn-cancel" id="stayModalDeleteBtn" style="display:none;color:#A32D2D;">刪除</button>
@@ -1117,6 +1144,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
       <div>
         <div class="modal-label">備註（選填）</div>
         <input type="text" id="restaurantModalNote" class="modal-input" placeholder="訂位資訊等">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div class="modal-label">預定者（選填）</div>
+          <input type="text" id="restaurantModalBookedBy" class="modal-input" placeholder="例如：Mao">
+        </div>
+        <div style="flex:1;">
+          <div class="modal-label">付款狀態</div>
+          <div class="scope-pick" id="restaurantModalPayStatusPick">
+            <span class="scope-pick-btn" data-status="unpaid">未付款</span>
+            <span class="scope-pick-btn" data-status="deposit">已付訂金</span>
+            <span class="scope-pick-btn" data-status="paid">已付清</span>
+          </div>
+        </div>
       </div>
     </div>
     <div class="modal-ftr">
@@ -1189,6 +1230,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
       <div>
         <div class="modal-label">備註／訂單編號（選填）</div>
         <input type="text" id="expenseModalNote" class="modal-input" placeholder="票券編號、訂單編號等">
+      </div>
+      <div>
+        <div class="modal-label">代墊人（選填，有代墊才需要分攤）</div>
+        <input type="text" id="expenseModalPayer" class="modal-input" placeholder="例如：Mao">
+      </div>
+      <div>
+        <div class="modal-label">分攤明細</div>
+        <div id="expenseModalSplits"></div>
+        <button class="trip-add-mini" id="expenseModalAddSplitBtn" type="button">+ 新增分攤對象</button>
       </div>
     </div>
     <div class="modal-ftr">
@@ -1268,6 +1318,7 @@ const EXPENSE_CATEGORIES = [
 function getExpenseCat(catId){
   return EXPENSE_CATEGORIES.find(c => c.id === catId) || EXPENSE_CATEGORIES[EXPENSE_CATEGORIES.length - 1];
 }
+const PAY_STATUS_LABELS = {unpaid:'未付款', deposit:'已付訂金', paid:'已付清'};
 function googleMapsUrl(address){
   return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
 }
@@ -1570,6 +1621,24 @@ function normalizeState(s){
     if(!Array.isArray(trip.todos)) trip.todos = [];
     if(!Array.isArray(trip.shopping)) trip.shopping = [];
     if(!Array.isArray(trip.expenses)) trip.expenses = [];
+    trip.stays.forEach(s2 => {
+      if(typeof s2.bookedBy !== 'string') s2.bookedBy = '';
+      if(!['unpaid','deposit','paid'].includes(s2.paymentStatus)) s2.paymentStatus = 'unpaid';
+    });
+    trip.restaurants.forEach(r2 => {
+      if(typeof r2.bookedBy !== 'string') r2.bookedBy = '';
+      if(!['unpaid','deposit','paid'].includes(r2.paymentStatus)) r2.paymentStatus = 'unpaid';
+    });
+    trip.expenses.forEach(e2 => {
+      if(typeof e2.payer !== 'string') e2.payer = '';
+      if(!Array.isArray(e2.splits)) e2.splits = [];
+      e2.splits.forEach(sp => {
+        if(typeof sp.id !== 'string') sp.id = uid();
+        if(typeof sp.person !== 'string') sp.person = '';
+        if(typeof sp.amount !== 'number') sp.amount = Number(sp.amount) || 0;
+        if(typeof sp.settled !== 'boolean') sp.settled = false;
+      });
+    });
   });
   if(!Array.isArray(s.subCategories)) s.subCategories = [];
   if(!Array.isArray(s.subscriptions)) s.subscriptions = [];
@@ -4111,13 +4180,13 @@ function buildTripCard(trip){
   // 住宿
   body.appendChild(buildTripListSection(trip, '🏨 住宿', trip.stays, s => openStayModal(trip, s), () => openStayModal(trip, null), s => {
     const dateTxt = s.startDate && s.endDate ? `${s.startDate.slice(5)} → ${s.endDate.slice(5)}` : '';
-    return {date: dateTxt, name: s.name, address: s.address};
+    return {date: dateTxt, name: s.name, address: s.address, bookedBy: s.bookedBy, paymentStatus: s.paymentStatus};
   }));
 
   // 餐廳
   body.appendChild(buildTripListSection(trip, '🍽 餐廳', trip.restaurants, r => openRestaurantModal(trip, r), () => openRestaurantModal(trip, null), r => {
     const dateTxt = (r.date ? r.date.slice(5) : '') + (r.time ? ' ' + r.time : '');
-    return {date: dateTxt, name: r.name, address: r.address};
+    return {date: dateTxt, name: r.name, address: r.address, bookedBy: r.bookedBy, paymentStatus: r.paymentStatus};
   }));
 
   // 行程規劃
@@ -4207,7 +4276,7 @@ function buildTripListSection(trip, titleTxt, items, onRowClick, onAdd, mapFn){
     return sec;
   }
   [...items].sort((a,b) => (a.startDate || a.date || '').localeCompare(b.startDate || b.date || '')).forEach(it => {
-    const {date, name, address} = mapFn(it);
+    const {date, name, address, bookedBy, paymentStatus} = mapFn(it);
     const row = document.createElement('div');
     row.className = 'trip-row';
     row.onclick = () => onRowClick(it);
@@ -4219,6 +4288,18 @@ function buildTripListSection(trip, titleTxt, items, onRowClick, onAdd, mapFn){
     nameEl.className = 'trip-row-name';
     nameEl.textContent = name;
     row.appendChild(nameEl);
+    if(bookedBy){
+      const bb = document.createElement('span');
+      bb.className = 'trip-booked-by';
+      bb.textContent = bookedBy + ' 訂';
+      row.appendChild(bb);
+    }
+    if(paymentStatus){
+      const ps = document.createElement('span');
+      ps.className = 'pay-status ' + paymentStatus;
+      ps.textContent = PAY_STATUS_LABELS[paymentStatus] || paymentStatus;
+      row.appendChild(ps);
+    }
     if(address){
       const mapLink = document.createElement('a');
       mapLink.className = 'trip-map-link';
@@ -4354,7 +4435,21 @@ function buildTripExpenseSection(trip){
       note.textContent = exp.note;
       main.appendChild(note);
     }
+    if(exp.payer){
+      const splitNote = document.createElement('div');
+      splitNote.className = 'trip-expense-note';
+      const unsettled = (exp.splits || []).filter(sp => !sp.settled).length;
+      splitNote.textContent = unsettled > 0 ? `${exp.payer} 代墊・${unsettled}人未收` : `${exp.payer} 代墊`;
+      main.appendChild(splitNote);
+    }
     row.appendChild(main);
+    if(exp.payer && (exp.splits || []).length > 0){
+      const allSettled = exp.splits.every(sp => sp.settled);
+      const payBadge = document.createElement('span');
+      payBadge.className = 'pay-status ' + (allSettled ? 'paid' : 'deposit');
+      payBadge.textContent = allSettled ? '已收清' : '待收款';
+      row.appendChild(payBadge);
+    }
     const cat = getExpenseCat(exp.category);
     const catColor = COLORS[cat.color % COLORS.length];
     const catBadge = document.createElement('span');
@@ -4453,6 +4548,21 @@ function deleteFlightModal(){
   saveState(); closeFlightModal(); renderTripPage();
 }
 
+// ── 付款狀態選擇器共用邏輯 ─────────────────────────────
+function wirePayStatusPick(pickId, current){
+  let status = current || 'unpaid';
+  document.querySelectorAll(`#${pickId} .scope-pick-btn`).forEach(b => {
+    b.classList.toggle('active', b.dataset.status === status);
+    b.onclick = () => {
+      status = b.dataset.status;
+      document.querySelectorAll(`#${pickId} .scope-pick-btn`).forEach(x => x.classList.toggle('active', x === b));
+    };
+  });
+}
+function readPayStatusPick(pickId){
+  return document.querySelector(`#${pickId} .scope-pick-btn.active`)?.dataset.status || 'unpaid';
+}
+
 // ── 住宿彈窗 ─────────────────────────────
 let stayModalCtx = null;
 function openStayModal(trip, stay){
@@ -4463,6 +4573,8 @@ function openStayModal(trip, stay){
   document.getElementById('stayModalEndDate').value = stay ? stay.endDate : '';
   document.getElementById('stayModalAddress').value = stay ? stay.address : '';
   document.getElementById('stayModalOrderNo').value = stay ? (stay.orderNo || '') : '';
+  document.getElementById('stayModalBookedBy').value = stay ? (stay.bookedBy || '') : '';
+  wirePayStatusPick('stayModalPayStatusPick', stay ? stay.paymentStatus : 'unpaid');
   document.getElementById('stayModalDeleteBtn').style.display = stay ? 'inline-block' : 'none';
   document.getElementById('stayModalOverlay').style.display = 'flex';
 }
@@ -4475,10 +4587,12 @@ function saveStayModal(){
   const endDate = document.getElementById('stayModalEndDate').value;
   const address = document.getElementById('stayModalAddress').value.trim();
   const orderNo = document.getElementById('stayModalOrderNo').value.trim();
+  const bookedBy = document.getElementById('stayModalBookedBy').value.trim();
+  const paymentStatus = readPayStatusPick('stayModalPayStatusPick');
   if(stay){
-    Object.assign(stay, {name, startDate, endDate, address, orderNo});
+    Object.assign(stay, {name, startDate, endDate, address, orderNo, bookedBy, paymentStatus});
   }else{
-    trip.stays.push({id:uid(), name, startDate, endDate, address, orderNo});
+    trip.stays.push({id:uid(), name, startDate, endDate, address, orderNo, bookedBy, paymentStatus});
   }
   saveState(); closeStayModal(); renderTripPage();
 }
@@ -4499,6 +4613,8 @@ function openRestaurantModal(trip, r){
   document.getElementById('restaurantModalTime').value = r ? (r.time || '') : '';
   document.getElementById('restaurantModalAddress').value = r ? r.address : '';
   document.getElementById('restaurantModalNote').value = r ? (r.note || '') : '';
+  document.getElementById('restaurantModalBookedBy').value = r ? (r.bookedBy || '') : '';
+  wirePayStatusPick('restaurantModalPayStatusPick', r ? r.paymentStatus : 'unpaid');
   document.getElementById('restaurantModalDeleteBtn').style.display = r ? 'inline-block' : 'none';
   document.getElementById('restaurantModalOverlay').style.display = 'flex';
 }
@@ -4511,10 +4627,12 @@ function saveRestaurantModal(){
   const time = document.getElementById('restaurantModalTime').value.trim();
   const address = document.getElementById('restaurantModalAddress').value.trim();
   const note = document.getElementById('restaurantModalNote').value.trim();
+  const bookedBy = document.getElementById('restaurantModalBookedBy').value.trim();
+  const paymentStatus = readPayStatusPick('restaurantModalPayStatusPick');
   if(restaurant){
-    Object.assign(restaurant, {name, date, time, address, note});
+    Object.assign(restaurant, {name, date, time, address, note, bookedBy, paymentStatus});
   }else{
-    trip.restaurants.push({id:uid(), name, date, time, address, note});
+    trip.restaurants.push({id:uid(), name, date, time, address, note, bookedBy, paymentStatus});
   }
   saveState(); closeRestaurantModal(); renderTripPage();
 }
@@ -4576,6 +4694,51 @@ function renderExpenseCategoryPicker(selectedId){
     wrap.appendChild(btn);
   });
 }
+let expenseModalSplits = [];
+function renderExpenseSplitsUI(){
+  const wrap = document.getElementById('expenseModalSplits');
+  wrap.innerHTML = '';
+  if(expenseModalSplits.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'trip-empty-hint';
+    empty.textContent = '尚未新增分攤對象';
+    wrap.appendChild(empty);
+    return;
+  }
+  expenseModalSplits.forEach(sp => {
+    const row = document.createElement('div');
+    row.className = 'trip-split-row';
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.placeholder = '姓名';
+    nameInput.value = sp.person;
+    nameInput.oninput = () => { sp.person = nameInput.value; };
+    row.appendChild(nameInput);
+    const amtInput = document.createElement('input');
+    amtInput.type = 'number';
+    amtInput.step = '1';
+    amtInput.placeholder = '金額';
+    amtInput.value = sp.amount || '';
+    amtInput.oninput = () => { sp.amount = Number(amtInput.value) || 0; };
+    row.appendChild(amtInput);
+    const settledBtn = document.createElement('button');
+    settledBtn.type = 'button';
+    settledBtn.className = 'trip-split-settled-btn' + (sp.settled ? ' on' : '');
+    settledBtn.textContent = sp.settled ? '已收' : '未收';
+    settledBtn.onclick = () => { sp.settled = !sp.settled; renderExpenseSplitsUI(); };
+    row.appendChild(settledBtn);
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'trip-split-del';
+    delBtn.textContent = '✕';
+    delBtn.onclick = () => {
+      expenseModalSplits = expenseModalSplits.filter(x => x.id !== sp.id);
+      renderExpenseSplitsUI();
+    };
+    row.appendChild(delBtn);
+    wrap.appendChild(row);
+  });
+}
 function openExpenseModal(trip, exp){
   expenseModalCtx = {trip, expense: exp};
   document.getElementById('expenseModalTitle').textContent = exp ? '編輯花費' : '新增花費';
@@ -4583,7 +4746,10 @@ function openExpenseModal(trip, exp){
   document.getElementById('expenseModalAmount').value = exp ? exp.amount : '';
   document.getElementById('expenseModalDate').value = exp ? (exp.date || '') : '';
   document.getElementById('expenseModalNote').value = exp ? (exp.note || '') : '';
+  document.getElementById('expenseModalPayer').value = exp ? (exp.payer || '') : '';
   renderExpenseCategoryPicker(exp ? exp.category : EXPENSE_CATEGORIES[0].id);
+  expenseModalSplits = exp ? exp.splits.map(sp => ({...sp})) : [];
+  renderExpenseSplitsUI();
   document.getElementById('expenseModalDeleteBtn').style.display = exp ? 'inline-block' : 'none';
   document.getElementById('expenseModalOverlay').style.display = 'flex';
 }
@@ -4595,11 +4761,13 @@ function saveExpenseModal(){
   const amount = Number(document.getElementById('expenseModalAmount').value) || 0;
   const date = document.getElementById('expenseModalDate').value;
   const note = document.getElementById('expenseModalNote').value.trim();
+  const payer = document.getElementById('expenseModalPayer').value.trim();
   const category = document.querySelector('#expenseModalCategoryPick .scope-pick-btn.active')?.dataset.catId || EXPENSE_CATEGORIES[0].id;
+  const splits = expenseModalSplits.filter(sp => sp.person.trim()).map(sp => ({id:sp.id, person:sp.person.trim(), amount:Number(sp.amount)||0, settled:!!sp.settled}));
   if(expense){
-    Object.assign(expense, {item, amount, date, note, category});
+    Object.assign(expense, {item, amount, date, note, category, payer, splits});
   }else{
-    trip.expenses.push({id:uid(), item, amount, date, note, category});
+    trip.expenses.push({id:uid(), item, amount, date, note, category, payer, splits});
   }
   saveState(); closeExpenseModal(); renderTripPage();
 }
@@ -5342,6 +5510,10 @@ document.getElementById('expenseModalCloseBtn').onclick = closeExpenseModal;
 document.getElementById('expenseModalCancelBtn').onclick = closeExpenseModal;
 document.getElementById('expenseModalSaveBtn').onclick = saveExpenseModal;
 document.getElementById('expenseModalDeleteBtn').onclick = deleteExpenseModal;
+document.getElementById('expenseModalAddSplitBtn').onclick = () => {
+  expenseModalSplits.push({id:uid(), person:'', amount:0, settled:false});
+  renderExpenseSplitsUI();
+};
 document.getElementById('expenseModalOverlay').onclick = (e) => {
   if(e.target.id === 'expenseModalOverlay') closeExpenseModal();
 };
