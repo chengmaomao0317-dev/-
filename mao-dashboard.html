@@ -273,6 +273,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .trip-split-settled-btn.on{background:#EAF3DE;color:#27500A;border-color:#EAF3DE;}
 .trip-split-del{background:none;border:none;color:#c9c8c2;cursor:pointer;font-size:11px;flex-shrink:0;}
 .trip-row-amt{font-weight:700;flex-shrink:0;font-size:12px;}
+.trip-legend-item{cursor:pointer;padding:4px 8px;border-radius:6px;}
+.trip-legend-item.active{background:#F1EFE8;}
+.trip-cat-detail-wrap{margin-top:8px;border-top:.5px solid rgba(0,0,0,.08);padding-top:8px;}
+.trip-cat-detail-row{display:flex;align-items:center;gap:8px;padding:6px 4px;font-size:12px;}
+.trip-cat-detail-src{font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px;background:#F1EFE8;color:#5f5e5a;flex-shrink:0;white-space:nowrap;}
+.trip-cat-detail-name{flex:1;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.trip-cat-detail-amt{font-weight:700;flex-shrink:0;}
 .item-collab{font-size:9.5px;font-weight:600;padding:1px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
 .collab-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:.5px solid rgba(0,0,0,.08);border-radius:8px;background:#faf9f7;transition:box-shadow .1s;}
 .collab-row.drop-before{box-shadow:0 -2px 0 #378ADD;}
@@ -1380,10 +1387,10 @@ function buildCostBadges(item){
 }
 function tripAllCosts(trip){
   const items = [];
-  trip.flights.forEach(f => items.push({item: (f.direction === 'return' ? '回程機票' : '去程機票') + (f.flightNo ? '・' + f.flightNo : ''), amount: f.amount, category: 'transport'}));
-  trip.stays.forEach(s => items.push({item: s.name, amount: s.amount, category: 'stay'}));
-  trip.restaurants.forEach(r => items.push({item: r.name, amount: r.amount, category: 'food'}));
-  trip.expenses.forEach(e => items.push({item: e.item, amount: e.amount, category: e.category}));
+  trip.flights.forEach(f => items.push({item: (f.direction === 'return' ? '回程機票' : '去程機票') + (f.flightNo ? '・' + f.flightNo : ''), amount: f.amount, category: 'transport', source: '航班'}));
+  trip.stays.forEach(s => items.push({item: s.name, amount: s.amount, category: 'stay', source: '住宿'}));
+  trip.restaurants.forEach(r => items.push({item: r.name, amount: r.amount, category: 'food', source: '餐廳'}));
+  trip.expenses.forEach(e => items.push({item: e.item, amount: e.amount, category: e.category, source: '花費'}));
   return items;
 }
 function googleMapsUrl(address){
@@ -4462,6 +4469,40 @@ function buildTripExpenseSection(trip){
     bar.className = 'stock-alloc-bar';
     const legend = document.createElement('div');
     legend.className = 'stock-alloc-legend';
+    const detailWrap = document.createElement('div');
+    detailWrap.className = 'trip-cat-detail-wrap';
+    detailWrap.style.display = 'none';
+    let expandedCat = null;
+    function renderCatDetail(){
+      detailWrap.innerHTML = '';
+      if(!expandedCat){ detailWrap.style.display = 'none'; return; }
+      detailWrap.style.display = 'block';
+      const catItems = allCosts.filter(c => c.category === expandedCat && Number(c.amount) > 0);
+      if(catItems.length === 0){
+        const empty = document.createElement('div');
+        empty.className = 'trip-empty-hint';
+        empty.textContent = '這個分類目前沒有金額紀錄';
+        detailWrap.appendChild(empty);
+        return;
+      }
+      catItems.forEach(c => {
+        const row = document.createElement('div');
+        row.className = 'trip-cat-detail-row';
+        const src = document.createElement('span');
+        src.className = 'trip-cat-detail-src';
+        src.textContent = c.source;
+        row.appendChild(src);
+        const nm = document.createElement('span');
+        nm.className = 'trip-cat-detail-name';
+        nm.textContent = c.item;
+        row.appendChild(nm);
+        const amtEl = document.createElement('span');
+        amtEl.className = 'trip-cat-detail-amt';
+        amtEl.textContent = `$${Math.round(c.amount).toLocaleString()}`;
+        row.appendChild(amtEl);
+        detailWrap.appendChild(row);
+      });
+    }
     EXPENSE_CATEGORIES.forEach(cat => {
       const amt = byCat[cat.id] || 0;
       if(amt <= 0) return;
@@ -4473,16 +4514,23 @@ function buildTripExpenseSection(trip){
       seg.title = `${cat.name} ${pct.toFixed(1)}%`;
       bar.appendChild(seg);
       const item = document.createElement('div');
-      item.className = 'stock-alloc-legend-item';
+      item.className = 'stock-alloc-legend-item trip-legend-item';
       const dot = document.createElement('span');
       dot.className = 'stock-alloc-dot';
       dot.style.background = color.text;
       item.appendChild(dot);
       item.appendChild(document.createTextNode(`${cat.name} $${Math.round(amt).toLocaleString()}`));
+      item.onclick = () => {
+        expandedCat = expandedCat === cat.id ? null : cat.id;
+        legend.querySelectorAll('.trip-legend-item').forEach(li => li.classList.remove('active'));
+        if(expandedCat === cat.id) item.classList.add('active');
+        renderCatDetail();
+      };
       legend.appendChild(item);
     });
     allocCard.appendChild(bar);
     allocCard.appendChild(legend);
+    allocCard.appendChild(detailWrap);
     sec.appendChild(allocCard);
   }
 
