@@ -1199,8 +1199,8 @@ async function fetchFunnelData() {
     }
   }
   // 解析月份別漏斗（B~N，品項名在 col 0，I~N 在 col 7~12）
-  function parseMonthRows(rows, brand, mi) {
-    if (!funnelDataMonthly[brand][mi]) funnelDataMonthly[brand][mi] = {};
+  function parseMonthRows(rows, brand, mi, append=false) {
+    if (!append) funnelDataMonthly[brand][mi] = {}; // reset，避免 re-sync 時累加
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (!row?.c) continue;
@@ -1234,8 +1234,11 @@ async function fetchFunnelData() {
   try { const r = await gvizJSONP('行銷新客轉換概況', 'B3:H22');  parseRows(r?.table?.rows||[], 'qi'); }
   catch(e) { console.warn('原綺漏斗載入失敗:', e.message); }
   // 原渥累計：B24:H52（含7月起新增品項）
-  try { const r = await gvizJSONP('行銷新客轉換概況', 'B24:H52'); parseRows(r?.table?.rows||[], 'wo'); }
+  try { const r = await gvizJSONP('行銷新客轉換概況', 'B24:H41'); parseRows(r?.table?.rows||[], 'wo'); }
   catch(e) { console.warn('原渥漏斗載入失敗:', e.message); }
+  // 7月起新增品項（row 48-52）累計漏斗
+  try { const r = await gvizJSONP('行銷新客轉換概況', 'B48:H52'); parseRows(r?.table?.rows||[], 'wo'); }
+  catch(e) { console.warn('原渥新品項漏斗載入失敗:', e.message); }
   // 8月（mi=7）：B~N 一次帶品項名 + I~N 數據
   try {
     const r = await gvizJSONP('行銷新客轉換概況', 'B3:N22');
@@ -1243,10 +1246,16 @@ async function fetchFunnelData() {
     console.log('[漏斗] 原綺8月月別載入成功，品項數:', Object.keys(funnelDataMonthly.qi[7]||{}).length, funnelDataMonthly.qi[7]);
   } catch(e) { console.error('[漏斗] 原綺8月漏斗載入失敗:', e.message); }
   try {
-    const r = await gvizJSONP('行銷新客轉換概況', 'B24:N52');
+    const r = await gvizJSONP('行銷新客轉換概況', 'B24:N41');
     parseMonthRows(r?.table?.rows||[], 'wo', 7);
-    console.log('[漏斗] 原渥8月月別載入成功，品項數:', Object.keys(funnelDataMonthly.wo[7]||{}).length, funnelDataMonthly.wo[7]);
+    console.log('[漏斗] 原渥8月月別載入成功，品項數:', Object.keys(funnelDataMonthly.wo[7]||{}).length);
   } catch(e) { console.error('[漏斗] 原渥8月漏斗載入失敗:', e.message); }
+  // 7月起新增品項（row 48-52）月別漏斗
+  try {
+    const r = await gvizJSONP('行銷新客轉換概況', 'B48:N52');
+    parseMonthRows(r?.table?.rows||[], 'wo', 7, true); // append=true：不 reset，直接補入
+    console.log('[漏斗] 原渥新品項8月月別載入成功');
+  } catch(e) { console.warn('[漏斗] 原渥新品項漏斗載入失敗:', e.message); }
 }
 
 async function initAutoFetch() {
@@ -1393,10 +1402,9 @@ async function initAutoFetch() {
     const v = await fetchCell('K21:K21');
     if (v != null) { kpiTrend.qi.tc[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原綺8月台中：${e.message}`); }
-  try {
-    const v = await fetchCell('K22:K22');
-    if (v != null) { kpiTrend.qi.data[7] = v; anyUpdated = true; }
-  } catch(e) { errors.push(`原綺8月新客：${e.message}`); }
+  // 原綺8月總新客 = 台北 + 台中（不讀 K22，同原渥）
+  { const tp = kpiTrend.qi.tp[7], tc = kpiTrend.qi.tc[7];
+    if (tp != null || tc != null) { kpiTrend.qi.data[7] = (tp||0) + (tc||0); anyUpdated = true; } }
   try {
     const v = await fetchCell('K23:K23');
     if (v != null) { kpiTrend.qi.rev[7] = v; anyUpdated = true; }
@@ -1409,10 +1417,9 @@ async function initAutoFetch() {
     const v = await fetchCell('X21:X21');
     if (v != null) { kpiTrend.wo.tc[7] = v; anyUpdated = true; }
   } catch(e) { errors.push(`原渥8月台中：${e.message}`); }
-  try {
-    const v = await fetchCell('X22:X22');
-    if (v != null) { kpiTrend.wo.data[7] = v; anyUpdated = true; }
-  } catch(e) { errors.push(`原渥8月新客：${e.message}`); }
+  // 原渥8月總新客 = 台北 + 台中（不讀 X22，避免 sheet formula 與廣告統計差異）
+  { const tp = kpiTrend.wo.tp[7], tc = kpiTrend.wo.tc[7];
+    if (tp != null || tc != null) { kpiTrend.wo.data[7] = (tp||0) + (tc||0); anyUpdated = true; } }
   try {
     const v = await fetchCell('X23:X23');
     if (v != null) { kpiTrend.wo.rev[7] = v; anyUpdated = true; }
