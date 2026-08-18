@@ -424,6 +424,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .day-sheet-empty{font-size:11.5px;color:#b0afa9;padding:10px 2px;text-align:center;}
 
 @media(max-width:768px){
+ input, select, textarea{font-size:16px !important;}
  .header-inner{padding:10px 34px 10px 16px;}
  .header-bar{padding:8px 34px 8px 16px;}
  .dash{padding:14px 34px 60px 16px;}
@@ -1233,6 +1234,71 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
   </div>
 </div>
 
+<div class="modal-overlay" id="ticketModalOverlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="ticketModalTitle">新增門票</span>
+      <button class="modal-close" id="ticketModalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">名稱</div>
+        <input type="text" id="ticketModalName" class="modal-input" placeholder="門票名稱">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div class="modal-label">日期</div>
+          <input type="date" id="ticketModalDate" class="modal-input">
+        </div>
+        <div style="flex:1;">
+          <div class="modal-label">時間（選填）</div>
+          <input type="text" id="ticketModalTime" class="modal-input" placeholder="例如：09:00">
+        </div>
+      </div>
+      <div>
+        <div class="modal-label">地址（選填）</div>
+        <input type="text" id="ticketModalAddress" class="modal-input" placeholder="完整地址，用來連到 Google Maps">
+      </div>
+      <div>
+        <div class="modal-label">備註（選填）</div>
+        <input type="text" id="ticketModalNote" class="modal-input" placeholder="訂購資訊等">
+      </div>
+      <div>
+        <div class="modal-label">預定者（選填）</div>
+        <input type="text" id="ticketModalBookedBy" class="modal-input" placeholder="例如：Mao">
+      </div>
+      <div>
+        <div class="modal-label">付款狀態</div>
+        <div class="scope-pick" id="ticketModalPayStatusPick" style="flex-wrap:wrap;">
+          <span class="scope-pick-btn" data-status="unpaid">未付款</span>
+          <span class="scope-pick-btn" data-status="deposit">已付訂金</span>
+          <span class="scope-pick-btn" data-status="paid">已付清</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div class="modal-label">金額（選填）</div>
+          <input type="number" step="1" id="ticketModalAmount" class="modal-input" placeholder="0">
+        </div>
+        <div style="flex:1;">
+          <div class="modal-label">代墊人（選填）</div>
+          <input type="text" id="ticketModalPayer" class="modal-input" placeholder="例如：Mao">
+        </div>
+      </div>
+      <div>
+        <div class="modal-label">分攤明細</div>
+        <div id="ticketModalSplits"></div>
+        <button class="trip-add-mini" id="ticketModalAddSplitBtn" type="button">+ 新增分攤對象</button>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn-cancel" id="ticketModalDeleteBtn" style="display:none;color:#A32D2D;">刪除</button>
+      <button class="modal-btn-cancel" id="ticketModalCancelBtn">取消</button>
+      <button class="modal-btn-save" id="ticketModalSaveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="itineraryModalOverlay" style="display:none;">
   <div class="modal-box">
     <div class="modal-hdr">
@@ -1406,6 +1472,7 @@ function tripAllCosts(trip){
   trip.flights.forEach(f => items.push({item: (f.direction === 'return' ? '回程機票' : '去程機票') + (f.flightNo ? '・' + f.flightNo : ''), amount: f.amount, category: 'transport', source: '航班'}));
   trip.stays.forEach(s => items.push({item: s.name, amount: s.amount, category: 'stay', source: '住宿'}));
   trip.restaurants.forEach(r => items.push({item: r.name, amount: r.amount, category: 'food', source: '餐廳'}));
+  trip.tickets.forEach(t => items.push({item: t.name, amount: t.amount, category: 'ticket', source: '門票'}));
   trip.expenses.forEach(e => items.push({item: e.item, amount: e.amount, category: e.category, source: '花費'}));
   return items;
 }
@@ -1707,6 +1774,7 @@ function normalizeState(s){
     if(!Array.isArray(trip.flights)) trip.flights = [];
     if(!Array.isArray(trip.stays)) trip.stays = [];
     if(!Array.isArray(trip.restaurants)) trip.restaurants = [];
+    if(!Array.isArray(trip.tickets)) trip.tickets = [];
     if(!Array.isArray(trip.itinerary)) trip.itinerary = [];
     if(!Array.isArray(trip.todos)) trip.todos = [];
     if(!Array.isArray(trip.shopping)) trip.shopping = [];
@@ -1732,6 +1800,11 @@ function normalizeState(s){
       if(typeof r2.bookedBy !== 'string') r2.bookedBy = '';
       if(!['unpaid','deposit','paid'].includes(r2.paymentStatus)) r2.paymentStatus = 'unpaid';
       normPayerSplits(r2);
+    });
+    trip.tickets.forEach(t2 => {
+      if(typeof t2.bookedBy !== 'string') t2.bookedBy = '';
+      if(!['unpaid','deposit','paid'].includes(t2.paymentStatus)) t2.paymentStatus = 'unpaid';
+      normPayerSplits(t2);
     });
     trip.expenses.forEach(normPayerSplits);
   });
@@ -4283,6 +4356,12 @@ function buildTripCard(trip){
     return {date: dateTxt, name: s.name, address: s.address, bookedBy: s.bookedBy, paymentStatus: s.paymentStatus};
   }));
 
+  // 門票
+  body.appendChild(buildTripListSection(trip, '🎫 門票', trip.tickets, t => openTicketModal(trip, t), () => openTicketModal(trip, null), t => {
+    const dateTxt = (t.date ? t.date.slice(5) : '') + (t.time ? ' ' + t.time : '');
+    return {date: dateTxt, name: t.name, address: t.address, bookedBy: t.bookedBy, paymentStatus: t.paymentStatus};
+  }));
+
   // 餐廳
   body.appendChild(buildTripListSection(trip, '🍽 餐廳', trip.restaurants, r => openRestaurantModal(trip, r), () => openRestaurantModal(trip, null), r => {
     const dateTxt = (r.date ? r.date.slice(5) : '') + (r.time ? ' ' + r.time : '');
@@ -4311,6 +4390,7 @@ const TIMELINE_SOURCE_STYLE = {
   restaurant: {dot: '#993556', bg: '#FBEAF0', text: '#993556', label: '餐廳'},
   stay: {dot: '#2F6B1F', bg: '#E3F3E0', text: '#2F6B1F', label: '住宿'},
   flight: {dot: '#185FA5', bg: '#E6F1FB', text: '#185FA5', label: '航班'},
+  ticket: {dot: '#9A6B00', bg: '#FFF3D6', text: '#9A6B00', label: '門票'},
 };
 function padTimeStr(t){
   const m = (t || '').match(/^(\d{1,2}):([0-5]\d)$/);
@@ -4339,6 +4419,10 @@ function buildTripTimelineEvents(trip){
     if(!f.date) return;
     const title = (f.direction === 'return' ? '回程機票' : '去程機票') + (f.flightNo ? '・' + f.flightNo : '') + (f.from || f.to ? '　' + (f.from || '') + ' → ' + (f.to || '') : '');
     events.push({date: f.date, time: guessTimeFromText(f.from) || guessTimeFromText(f.to), title, source: 'flight', onClick: () => openFlightModal(trip, f)});
+  });
+  trip.tickets.forEach(t => {
+    if(!t.date) return;
+    events.push({date: t.date, time: t.time || '', title: t.name, source: 'ticket', onClick: () => openTicketModal(trip, t)});
   });
   return events;
 }
@@ -4393,7 +4477,7 @@ function buildTripTimelineSection(trip){
   });
   sec.appendChild(nav);
 
-  const srcLabelMap = {itinerary: '行程', restaurant: '餐廳', stay: '住宿', flight: '航班'};
+  const srcLabelMap = {itinerary: '行程', restaurant: '餐廳', stay: '住宿', flight: '航班', ticket: '門票'};
 
   dateKeys.forEach(dateKey => {
     const group = document.createElement('div');
@@ -4925,6 +5009,52 @@ function deleteRestaurantModal(){
   saveState(); closeRestaurantModal(); renderTripPage();
 }
 
+// ── 門票彈窗 ─────────────────────────────
+let ticketModalCtx = null;
+function openTicketModal(trip, t){
+  ticketModalCtx = {trip, ticket: t};
+  document.getElementById('ticketModalTitle').textContent = t ? '編輯門票' : '新增門票';
+  document.getElementById('ticketModalName').value = t ? t.name : '';
+  document.getElementById('ticketModalDate').value = t ? t.date : '';
+  document.getElementById('ticketModalTime').value = t ? (t.time || '') : '';
+  document.getElementById('ticketModalAddress').value = t ? (t.address || '') : '';
+  document.getElementById('ticketModalNote').value = t ? (t.note || '') : '';
+  document.getElementById('ticketModalBookedBy').value = t ? (t.bookedBy || '') : '';
+  wirePayStatusPick('ticketModalPayStatusPick', t ? t.paymentStatus : 'unpaid');
+  document.getElementById('ticketModalAmount').value = t ? (t.amount || '') : '';
+  document.getElementById('ticketModalPayer').value = t ? (t.payer || '') : '';
+  ticketSplitsCtl.set(t ? t.splits : []);
+  document.getElementById('ticketModalDeleteBtn').style.display = t ? 'inline-block' : 'none';
+  document.getElementById('ticketModalOverlay').style.display = 'flex';
+}
+function closeTicketModal(){ document.getElementById('ticketModalOverlay').style.display = 'none'; }
+function saveTicketModal(){
+  const {trip, ticket} = ticketModalCtx;
+  const name = document.getElementById('ticketModalName').value.trim();
+  if(!name){ alert('請輸入名稱'); return; }
+  const date = document.getElementById('ticketModalDate').value;
+  const time = document.getElementById('ticketModalTime').value.trim();
+  const address = document.getElementById('ticketModalAddress').value.trim();
+  const note = document.getElementById('ticketModalNote').value.trim();
+  const bookedBy = document.getElementById('ticketModalBookedBy').value.trim();
+  const paymentStatus = readPayStatusPick('ticketModalPayStatusPick');
+  const amount = Number(document.getElementById('ticketModalAmount').value) || 0;
+  const payer = document.getElementById('ticketModalPayer').value.trim();
+  const splits = ticketSplitsCtl.get();
+  if(ticket){
+    Object.assign(ticket, {name, date, time, address, note, bookedBy, paymentStatus, amount, payer, splits});
+  }else{
+    trip.tickets.push({id:uid(), name, date, time, address, note, bookedBy, paymentStatus, amount, payer, splits});
+  }
+  saveState(); closeTicketModal(); renderTripPage();
+}
+function deleteTicketModal(){
+  const {trip, ticket} = ticketModalCtx;
+  if(!ticket) return;
+  trip.tickets = trip.tickets.filter(t => t.id !== ticket.id);
+  saveState(); closeTicketModal(); renderTripPage();
+}
+
 // ── 行程規劃彈窗 ─────────────────────────────
 let itineraryModalCtx = null;
 function openItineraryModal(trip, item){
@@ -5030,6 +5160,7 @@ const expenseSplitsCtl = makeSplitsController('expenseModalSplits');
 const staySplitsCtl = makeSplitsController('stayModalSplits');
 const restaurantSplitsCtl = makeSplitsController('restaurantModalSplits');
 const flightSplitsCtl = makeSplitsController('flightModalSplits');
+const ticketSplitsCtl = makeSplitsController('ticketModalSplits');
 
 function openExpenseModal(trip, exp){
   expenseModalCtx = {trip, expense: exp};
@@ -5787,6 +5918,15 @@ document.getElementById('restaurantModalSaveBtn').onclick = saveRestaurantModal;
 document.getElementById('restaurantModalDeleteBtn').onclick = deleteRestaurantModal;
 document.getElementById('restaurantModalOverlay').onclick = (e) => {
   if(e.target.id === 'restaurantModalOverlay') closeRestaurantModal();
+};
+
+document.getElementById('ticketModalCloseBtn').onclick = closeTicketModal;
+document.getElementById('ticketModalCancelBtn').onclick = closeTicketModal;
+document.getElementById('ticketModalSaveBtn').onclick = saveTicketModal;
+document.getElementById('ticketModalDeleteBtn').onclick = deleteTicketModal;
+document.getElementById('ticketModalAddSplitBtn').onclick = () => ticketSplitsCtl.add();
+document.getElementById('ticketModalOverlay').onclick = (e) => {
+  if(e.target.id === 'ticketModalOverlay') closeTicketModal();
 };
 
 document.getElementById('itineraryModalCloseBtn').onclick = closeItineraryModal;
