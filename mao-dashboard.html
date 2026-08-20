@@ -986,11 +986,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
       </div>
       <div>
         <div class="modal-label">訂閱週期</div>
-        <div class="scope-pick" id="subscriptionModalCyclePick">
+        <div class="scope-pick" id="subscriptionModalCyclePick" style="flex-wrap:wrap;">
           <span class="scope-pick-btn" data-cycle="monthly">每月</span>
           <span class="scope-pick-btn" data-cycle="yearly">每年</span>
           <span class="scope-pick-btn" data-cycle="onetime">買斷</span>
+          <span class="scope-pick-btn" data-cycle="custom">自訂天數</span>
         </div>
+      </div>
+      <div id="subscriptionModalCustomDaysWrap" style="display:none;">
+        <div class="modal-label">每幾天續約一次</div>
+        <input type="number" step="1" min="1" id="subscriptionModalCustomDays" class="modal-input" placeholder="例如：180">
       </div>
       <div style="display:flex;gap:10px;">
         <div style="flex:1;">
@@ -1812,7 +1817,10 @@ function normalizeState(s){
   if(!Array.isArray(s.subscriptions)) s.subscriptions = [];
   if(typeof s.subStatusFilter !== 'string') s.subStatusFilter = 'active';
   s.subCategories.forEach(c => { if(typeof c.collapsed !== 'boolean') c.collapsed = false; });
-  s.subscriptions.forEach(sub => { if(typeof sub.status !== 'string') sub.status = 'active'; });
+  s.subscriptions.forEach(sub => {
+    if(typeof sub.status !== 'string') sub.status = 'active';
+    if(typeof sub.customDays !== 'number') sub.customDays = 0;
+  });
   if(!s.subImportedV1){
     const catIdByName = {};
     IMPORTED_SUB_CATEGORIES.forEach(c => {
@@ -3925,17 +3933,20 @@ function getSubCat(catId){
 }
 
 // 依訂閱開始日跟週期，算出「上次扣款日」跟「下次扣款日」（買斷型沒有下次扣款）
-function computeSubCharges(startDateStr, cycle){
+function computeSubCharges(startDateStr, cycle, customDays){
   if(!startDateStr) return {last:null, next:null};
   const start = new Date(startDateStr + 'T00:00:00');
   const today = new Date(); today.setHours(0,0,0,0);
   if(cycle === 'onetime') return {last:startDateStr, next:null};
+  const days = Number(customDays) || 0;
   const addInterval = (d, n) => {
     const nd = new Date(d);
-    if(cycle === 'yearly') nd.setFullYear(nd.getFullYear() + n);
+    if(cycle === 'custom') nd.setDate(nd.getDate() + days * n);
+    else if(cycle === 'yearly') nd.setFullYear(nd.getFullYear() + n);
     else nd.setMonth(nd.getMonth() + n);
     return nd;
   };
+  if(cycle === 'custom' && days <= 0) return {last:null, next:null};
   if(start > today){
     return {last:null, next:dateStr(start.getFullYear(), start.getMonth(), start.getDate())};
   }
@@ -3953,12 +3964,14 @@ function subMonthlyCost(sub){
   const cost = Number(sub.cost) || 0;
   if(sub.cycle === 'monthly') return cost;
   if(sub.cycle === 'yearly') return cost / 12;
+  if(sub.cycle === 'custom' && Number(sub.customDays) > 0) return cost * 30 / Number(sub.customDays);
   return 0;
 }
 function subYearlyCost(sub){
   const cost = Number(sub.cost) || 0;
   if(sub.cycle === 'monthly') return cost * 12;
   if(sub.cycle === 'yearly') return cost;
+  if(sub.cycle === 'custom' && Number(sub.customDays) > 0) return cost * 365 / Number(sub.customDays);
   return 0;
 }
 
@@ -4007,6 +4020,7 @@ function renderSubscriptionCategorySelect(){
   sel.innerHTML = STATE.subCategories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 }
 function renderSubscriptionCyclePicker(){
+  document.getElementById('subscriptionModalCustomDaysWrap').style.display = subscriptionModalCycle === 'custom' ? '' : 'none';
   document.querySelectorAll('#subscriptionModalCyclePick .scope-pick-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.cycle === subscriptionModalCycle);
     btn.onclick = () => { subscriptionModalCycle = btn.dataset.cycle; renderSubscriptionCyclePicker(); };
@@ -4025,6 +4039,7 @@ function openSubscriptionModal(sub, defaultCat){
   renderSubscriptionCategorySelect();
   document.getElementById('subscriptionModalCategory').value = sub ? sub.categoryId : (defaultCat ? defaultCat.id : STATE.subCategories[0].id);
   subscriptionModalCycle = sub ? sub.cycle : 'monthly';
+  document.getElementById('subscriptionModalCustomDays').value = sub && sub.customDays ? sub.customDays : '';
   renderSubscriptionCyclePicker();
   document.getElementById('subscriptionModalDeleteBtn').style.display = sub ? '' : 'none';
   const toggleBtn = document.getElementById('subscriptionModalToggleBtn');
@@ -4044,13 +4059,15 @@ function saveSubscriptionModal(){
   const categoryId = document.getElementById('subscriptionModalCategory').value;
   const cost = parseFloat(document.getElementById('subscriptionModalCost').value) || 0;
   const startDate = document.getElementById('subscriptionModalStartDate').value;
+  const customDays = Number(document.getElementById('subscriptionModalCustomDays').value) || 0;
   if(!name){ alert('請輸入訂閱服務名稱'); return; }
   if(!startDate){ alert('請選擇訂閱開始日'); return; }
+  if(subscriptionModalCycle === 'custom' && customDays <= 0){ alert('請輸入續約天數'); return; }
   if(subscriptionModalEditId){
     const sub = STATE.subscriptions.find(s => s.id === subscriptionModalEditId);
-    if(sub){ Object.assign(sub, {name, platform, categoryId, cycle:subscriptionModalCycle, cost, startDate}); }
+    if(sub){ Object.assign(sub, {name, platform, categoryId, cycle:subscriptionModalCycle, cost, startDate, customDays}); }
   }else{
-    STATE.subscriptions.push({id:uid(), name, platform, categoryId, cycle:subscriptionModalCycle, cost, startDate, status:'active'});
+    STATE.subscriptions.push({id:uid(), name, platform, categoryId, cycle:subscriptionModalCycle, cost, startDate, customDays, status:'active'});
   }
   saveState();
   closeSubscriptionModal();
@@ -4086,7 +4103,7 @@ function buildSubscriptionRow(sub){
 
   const cycle = document.createElement('span');
   cycle.className = 'sub-row-cycle';
-  cycle.textContent = sub.cycle === 'monthly' ? '每月' : sub.cycle === 'yearly' ? '每年' : '買斷';
+  cycle.textContent = sub.cycle === 'monthly' ? '每月' : sub.cycle === 'yearly' ? '每年' : sub.cycle === 'custom' ? `每${sub.customDays || 0}天` : '買斷';
   row.appendChild(cycle);
 
   const cost = document.createElement('span');
@@ -4095,7 +4112,7 @@ function buildSubscriptionRow(sub){
   row.appendChild(cost);
 
   const next = document.createElement('span');
-  const charges = computeSubCharges(sub.startDate, sub.cycle);
+  const charges = computeSubCharges(sub.startDate, sub.cycle, sub.customDays);
   if(charges.next){
     const days = Math.round((new Date(charges.next + 'T00:00:00') - new Date(todayStr() + 'T00:00:00')) / 86400000);
     next.className = 'sub-row-next' + (sub.status === 'active' && days <= 7 ? ' soon' : '');
@@ -4224,8 +4241,8 @@ function renderSubCategories(){
       catBody.appendChild(hint);
     }
     [...subsInCat].sort((a,b) => {
-      const ca = computeSubCharges(a.startDate, a.cycle).next || '9999';
-      const cb = computeSubCharges(b.startDate, b.cycle).next || '9999';
+      const ca = computeSubCharges(a.startDate, a.cycle, a.customDays).next || '9999';
+      const cb = computeSubCharges(b.startDate, b.cycle, b.customDays).next || '9999';
       return ca.localeCompare(cb);
     }).forEach(sub => catBody.appendChild(buildSubscriptionRow(sub)));
 
