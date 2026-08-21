@@ -107,13 +107,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .proj-blk{border:.5px solid rgba(0,0,0,.07);border-radius:9px;margin-bottom:8px;overflow:hidden;transition:box-shadow .1s;}
 .proj-blk.drop-before{box-shadow:0 -2px 0 #378ADD;}
 .proj-blk.drop-after{box-shadow:0 2px 0 #378ADD;}
-.proj-drag-handle{cursor:grab;color:#c9c8c2;font-size:16px;flex-shrink:0;user-select:none;padding:8px 6px;margin:-8px -6px -8px -4px;touch-action:none;}
+.proj-drag-handle{cursor:grab;color:#c9c8c2;font-size:16px;flex-shrink:0;user-select:none;padding:8px 6px;margin:-8px -6px -8px -6px;touch-action:none;}
 .proj-drag-handle:active{cursor:grabbing;color:#5f5e5a;}
 .cat-card.cat-dragover{background:#f0f6fc;}
 .cat-card{transition:box-shadow .1s;}
 .cat-card.cat-drop-before{box-shadow:0 -3px 0 #378ADD;}
 .cat-card.cat-drop-after{box-shadow:0 3px 0 #378ADD;}
-.cat-drag-handle{cursor:grab;color:#c9c8c2;font-size:16px;flex-shrink:0;user-select:none;padding:8px 6px;margin:-8px -4px -8px -4px;touch-action:none;}
+.cat-drag-handle{cursor:grab;color:#c9c8c2;font-size:16px;flex-shrink:0;user-select:none;padding:8px 6px;margin:-8px -6px -8px -6px;touch-action:none;}
 .cat-drag-handle:active{cursor:grabbing;color:#5f5e5a;}
 .proj-hdr{display:flex;align-items:center;gap:6px;padding:8px 10px;background:#faf9f7;cursor:pointer;}
 .proj-name-col{flex:1;min-width:0;cursor:pointer;}
@@ -141,7 +141,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-
 .item-row{display:flex;align-items:center;gap:6px;padding:5px 2px;border-bottom:.5px solid rgba(0,0,0,.05);}
 .item-row:last-child{border-bottom:none;}
 .item-row.done .item-txt{text-decoration:line-through;color:#b0afa9;}
-.item-handle{cursor:grab;color:#c9c8c2;font-size:17px;flex-shrink:0;user-select:none;padding:8px 6px;margin:-8px -6px -8px 0;touch-action:none;}
+.item-handle{cursor:grab;color:#c9c8c2;font-size:17px;flex-shrink:0;user-select:none;padding:8px 6px;margin:-8px -6px -8px -6px;touch-action:none;}
 .item-handle:active{cursor:grabbing;color:#5f5e5a;}
 .item-textcol{flex:1;min-width:0;cursor:pointer;padding:2px 4px;border-radius:4px;}
 .item-textcol:hover{background:#f5f4f0;}
@@ -2252,10 +2252,20 @@ function getCategoryScope(catId){
   return cat ? (cat.scope || 'work') : 'work';
 }
 
+// 勾選細項完成狀態時，局部更新畫面（列/月曆chip/專案完成數），避免整頁重繪造成手機版面跳動
+function syncItemDoneUI(item, proj){
+  document.querySelectorAll(`.item-row[data-item-id="${item.id}"]`).forEach(r => r.classList.toggle('done', !!item.done));
+  document.querySelectorAll(`.cal-chip[data-item-id="${item.id}"]`).forEach(c => c.classList.toggle('done', !!item.done));
+  if(proj){
+    const badge = document.querySelector(`.proj-blk[data-proj-id="${proj.id}"] .proj-count`);
+    if(badge) badge.textContent = `${proj.items.filter(i=>i.done).length}/${proj.items.length}`;
+  }
+}
 function buildCalChip(item, project){
   // project 為 null 代表這是直接在月曆新增的行程（不隸屬任何專案）
   const chip = document.createElement('div');
   chip.className = 'cal-chip' + (item.done ? ' done' : '') + (project ? '' : ' standalone');
+  chip.dataset.itemId = item.id;
 
   const colorObj = project
     ? getCategoryColor(project.categoryId)
@@ -2273,7 +2283,7 @@ function buildCalChip(item, project){
   if(project){
     const cb = document.createElement('input');
     cb.type = 'checkbox'; cb.checked = !!item.done;
-    cb.onchange = () => { item.done = cb.checked; saveState(); renderAll(); };
+    cb.onchange = () => { item.done = cb.checked; saveState(); syncItemDoneUI(item, project); };
     chip.appendChild(cb);
   }
 
@@ -2669,6 +2679,7 @@ function buildProjectBlock(proj){
 function buildItemRow(item, proj){
   const row = document.createElement('div');
   row.className = 'item-row' + (item.done ? ' done' : '');
+  row.dataset.itemId = item.id;
 
   const handle = document.createElement('span');
   handle.className = 'item-handle';
@@ -2683,7 +2694,7 @@ function buildItemRow(item, proj){
 
   const cb = document.createElement('input');
   cb.type = 'checkbox'; cb.checked = !!item.done;
-  cb.onchange = () => { item.done = cb.checked; saveState(); renderAll(); };
+  cb.onchange = () => { item.done = cb.checked; saveState(); syncItemDoneUI(item, proj); };
   row.appendChild(cb);
 
   const textCol = document.createElement('div');
