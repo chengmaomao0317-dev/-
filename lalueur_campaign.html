@@ -1122,6 +1122,8 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 {"date": "2026-08-25", "month": "2026-08", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "新客", "client_name": "周曉恩", "subtotal": 17498, "ext_revenue": 1998, "store": "站前店", "period": "20260623-20260731"},
 // 站前 8/27
 {"date": "2026-08-27", "month": "2026-08", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "新客", "client_name": "林佳璇", "subtotal": 17498, "ext_revenue": 1998, "store": "站前店", "period": "20260623-20260731"},
+// 站前 8/28
+{"date": "2026-08-28", "month": "2026-08", "activity": "超肌因水拉提", "act_price": 4499, "client_type": "舊客", "client_name": "劉佩芸", "subtotal": 4275, "ext_revenue": 0, "store": "站前店", "period": "20260724-20260831"},
 {"date": "2026-08-22", "month": "2026-08", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "舊客", "client_name": "詹琇涵", "subtotal": 31350, "ext_revenue": 15850, "store": "站前店", "period": "20260623-20260731"},
 // 板橋 8/19
 {"date": "2026-08-19", "month": "2026-08", "activity": "法式珍珠光美背", "act_price": 2499, "client_type": "舊客", "client_name": "彭圓安", "subtotal": 180296, "ext_revenue": 177797, "store": "板橋店", "period": "20260807-20260930"},
@@ -1134,6 +1136,10 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
 {"date": "2026-08-26", "month": "2026-08", "activity": "法式珍珠光美背", "act_price": 2499, "client_type": "新客", "client_name": "蘇姿耘", "subtotal": 3498, "ext_revenue": 999, "store": "板橋店", "period": "20260807-20260930"},
 // 板橋 8/28
 {"date": "2026-08-28", "month": "2026-08", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "新客", "client_name": "鐘慧穎", "subtotal": 17498, "ext_revenue": 1998, "store": "板橋店", "period": "20260623-20260731"},
+// 板橋 8/31
+{"date": "2026-08-31", "month": "2026-08", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "舊客", "client_name": "陳思穎", "subtotal": 33000, "ext_revenue": 17500, "store": "板橋店", "period": "20260623-20260731"},
+{"date": "2026-08-31", "month": "2026-08", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "舊客", "client_name": "陳思穎", "subtotal": 15500, "ext_revenue": 0, "store": "板橋店", "period": "20260623-20260731"},
+{"date": "2026-08-31", "month": "2026-08", "activity": "超肌因水拉提", "act_price": 4499, "client_type": "舊客", "client_name": "李芷瑜", "subtotal": 7139, "ext_revenue": 2640, "store": "板橋店", "period": "20260724-20260831"},
 // 忠孝 8/13
 {"date": "2026-08-13", "month": "2026-08", "activity": "夏日限定$15500", "act_price": 15500, "client_type": "新客", "client_name": "古澤繪美", "subtotal": 17498, "ext_revenue": 1998, "store": "忠孝店", "period": "20260623-20260731"},
 // 台中 8/6
@@ -1198,6 +1204,12 @@ const GS=[
   {k:'fzmb',ic:'💎',lb:'法式珍珠光美背',acts:[
     {k:'法式珍珠光美背',lb:'小香肩＋液態皮秒＋手臂 $2,499',pl:'單方案',p:2499,pr:'2026/08/07－2026/09/30',nc:'不限',
      ds:'小香肩＋液態皮秒＋手臂 $2,499'},
+  ]},
+  {k:'zy_rw',ic:'🎊',lb:'週年慶（原渥）',acts:[
+    {k:'綺肌養護全臉升級',lb:'綺肌養護·全臉升級',pl:'$19,999',p:19999,pr:'2026/09/01－2026/10/31',nc:'不限',
+     ds:'童顏V臉20000發贈無針水光(1+2)2堂 $19,999'},
+    {k:'美容九宮格',lb:'美容九宮格',pl:'單格$2,000｜三格$4,999｜六格$9,000',p:0,pr:'2026/09/01－2026/10/31',nc:'不限',
+     ds:'小香肩｜童顏2000發｜酸類美背｜杏仁酸臉｜體雕｜超皮秒臉｜美胸｜無針水光｜肌肉管理 · 單格$2,000｜任三格$4,999｜任六格$9,000，連線贈藍色雙層化妝包'},
   ]},
 ];
 
@@ -1280,8 +1292,17 @@ const YQ_RAW=[
   {"date":"2026-08-26","month":"2026-08","activity":"女醫師暖心企劃","act_price":19999,"client_type":"新客","client_name":"余婕菱","subtotal":28998,"ext_revenue":8999,"store":"台北原綺","period":"20260801-20260831"},
   {"date":"2026-08-26","month":"2026-08","activity":"無雙電波限時","act_price":54888,"client_type":"新客","client_name":"洪嘉憶","subtotal":86887,"ext_revenue":31999,"store":"台北原綺","period":"20260717-20260831"},
   {"date":"2026-08-26","month":"2026-08","activity":"無雙電波限時","act_price":54888,"client_type":"舊客","client_name":"吳品喬","subtotal":54888,"ext_revenue":0,"store":"台北原綺","period":"20260717-20260831"},
+  // 8/29 台北原綺
+  {"date":"2026-08-29","month":"2026-08","activity":"無雙電波限時","act_price":90888,"client_type":"新客","client_name":"陳雪琴","subtotal":90888,"ext_revenue":0,"store":"台北原綺","period":"20260717-20260831"},
+  {"date":"2026-08-29","month":"2026-08","activity":"無雙電波限時","act_price":90888,"client_type":"舊客","client_name":"邱怡嘉","subtotal":90888,"ext_revenue":0,"store":"台北原綺","period":"20260717-20260831"},
+  // 8/31 台北原綺
+  {"date":"2026-08-31","month":"2026-08","activity":"週年慶A+B","act_price":15000,"client_type":"舊客","client_name":"王沛雯","subtotal":15000,"ext_revenue":0,"store":"台北原綺","period":"20260831-20261031"},
+  {"date":"2026-08-31","month":"2026-08","activity":"週年慶A+B","act_price":15000,"client_type":"舊客","client_name":"高綾雲","subtotal":15000,"ext_revenue":0,"store":"台北原綺","period":"20260831-20261031"},
   // 8/19 台中原綺
   {"date":"2026-08-19","month":"2026-08","activity":"無雙電波限時","act_price":54888,"client_type":"新客","client_name":"李若喬","subtotal":61887,"ext_revenue":6999,"store":"台中原綺","period":"20260717-20260831"},
+  // 8/28 台中原綺
+  {"date":"2026-08-28","month":"2026-08","activity":"無雙電波限時","act_price":18888,"client_type":"新客","client_name":"許芷翊","subtotal":27888,"ext_revenue":9000,"store":"台中原綺","period":"20260717-20260831"},
+  {"date":"2026-08-28","month":"2026-08","activity":"無雙電波限時","act_price":9000,"client_type":"新客","client_name":"許芷翊","subtotal":9000,"ext_revenue":0,"store":"台中原綺","period":"20260717-20260831"},
   // 8/7 台中原綺
   {"date":"2026-08-07","month":"2026-08","activity":"再生針","act_price":25000,"client_type":"舊客","client_name":"顏彥偶","ext_revenue":14999,"store":"台中原綺","period":"20260708-20261231"},
   {"date":"2026-08-07","month":"2026-08","activity":"再生針","act_price":68399,"client_type":"舊客","client_name":"劉佩璦","ext_revenue":0,"store":"台中原綺","period":"20260708-20261231"},
@@ -1332,13 +1353,27 @@ const GS_YQ=[
     {k:'台中限定1+1',lb:'仙女玻尿酸1cc＋熊貓針1cc $18,799',p:18799,pr:'2026/06/18－2026/07/18',nc:'新客',
      ds:'仙女玻尿酸1cc＋熊貓針1cc $18,799（台中限定，新客限定，不能加購體驗價）'},
   ]},
-  {k:'ws',ic:'⚡',lb:'無雙電波限時',pr:'2026/07/17－2026/08/31',acts:[
-    {k:'無雙電波限時',lb:'無雙電波限時',pl:'多方案',p:0,pr:'2026/07/17－2026/08/31',nc:'不限',
-     ds:'200發$18,888｜後續每100發$9,000｜600發$54,888（贈肉毒40u/除皺三區/皮秒蜂巢三選一）｜1000發$90,888（贈音波200發/肉毒一瓶二選一）'},
+  {k:'ws',ic:'⚡',lb:'無雙電波限時',pr:'2026/07/17起',acts:[
+    {k:'無雙電波限時',lb:'無雙電波限時',pl:'多方案',p:0,pr:'2026/07/17起',nc:'不限',
+     ds:'200發$18,888｜後續每100發$9,000｜600發$54,888（肉毒40u/除皺三區/皮秒蜂巢三選一）｜1000發$90,888 升級Alpha探頭（音波200發/肉毒一瓶二選一）｜★Alpha探頭加購$100/發'},
   ]},
   {k:'wnhx',ic:'👩‍⚕️',lb:'女醫師暖心企劃',pr:'2026/08/01－2026/08/31',acts:[
     {k:'女醫師暖心企劃',lb:'女醫師暖心企劃',pl:'單方案',p:19999,pr:'2026/08/01－2026/08/31',nc:'不限',
      ds:'女醫師暖心企劃 $19,999'},
+  ]},
+  {k:'zy',ic:'🎉',lb:'週年慶',pr:'2026/08/31－2026/10/31',acts:[
+    {k:'電音波專區',lb:'電音波專區',pl:'$19,999',p:19999,pr:'2026/08/31－2026/10/31',nc:'不限',
+     ds:'音波200發+超玩美電波100發 $19,999（限購一次，不參與任何折扣）'},
+    {k:'週年慶A+B',lb:'A+B $15,000',pl:'$15,000',p:15000,pr:'2026/08/31－2026/10/31',nc:'不限',
+     ds:'A區：肉毒除皺三區(6,000)／肉毒小臉(6,000)／頂級水光針1堂(7,499)／臉部埋線2條(10,000)｜B區：再生針0.5cc(8,999)／仙女玻尿酸1cc(12,000)／熊貓針1cc(13,000)／皮秒蜂巢3堂(15,000)／臉部埋線2條(10,000)（限購一次，不參與任何折扣）'},
+    {k:'人中拉提x立體唇',lb:'人中拉提x立體唇',pl:'$29,999',p:29999,pr:'2026/08/31－2026/10/31',nc:'不限',
+     ds:'超玩美300發+仙女1cc $29,999（限購一次，不參與任何折扣）'},
+    {k:'升級版外三點拉提',lb:'升級版外三點拉提',pl:'$48,000',p:48000,pr:'2026/08/31－2026/10/31',nc:'不限',
+     ds:'喬雅登 $48,000（限購一次，不參與任何折扣）'},
+    {k:'6C眉弓亮眼',lb:'6C眉弓亮眼',pl:'$29,999',p:29999,pr:'2026/08/31－2026/10/31',nc:'不限',
+     ds:'再生針1cc+熊貓針1cc $29,999（限購一次，不參與任何折扣）'},
+    {k:'點線面拉提',lb:'點線面拉提',pl:'$33,999',p:33999,pr:'2026/08/31－2026/10/31',nc:'不限',
+     ds:'埋線4條+瑞斯朗1cc+音波300發 $33,999（限購一次，不參與任何折扣）'},
   ]},
 ];
 
@@ -1462,11 +1497,22 @@ const PROD_RAW=[
   // 板橋 8/29
   {"date": "2026-08-29", "month": "2026-08", "activity": "夏日面膜季", "act_price": 2640, "client_type": "新客", "client_name": "羅紫寧", "subtotal": 41400, "ext_revenue": 38760, "store": "板橋店", "period": "20260722-20260831"},
   {"date": "2026-08-29", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "新客", "client_name": "羅紫寧", "subtotal": 41400, "ext_revenue": 37401, "store": "板橋店", "period": "20260708-20260831"},
+  // 板橋 8/31
+  {"date": "2026-08-31", "month": "2026-08", "activity": "夏日面膜季", "act_price": 2640, "client_type": "舊客", "client_name": "蘇婉茹", "subtotal": 4300, "ext_revenue": 1660, "store": "板橋店", "period": "20260722-20260831"},
+  {"date": "2026-08-31", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "蘇婉茹", "subtotal": 4300, "ext_revenue": 301, "store": "板橋店", "period": "20260708-20260831"},
+  {"date": "2026-08-31", "month": "2026-08", "activity": "夏日面膜季", "act_price": 2640, "client_type": "舊客", "client_name": "李芷瑜", "subtotal": 7139, "ext_revenue": 4499, "store": "板橋店", "period": "20260722-20260831"},
   {"date": "2026-08-15", "month": "2026-08", "activity": "夏日面膜季", "act_price": 2640, "client_type": "舊客", "client_name": "劉倍嘉", "subtotal": 2640, "ext_revenue": 0, "store": "東門店", "period": "20260722-20260831"},
   {"date": "2026-08-15", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "劉倍嘉", "subtotal": 6162, "ext_revenue": 2163, "store": "東門店", "period": "20260708-20260831"},
   // 大安 8/22
   {"date": "2026-08-22", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳雅涵", "subtotal": 18774, "ext_revenue": 14775, "store": "大安店", "period": "20260708-20260831"},
   {"date": "2026-08-22", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳雅涵", "subtotal": 3999, "ext_revenue": 0, "store": "大安店", "period": "20260708-20260831"},
+  // 大安 8/28
+  {"date": "2026-08-28", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳韻茹", "subtotal": 36680, "ext_revenue": 32681, "store": "大安店", "period": "20260708-20260831"},
+  {"date": "2026-08-28", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳韻茹", "subtotal": 3999, "ext_revenue": 0, "store": "大安店", "period": "20260708-20260831"},
+  {"date": "2026-08-28", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳韻茹", "subtotal": 3999, "ext_revenue": 0, "store": "大安店", "period": "20260708-20260831"},
+  {"date": "2026-08-28", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "陳韻茹", "subtotal": 3999, "ext_revenue": 0, "store": "大安店", "period": "20260708-20260831"},
+  // 大安 8/31
+  {"date": "2026-08-31", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "黃澄珊", "subtotal": 25800, "ext_revenue": 21801, "store": "大安店", "period": "20260708-20260831"},
   // 大安 8/21
   {"date": "2026-08-21", "month": "2026-08", "activity": "夏日面膜季", "act_price": 2640, "client_type": "舊客", "client_name": "趙芷菲", "subtotal": 2640, "ext_revenue": 0, "store": "大安店", "period": "20260722-20260831"},
   // 大安 8/14
@@ -1480,6 +1526,8 @@ const PROD_RAW=[
   // 站前 8/22
   {"date": "2026-08-22", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "王昱平", "subtotal": 23200, "ext_revenue": 19201, "store": "站前店", "period": "20260708-20260831"},
   {"date": "2026-08-20", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "新客", "client_name": "陳冠樺", "subtotal": 25030, "ext_revenue": 21031, "store": "站前店", "period": "20260708-20260831"},
+  // 站前 8/28
+  {"date": "2026-08-28", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "舊客", "client_name": "戴詩昀", "subtotal": 4280, "ext_revenue": 281, "store": "站前店", "period": "20260708-20260831"},
   // 大安 8/13
   {"date": "2026-08-13", "month": "2026-08", "activity": "產品加碼", "act_price": 3999, "client_type": "新客", "client_name": "周欣穎", "subtotal": 85799, "ext_revenue": 81800, "store": "大安店", "period": "20260708-20260831"},
   // 台中 8/15
@@ -1548,6 +1596,13 @@ const GS_PROD=[
   ]},
   {k:'fm',ic:'🧴',lb:'夏日面膜季',pr:'2026/07/22－2026/08/31',acts:[
     {k:'夏日面膜季', lb:'面膜任選買三贈一', p:0, pr:'2026/07/22起'},
+  ]},
+  {k:'zy_pd',ic:'🎊',lb:'週年慶（門市產品）',pr:'2026/09/01－2026/10/31',acts:[
+    {k:'週年慶-P4組合1999', lb:'P4+三代膠囊+膠原蛋白 $1,999', p:1999, pr:'2026/09/01－2026/10/31'},
+    {k:'週年慶-P4三盒2099', lb:'P4三盒贈陶瓷罐 $2,099',        p:2099, pr:'2026/09/01－2026/10/31'},
+    {k:'週年慶-P4六盒3999', lb:'P4六盒 $3,999',                 p:3999, pr:'2026/09/01－2026/10/31'},
+    {k:'週年慶-課程加購699', lb:'極萃暫加購 $699/件',             p:699,  pr:'2026/09/01－2026/10/31'},
+    {k:'週年慶-課程加購599', lb:'HAN加購（玻色因除外）$599/件',   p:599,  pr:'2026/09/01－2026/10/31'},
   ]},
 ];
 
@@ -2614,10 +2669,12 @@ const TIMELINE=[
    d:'仙女玻尿酸1cc＋熊貓針1cc $18,799（台中限定｜新客限定｜不能加購體驗價）'},
   {b:'原綺',a:'再生針',s:'2026-07-08',e:'2026-12-31',c:'#0891b2',
    d:'0.5cc $8,999 ／ 1.5cc $25,000 ／ 4.5cc $60,000'},
-  {b:'原綺',a:'無雙電波限時',s:'2026-07-17',e:'2026-08-31',c:'#d97706',gid:'gb-yq-ws',actKey:'無雙電波限時',
-   d:'200發$18,888｜後續每100發$9,000｜600發$54,888（贈肉毒40u/除皺三區/皮秒蜂巢三選一）｜1000發$90,888（贈音波200發/肉毒一瓶二選一）'},
+  {b:'原綺',a:'無雙電波限時',s:'2026-07-17',e:'2026-12-31',c:'#d97706',gid:'gb-yq-ws',actKey:'無雙電波限時',
+   d:'200發$18,888｜後續每100發$9,000｜600發$54,888（肉毒40u/除皺三區/皮秒蜂巢三選一）｜1000發$90,888 升級Alpha探頭（音波200發/肉毒一瓶二選一）｜★Alpha探頭加購$100/發'},
   {b:'原綺',a:'女醫師暖心企劃',s:'2026-08-01',e:'2026-08-31',c:'#db2777',gid:'gb-yq-wnhx',actKey:'女醫師暖心企劃',
    d:'女醫師暖心企劃 $19,999'},
+  {b:'原綺',a:'週年慶',s:'2026-08-31',e:'2026-10-31',c:'#f59e0b',gid:'gb-yq-zy',actKey:'週年慶',
+   d:'電音波專區$19,999｜A+B$15,000｜人中拉提x立體唇$29,999｜升級版外三點拉提$48,000｜6C眉弓亮眼$29,999｜點線面拉提$33,999'},
   // ── 原渥 ─────────────────────────────────────────────────────────────────
   {b:'原渥',a:'過年活動',s:'2026-01-05',e:'2026-02-28',c:'#3b82f6',gid:'gb-rh-ny',actKey:'過年刮刮卡',
    d:'滿16,888即贈1,688折價券 ／ 滿3,600即贈刮刮卡 ／ 16,888馬年福袋大禮包'},
@@ -2647,6 +2704,10 @@ const TIMELINE=[
    d:'童顏3000發＋無針水光 $4,499　限未體驗過童顏無針新客'},
   {b:'原渥',a:'腹臀雙C線精雕',s:'2026-07-24',e:'2026-08-31',c:'#8b5cf6',gid:'gb-fhjd',
    d:'體雕（腹/馬鞍）、肌肉管理不限部位任選4堂 $7,999'},
+  {b:'原渥',a:'法式珍珠光美背',s:'2026-08-07',e:'2026-09-30',c:'#db2777',gid:'gb-fzmb',actKey:'法式珍珠光美背',
+   d:'小香肩＋液態皮秒＋手臂 $2,499'},
+  {b:'原渥',a:'週年慶',s:'2026-09-01',e:'2026-10-31',c:'#f59e0b',gid:'gb-zy_rw',actKey:'週年慶',
+   d:'綺肌養護·全臉升級$19,999｜美容九宮格 單格$2,000｜三格$4,999｜六格$9,000'},
   // ── 產品 ─────────────────────────────────────────────────────────────────
   {b:'門市產品',a:'女神節-產品',s:'2026-03-01',e:'2026-03-31',c:'#10b981',gid:'gb-pd-hist-gs_prod',actKey:'極萃皙任選6盒',
    d:'極萃皙任選6盒 $6,666 ／ 產品加購-面膜$800 ／ 產品加購-纖萃加購$990'},
@@ -2660,6 +2721,8 @@ const TIMELINE=[
    d:'全產品滿$3,999 贈慕夜森林沐浴露（可累贈）'},
   {b:'門市產品',a:'夏日面膜季',s:'2026-07-22',e:'2026-08-31',c:'#34d399',gid:'gb-pd-fm',
    d:'面膜任選買三贈一'},
+  {b:'門市產品',a:'週年慶',s:'2026-09-01',e:'2026-10-31',c:'#f59e0b',gid:'gb-pd-zy_pd',actKey:'週年慶',
+   d:'P4+三代膠囊+膠原蛋白$1,999｜P4三盒$2,099｜P4六盒$3,999｜極萃加購$699｜HAN加購$599'},
   // ── 線上通路 ──────────────────────────────────────────────────────────────
   {b:'線上通路',a:'618活動',s:'2026-06-12',e:'2026-06-20',c:'#059669',gid:'gb-ol618',
    d:'618活動'},
@@ -2915,12 +2978,12 @@ function buildTimeline(){
 
   // ── date helpers ────────────────────────────────────────────────────────────
   const REF=new Date('2025-12-01T00:00:00');
-  const DISP=new Date('2026-08-01T00:00:00');
+  const DISP=new Date('2026-11-01T00:00:00');
   const totalMs=DISP-REF;
   const pct=ds=>((new Date(ds+'T00:00:00')-REF)/totalMs*100);
   const barSpan=(s,e)=>{
     const ongoing=e>='2026-12-31';
-    const effE=ongoing?'2026-08-01':e;
+    const effE=ongoing?'2026-11-01':e;
     const l=Math.max(0,pct(s));
     const r=Math.min(100,pct(effE));
     return{l,w:Math.max(.3,r-l),ongoing};
@@ -2938,6 +3001,9 @@ function buildTimeline(){
     {d:'2026-05-01',yr:'',mo:'5月'},
     {d:'2026-06-01',yr:'',mo:'6月'},
     {d:'2026-07-01',yr:'',mo:'7月'},
+    {d:'2026-08-01',yr:'',mo:'8月'},
+    {d:'2026-09-01',yr:'',mo:'9月'},
+    {d:'2026-10-01',yr:'',mo:'10月'},
   ];
 
   const BRAND_CFG={
@@ -2962,7 +3028,7 @@ function buildTimeline(){
 
   // ── month header ticks ───────────────────────────────────────────────────────
   const monthTicksHtml=MONTH_DEFS.map((m,mi)=>{
-    const nextD=mi<MONTH_DEFS.length-1?MONTH_DEFS[mi+1].d:'2026-08-01';
+    const nextD=mi<MONTH_DEFS.length-1?MONTH_DEFS[mi+1].d:'2026-11-01';
     const l=((pct(m.d)+pct(nextD))/2).toFixed(2);
     return'<div class="gantt-month-tick" style="left:'+l+'%;transform:translateX(-50%);text-align:center">'
       +(m.yr?'<span class="yr">'+m.yr+'</span>':'')
