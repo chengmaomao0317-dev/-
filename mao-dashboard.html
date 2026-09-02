@@ -1859,6 +1859,8 @@ function normalizeState(s){
     if(!Array.isArray(trip.shopping)) trip.shopping = [];
     if(typeof trip.todosHidden !== 'boolean') trip.todosHidden = false;
     if(typeof trip.shoppingHidden !== 'boolean') trip.shoppingHidden = false;
+    if(typeof trip.todosCollapsed !== 'boolean') trip.todosCollapsed = false;
+    if(typeof trip.shoppingCollapsed !== 'boolean') trip.shoppingCollapsed = false;
     if(!Array.isArray(trip.checkOrder) || trip.checkOrder.length !== 2) trip.checkOrder = ['todos', 'shopping'];
     if(!Array.isArray(trip.expenses)) trip.expenses = [];
     const normPayerSplits = it => {
@@ -4887,7 +4889,22 @@ function buildTripCheckSection(trip, titleTxt, kind, labelField, hiddenField, de
   deleteBtn.title = '刪除分類';
   deleteBtn.onclick = () => deleteTripBuiltinSection(trip, kind, hiddenField, labelField, defaultLabel);
   title.appendChild(deleteBtn);
+  const collapsedField = kind + 'Collapsed';
+  const chev = document.createElement('span');
+  chev.className = 'cat-chev' + (trip[collapsedField] ? '' : ' open');
+  chev.textContent = '▾';
+  title.appendChild(chev);
+  title.onclick = () => {
+    trip[collapsedField] = !trip[collapsedField];
+    saveState(); renderTripPage();
+  };
+  [dragHandle, renameBtn, deleteBtn].forEach(el => {
+    const orig = el.onclick;
+    el.onclick = (e) => { e.stopPropagation(); if(orig) orig(e); };
+  });
   sec.appendChild(title);
+  const body = document.createElement('div');
+  body.className = 'cat-body' + (trip[collapsedField] ? '' : ' open');
   trip[kind].forEach(item => {
     const row = document.createElement('div');
     row.className = 'trip-check-row' + (item.done ? ' done' : '');
@@ -4908,7 +4925,7 @@ function buildTripCheckSection(trip, titleTxt, kind, labelField, hiddenField, de
       saveState(); renderTripPage();
     };
     row.appendChild(del);
-    sec.appendChild(row);
+    body.appendChild(row);
   });
   const addRow = document.createElement('div');
   addRow.className = 'trip-check-add';
@@ -4922,7 +4939,8 @@ function buildTripCheckSection(trip, titleTxt, kind, labelField, hiddenField, de
     }
   };
   addRow.appendChild(input);
-  sec.appendChild(addRow);
+  body.appendChild(addRow);
+  sec.appendChild(body);
   return sec;
 }
 
