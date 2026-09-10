@@ -2784,7 +2784,7 @@ function buildAdsSummary(b) {
 
 function openProdModal(b, name) {
   const baseMonthly = (monthlyProdSpend[b]||{})[name] || [];
-  const labels = ['1月','2月','3月','4月','5月','6月','7月','8月'];
+  const labels = MOS.slice(0, _defaultMi + 1); // 依當月自動擴展，_defaultMi=8 → 9個月
 
   // 若此品項屬於 REPORT_GROUPS 群組，將 tp/tc/clients 改為群組所有成員加總
   const group = (REPORT_GROUPS[b]||[]).find(g => g.members.has(name));
