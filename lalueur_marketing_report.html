@@ -1447,42 +1447,45 @@ async function initAutoFetch() {
     } catch(e) { errors.push(`${b} 績效：${e.message}`); }
   }
 
-  // 年度新客目標 batch read（最後執行，覆蓋 fetchPerfData，確保手動填入值優先）
-  // qi=D欄(1月)~O欄(12月), wo=Q欄(1月)~AB欄(12月); 列20=台北, 21=台中, 23=業績, 25=目標
+  // 年度新客目標：各列獨立讀取，避免 gviz 跳過空白列造成 index 錯位
+  // qi=D欄(1月)~O欄(12月), wo=Q欄(1月)~AB欄(12月)
+  // 列20=台北, 21=台中, 23=業績, 25=目標
   try {
-    const curResp = await gvizJSONP('年度新客目標', 'D20:AB26');
-    const cRows = curResp?.table?.rows || [];
     const cnv = (row, col) => { const v = row?.c?.[col]?.v; return (v != null && !isNaN(+v)) ? +v : null; };
-    const tpRow  = cRows[0]; // row 20: 台北
-    const tcRow  = cRows[1]; // row 21: 台中
-    const revRow = cRows[3]; // row 23: 新客業績
-    const tgtRow = cRows[5]; // row 25: 目標
-    if (tpRow || tcRow || revRow) {
-      for (let mi = 0; mi < 12; mi++) {
-        const qc = mi, wc = mi + 13;
-        const qTp = cnv(tpRow, qc), qTc = cnv(tcRow, qc);
-        const wTp = cnv(tpRow, wc), wTc = cnv(tcRow, wc);
-        const qRev = cnv(revRow, qc), wRev = cnv(revRow, wc);
-        const qTgt = cnv(tgtRow, qc), wTgt = cnv(tgtRow, wc);
-        // 台北+台中都有值才更新新客數（避免舊月份格式不同時蓋錯）
-        if (qTp != null && qTc != null) {
-          kpiTrend.qi.tp[mi] = qTp; kpiTrend.qi.tc[mi] = qTc;
-          kpiTrend.qi.data[mi] = qTp + qTc; anyUpdated = true;
-        }
-        if (wTp != null && wTc != null) {
-          kpiTrend.wo.tp[mi] = wTp; kpiTrend.wo.tc[mi] = wTc;
-          kpiTrend.wo.data[mi] = wTp + wTc; anyUpdated = true;
-        }
-        if (qRev != null && qRev > 0) { kpiTrend.qi.rev[mi] = qRev; anyUpdated = true; }
-        if (wRev != null && wRev > 0) { kpiTrend.wo.rev[mi] = wRev; anyUpdated = true; }
-        if (qTgt != null && qTgt > 0 && qTgt < 1000) kpiTrend.qi.target[mi] = qTgt;
-        if (wTgt != null && wTgt > 0 && wTgt < 1000) kpiTrend.wo.target[mi] = wTgt;
-        // 重新計算 aov
-        const qTotal = kpiTrend.qi.data[mi], qR = kpiTrend.qi.rev[mi];
-        if (qTotal > 0 && qR > 0) kpiTrend.qi.aov[mi] = Math.round(qR / qTotal);
-        const wTotal = kpiTrend.wo.data[mi], wR = kpiTrend.wo.rev[mi];
-        if (wTotal > 0 && wR > 0) kpiTrend.wo.aov[mi] = Math.round(wR / wTotal);
+    const getRow = async (range) => {
+      try { const r = await gvizJSONP('年度新客目標', range); return r?.table?.rows?.[0] || null; }
+      catch(e) { return null; }
+    };
+    const [tpRow, tcRow, revRow, tgtRow] = await Promise.all([
+      getRow('D20:AB20'), // 台北新客
+      getRow('D21:AB21'), // 台中新客
+      getRow('D23:AB23'), // 新客業績
+      getRow('D25:AB25'), // 目標
+    ]);
+    for (let mi = 0; mi < 12; mi++) {
+      const qc = mi, wc = mi + 13;
+      const qTp = cnv(tpRow, qc), qTc = cnv(tcRow, qc);
+      const wTp = cnv(tpRow, wc), wTc = cnv(tcRow, wc);
+      const qRev = cnv(revRow, qc), wRev = cnv(revRow, wc);
+      const qTgt = cnv(tgtRow, qc), wTgt = cnv(tgtRow, wc);
+      // 台北+台中都有值才更新新客數（避免舊月份格式不同時蓋錯）
+      if (qTp != null && qTc != null) {
+        kpiTrend.qi.tp[mi] = qTp; kpiTrend.qi.tc[mi] = qTc;
+        kpiTrend.qi.data[mi] = qTp + qTc; anyUpdated = true;
       }
+      if (wTp != null && wTc != null) {
+        kpiTrend.wo.tp[mi] = wTp; kpiTrend.wo.tc[mi] = wTc;
+        kpiTrend.wo.data[mi] = wTp + wTc; anyUpdated = true;
+      }
+      if (qRev != null && qRev > 0) { kpiTrend.qi.rev[mi] = qRev; anyUpdated = true; }
+      if (wRev != null && wRev > 0) { kpiTrend.wo.rev[mi] = wRev; anyUpdated = true; }
+      if (qTgt != null && qTgt > 0 && qTgt < 1000) kpiTrend.qi.target[mi] = qTgt;
+      if (wTgt != null && wTgt > 0 && wTgt < 1000) kpiTrend.wo.target[mi] = wTgt;
+      // 重新計算 aov
+      const qTotal = kpiTrend.qi.data[mi], qR = kpiTrend.qi.rev[mi];
+      if (qTotal > 0 && qR > 0) kpiTrend.qi.aov[mi] = Math.round(qR / qTotal);
+      const wTotal = kpiTrend.wo.data[mi], wR = kpiTrend.wo.rev[mi];
+      if (wTotal > 0 && wR > 0) kpiTrend.wo.aov[mi] = Math.round(wR / wTotal);
     }
   } catch(e) { errors.push(`年度新客目標：${e.message}`); }
 
