@@ -3546,6 +3546,8 @@ const BRAND_STYLES={
 
 function setStore(s){
   SS=s;
+  ACTF='';
+  const _aSel=document.getElementById('act-filter');if(_aSel)_aSel.value='';
   document.querySelectorAll('.pill.store').forEach(el=>{
     const ss=el.dataset.store;if(!ss)return;
     if(BRAND_STYLES[ss]){
