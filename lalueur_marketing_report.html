@@ -2223,6 +2223,32 @@ async function fetchPerfData(brand) {
       months: [4,5,6,7,8,9,10,11,12,13,14,15].map(i => n(c[i]?.v))
     };
   }
+  // acc 為 null 時，從已有的 months 加總補入（PERF_SHEET 年累計格可能是空的）
+  const fillAccFromMonths = (obj) => {
+    if (!obj || obj.acc != null) return;
+    const s = obj.months.reduce((sum, v) => v != null ? sum + v : sum, 0);
+    if (s > 0) obj.acc = s;
+  };
+  ['tpe','tca','total'].forEach(loc => {
+    ['新客數','新客業績','舊客數','舊客業績'].forEach(key => fillAccFromMonths(data[loc][key]));
+  });
+  // 新客數/新客業績：tca 缺 acc 時從 total - tpe 推算；total 缺 acc 時從 tpe + tca 加總
+  ['新客數','新客業績'].forEach(key => {
+    const tot = data.total[key], tp = data.tpe[key], tc = data.tca[key];
+    // tca acc 還是 null → 從 total - tpe
+    if (tc?.acc == null && tot?.acc != null && tp?.acc != null) {
+      if (!data.tca[key]) data.tca[key] = { acc: null, months: Array(12).fill(null) };
+      data.tca[key].acc = tot.acc - tp.acc;
+    }
+    // total acc 還是 null → 從 tpe + tca 加總
+    if (data.total[key]?.acc == null) {
+      const sa = (tp?.acc ?? 0) + (data.tca[key]?.acc ?? 0);
+      if (sa > 0) {
+        if (!data.total[key]) data.total[key] = { acc: null, months: Array(12).fill(null) };
+        data.total[key].acc = sa;
+      }
+    }
+  });
   // 若 total 缺舊客資料，從台北 + 台中加總推算
   ['舊客數','舊客業績'].forEach(key => {
     if (data.total[key]) return;
