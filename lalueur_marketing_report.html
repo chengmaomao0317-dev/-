@@ -1437,9 +1437,9 @@ async function initAutoFetch() {
         if (tcNums[mi] != null) kpiTrend[b].tc[mi] = tcNums[mi];
         if (tpNums[mi] != null && tcNums[mi] != null)
           kpiTrend[b].data[mi] = (tpNums[mi] || 0) + (tcNums[mi] || 0);
-        if (tpRev[mi]  != null && tpRev[mi]  > 0) kpiTrend[b].revTp[mi] = tpRev[mi];
-        if (tcRev[mi]  != null && tcRev[mi]  > 0) kpiTrend[b].revTc[mi] = tcRev[mi];
-        const r = (tpRev[mi] || 0) + (tcRev[mi] || 0);
+        if (tpRev[mi]  != null && tpRev[mi]  > 1000) kpiTrend[b].revTp[mi] = tpRev[mi]; // >1000 防止人數值誤當業績
+        if (tcRev[mi]  != null && tcRev[mi]  > 1000) kpiTrend[b].revTc[mi] = tcRev[mi];
+        const r = (tpRev[mi] > 1000 ? tpRev[mi] : 0) + (tcRev[mi] > 1000 ? tcRev[mi] : 0);
         if (r > 0) kpiTrend[b].rev[mi] = r;
         const total = kpiTrend[b].data[mi];
         if (total > 0 && r > 0) kpiTrend[b].aov[mi] = Math.round(r / total);
@@ -1462,7 +1462,7 @@ async function initAutoFetch() {
       getRow('D20:AB20'), // 台北新客
       getRow('D21:AB21'), // 台中新客
       getRow('D23:AB23'), // 新客業績
-      getRow('D25:AB25'), // 目標
+      getRow('D26:AB26'), // 目標
     ]);
     for (let mi = 0; mi < 12; mi++) {
       const qc = mi, wc = mi + 13;
@@ -1471,16 +1471,17 @@ async function initAutoFetch() {
       const qRev = cnv(revRow, qc), wRev = cnv(revRow, wc);
       const qTgt = cnv(tgtRow, qc), wTgt = cnv(tgtRow, wc);
       // 台北+台中都有值才更新新客數（避免舊月份格式不同時蓋錯）
-      if (qTp != null && qTc != null) {
+      // 且績效表（fetchPerfData）尚未提供有效值才介入，避免蓋掉更準確的資料
+      if (qTp != null && qTc != null && !(kpiTrend.qi.data[mi] > 0)) {
         kpiTrend.qi.tp[mi] = qTp; kpiTrend.qi.tc[mi] = qTc;
         kpiTrend.qi.data[mi] = qTp + qTc; anyUpdated = true;
       }
-      if (wTp != null && wTc != null) {
+      if (wTp != null && wTc != null && !(kpiTrend.wo.data[mi] > 0)) {
         kpiTrend.wo.tp[mi] = wTp; kpiTrend.wo.tc[mi] = wTc;
         kpiTrend.wo.data[mi] = wTp + wTc; anyUpdated = true;
       }
-      if (qRev != null && qRev > 0) { kpiTrend.qi.rev[mi] = qRev; anyUpdated = true; }
-      if (wRev != null && wRev > 0) { kpiTrend.wo.rev[mi] = wRev; anyUpdated = true; }
+      if (qRev != null && qRev > 1000) { kpiTrend.qi.rev[mi] = qRev; anyUpdated = true; } // >1000 防止人數值誤當業績
+      if (wRev != null && wRev > 1000) { kpiTrend.wo.rev[mi] = wRev; anyUpdated = true; }
       if (qTgt != null && qTgt > 0 && qTgt < 1000) kpiTrend.qi.target[mi] = qTgt;
       if (wTgt != null && wTgt > 0 && wTgt < 1000) kpiTrend.wo.target[mi] = wTgt;
       // 重新計算 aov
@@ -3002,6 +3003,7 @@ function openReportModal(b) {
       } else {
         const f = getFunnel(item.row?.name);
         if (f) { totalFInq += f.inq||0; totalFBook += f.book||0; totalFStay += f.stay||0; }
+        else { totalFInq += item.inq || 0; } // 沒有漏斗對應的品項（如 CMslim、A+B）用廣告詢問數補入
       }
     });
   }
