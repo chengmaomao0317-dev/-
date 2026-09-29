@@ -1979,16 +1979,23 @@ function loadState(){
 
 let saveTimer = null;
 let lastPushedCloudJson = null;
+// 只有在「確實從雲端讀到真正的資料、或雲端經確認過去從未有資料（真正第一次使用）」之後，
+// 才允許把本機資料寫回雲端。連線逾時／出錯而改用本機資料的情況下（bootWithLocalOnly），
+// 這個旗標會維持 false，saveState() 只會存本機、不會覆蓋雲端，避免把暫時性的預設/示範資料
+// 誤蓋掉雲端真正的資料。
+window.__cloudWriteAllowed = false;
 function saveState(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
     const json = JSON.stringify(STATE);
     try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){}
-    if(window.__fb){
+    if(window.__fb && window.__cloudWriteAllowed){
       lastPushedCloudJson = json;
       window.__fb.setDoc(window.__fb.docRef, {data: json, updatedAt: Date.now()})
         .then(() => setSyncStatus('ok'))
         .catch(() => setSyncStatus('error'));
+    }else if(window.__fb){
+      setSyncStatus('error');
     }
   }, 150);
 }
@@ -6432,6 +6439,7 @@ function bootApp(){
     if(!snap.exists()){
       // 雲端第一次使用，還沒有資料：把目前（預設）資料寫一份上去
       loadState();
+      window.__cloudWriteAllowed = true;
       const json = JSON.stringify(STATE);
       lastPushedCloudJson = json;
       window.__fb.setDoc(window.__fb.docRef, {data: json, updatedAt: Date.now()}).catch(() => {});
@@ -6442,12 +6450,14 @@ function bootApp(){
 
     const json = snap.data().data;
     if(json === lastPushedCloudJson){
+      window.__cloudWriteAllowed = true;
       clearTimeout(safetyTimer);
       if(!bootstrapped){ bootstrapped = true; setSyncStatus('ok'); afterStateReady(); }
       return;
     }
     try{
       STATE = normalizeState(JSON.parse(json));
+      window.__cloudWriteAllowed = true;
       const normalizedJson = JSON.stringify(STATE);
       try{ localStorage.setItem(STORAGE_KEY, normalizedJson); }catch(e){}
       // normalizeState 可能補了預設欄位或做了一次性資料匯入／去重，

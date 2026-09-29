@@ -357,6 +357,7 @@ const history={
 };
 
 let curGroup='all',curMonth=0,curStaff=-1,curTab='main';
+let _numMonths=6; // 動態更新：syncPerfData 從 Apps Script 陣列長度算出實際月數
 
 function setGroup(g,btn){curGroup=g;document.querySelectorAll('#grp-btns .btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');refresh()}
 function setMonthDrop(sel){curMonth=parseInt(sel.value);refresh()}
@@ -373,7 +374,7 @@ function setTab(tab,btn){
   if(tab==='schedule'){renderSchedule();}
 }
 function getGroups(){return curGroup==='all'?['渥','綺']:[curGroup]}
-function getMonthIdxs(){return curMonth===0?[0,1,2,3,4,5]:[curMonth-1]}
+function getMonthIdxs(){return curMonth===0?Array.from({length:_numMonths},(_,i)=>i):[curMonth-1]}
 function sumArr(a){return a.reduce((s,v)=>s+(v||0),0)}
 function achColor(v){return v>=100?'#15803d':v>0?'#dc2626':'#aea9a4'}
 function achLabel(v){return v>=100?'green':v>0?'red':'grey'}
@@ -398,7 +399,7 @@ function renderTeam(){
     info[g]={target,progress,ach,diff:progress-target};
   });
   const ANNUAL={渥:2650,綺:1500};
-  const allMidxs=[0,1,2,3,4];
+  const allMidxs=Array.from({length:_numMonths},(_,i)=>i); // 年度進度永遠用全期範圍，與 getMonthIdxs() 全期一致
   // 日進度計算（昨日為基準，只在當月單月模式顯示）
   const _kt=new Date(),_ktm=_kt.getMonth()+1,_ky=_kt.getDate()-1;
   const _kshow=curMonth>0&&curMonth===_ktm&&_ky>0;
@@ -451,6 +452,12 @@ function renderTeam(){
       const o=sumArr(perf[g].舊客到店[mi]);
       prog+=g==='渥'?n:n+o;
     });
+    // YOY：2025 全年總到店（兩品牌一致用 sheetTotal.arrive）
+    let prev2025=0;
+    (sheetTotal[g]?.arrive[2025]||[]).forEach(v=>{ prev2025+=(v||0); });
+    const yoyDiff=prev2025>0?Math.round((prog-prev2025)/prev2025*100):null;
+    const yoyUp=yoyDiff!=null&&yoyDiff>=0;
+    const yoyBadge=yoyDiff!=null?`<span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;background:${yoyUp?'#dcfce7':'#fee2e2'};color:${yoyUp?'#15803d':'#b91c1c'}">${yoyUp?'▲':'▼'} ${Math.abs(yoyDiff)}% YOY</span>`:'';
     const pct=Math.round(prog/annTar*100);
     const bar=Math.min(pct,100);
     const clr=pct>=100?'#15803d':pct>=70?'#b45309':'#dc2626';
@@ -463,10 +470,12 @@ function renderTeam(){
         <span style="padding:1px 7px;border-radius:20px;font-size:11px;font-weight:700;background:${pb};color:${pc}">${g==='渥'?'原渥':'原綺'}</span>
         <span style="font-size:9px;color:#aea9a4">年度目標 ${annTar.toLocaleString()}</span>
       </div>
-      <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:4px">
+      <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:2px">
         <span style="font-size:22px;font-weight:800;color:${clr}">${prog.toLocaleString()}</span>
         <span style="font-size:13px;font-weight:700;color:${clr}">${pct}%</span>
+        ${yoyBadge}
       </div>
+      ${prev2025>0?`<div style="font-size:10px;color:#aea9a4;margin-bottom:3px">2025年 ${prev2025.toLocaleString()}</div>`:''}
       <div class="prog-bar-wrap"><div class="prog-bar" style="width:${bar}%;background:${clr}"></div></div>
       <div style="font-size:11px;font-weight:600;color:${clr};margin-top:4px">${remaining>0?`還差 ${remaining.toLocaleString()} 人`:`超標 +${Math.abs(remaining).toLocaleString()} 人`}</div>
     </div>`;
@@ -1081,6 +1090,13 @@ async function fetchLatest2026(){
         history['綺'][2026].p[mi]=sum(r37,q_book_idx);
         history['渥'][2026].n[mi]=sum(r38,w_new_idx);
         history['綺'][2026].n[mi]=sum(r38,q_new_idx);
+        // 也更新 sheetTotal.arrive（總到店 = 新客+舊客，使用 w_book_idx/q_book_idx）
+        if (!sheetTotal['渥']) sheetTotal['渥']={arrive:{},booknew:{}};
+        if (!sheetTotal['綺']) sheetTotal['綺']={arrive:{},booknew:{}};
+        if (!sheetTotal['渥'].arrive[2026]) sheetTotal['渥'].arrive[2026]=Array(12).fill(null);
+        if (!sheetTotal['綺'].arrive[2026]) sheetTotal['綺'].arrive[2026]=Array(12).fill(null);
+        sheetTotal['渥'].arrive[2026][mi]=sum(r38,w_book_idx);
+        sheetTotal['綺'].arrive[2026][mi]=sum(r38,q_book_idx);
         updated++;
       }
     }catch(e){errors++;}
@@ -1160,6 +1176,7 @@ async function syncPerfData() {
   // Apps Script 應使用 getLastColumn() 動態抓範圍，無需每月更新
   const totalCols = (w詢問||[]).length;
   const numMonths = totalCols <= 6 ? 1 : 1 + Math.round((totalCols - 6) / 5);
+  _numMonths = numMonths; // 更新全域，讓 getMonthIdxs() 和 allMidxs 動態使用
 
   function toGrid(data) {
     const grid = [];
@@ -1256,8 +1273,8 @@ async function syncPerfData() {
       history['渥'][2026].n[mi]=wNw; history['綺'][2026].n[mi]=qNw;
     }
     const wArr=wNw+wOd, qArr=qNw+qOd;
-    if (wArr&&qArr&&Number.isInteger(wArr)&&Number.isInteger(qArr)&&wArr>=wNw&&qArr>=qNw
-        &&(hcA_w===null||Math.abs(wArr-hcA_w)/Math.max(hcA_w,1)<0.5)) {
+    // 只保留基本合理性檢查（總到店>=新客到店），移除 50% 偏差限制避免擋掉真實資料
+    if (wArr&&qArr&&Number.isInteger(wArr)&&Number.isInteger(qArr)&&wArr>=wNw&&qArr>=qNw) {
       sheetTotal['渥'].arrive[2026][mi]=wArr; sheetTotal['綺'].arrive[2026][mi]=qArr;
     }
     // 客服預約新客數：各品牌獨立寫入，有值才覆蓋

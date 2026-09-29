@@ -1915,7 +1915,7 @@ function renderPerfGrid(mi) {
     const a = D.annual[b];
     a.ytd = kpiTrend[b].data.reduce((s,v)=>s+(v||0),0); // 從月數據加總，確保一致
     const pa = pN(a.ytd, a.target);
-    const ar = D.annualRev[b];
+    const ar = perfData[b]?.total?.['新客業績']?.acc || kpiTrend[b].rev.reduce((s,v)=>s+(v||0),0) || D.annualRev[b]; // 優先用績效表年累計
     const p25 = D.annual2025[b];
     const aov26 = a.ytd > 0 ? Math.round(ar / a.ytd) : 0;
     const aov25 = Math.round(p25.rev / p25.clients);
