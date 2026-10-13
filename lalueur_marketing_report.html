@@ -1283,6 +1283,22 @@ async function fetchFunnelData() {
     parseMonthRows(r?.table?.rows||[], 'wo', 8, true, 13); // append=true
     console.log('[漏斗] 原渥新品項9月月別載入成功');
   } catch(e) { console.warn('[漏斗] 原渥新品項9月漏斗載入失敗:', e.message); }
+  // 10月（mi=9）：B~Z，月別數據在 U~Z（colOff=19）
+  try {
+    const r = await gvizJSONP('行銷新客轉換概況', 'B3:Z22');
+    parseMonthRows(r?.table?.rows||[], 'qi', 9, false, 19);
+    console.log('[漏斗] 原綺10月月別載入成功，品項數:', Object.keys(funnelDataMonthly.qi[9]||{}).length);
+  } catch(e) { console.warn('[漏斗] 原綺10月漏斗載入失敗:', e.message); }
+  try {
+    const r = await gvizJSONP('行銷新客轉換概況', 'B24:Z41');
+    parseMonthRows(r?.table?.rows||[], 'wo', 9, false, 19);
+    console.log('[漏斗] 原渥10月月別載入成功，品項數:', Object.keys(funnelDataMonthly.wo[9]||{}).length);
+  } catch(e) { console.warn('[漏斗] 原渥10月漏斗載入失敗:', e.message); }
+  try {
+    const r = await gvizJSONP('行銷新客轉換概況', 'B48:Z52');
+    parseMonthRows(r?.table?.rows||[], 'wo', 9, true, 19); // append=true
+    console.log('[漏斗] 原渥新品項10月月別載入成功');
+  } catch(e) { console.warn('[漏斗] 原渥新品項10月漏斗載入失敗:', e.message); }
 }
 
 async function initAutoFetch() {
@@ -1426,10 +1442,12 @@ async function initAutoFetch() {
     try {
       const pd = await fetchPerfData(b);
       perfData[b] = pd;
-      const tpNums = pd.tpe?.['新客數']?.months   || [];
-      const tcNums = pd.tca?.['新客數']?.months   || [];
+      const tpNums   = pd.tpe?.['新客數']?.months   || [];
+      const tcNums   = pd.tca?.['新客數']?.months   || [];
+      const totNums  = pd.total?.['新客數']?.months || []; // fallback: 合計/總計列
       const tpRev  = pd.tpe?.['新客業績']?.months || [];
       const tcRev  = pd.tca?.['新客業績']?.months || [];
+      const totRev = pd.total?.['新客業績']?.months || []; // fallback: 合計/總計列
       if (!kpiTrend[b].revTp) kpiTrend[b].revTp = Array(12).fill(0);
       if (!kpiTrend[b].revTc) kpiTrend[b].revTc = Array(12).fill(0);
       for (let mi = 0; mi < 12; mi++) {
@@ -1437,9 +1455,13 @@ async function initAutoFetch() {
         if (tcNums[mi] != null) kpiTrend[b].tc[mi] = tcNums[mi];
         if (tpNums[mi] != null && tcNums[mi] != null)
           kpiTrend[b].data[mi] = (tpNums[mi] || 0) + (tcNums[mi] || 0);
+        else if (totNums[mi] != null && !(kpiTrend[b].data[mi] > 0))
+          kpiTrend[b].data[mi] = totNums[mi]; // 台北/台中缺資料時用合計列補
         if (tpRev[mi]  != null && tpRev[mi]  > 1000) kpiTrend[b].revTp[mi] = tpRev[mi]; // >1000 防止人數值誤當業績
         if (tcRev[mi]  != null && tcRev[mi]  > 1000) kpiTrend[b].revTc[mi] = tcRev[mi];
-        const r = (tpRev[mi] > 1000 ? tpRev[mi] : 0) + (tcRev[mi] > 1000 ? tcRev[mi] : 0);
+        let r = (tpRev[mi] > 1000 ? tpRev[mi] : 0) + (tcRev[mi] > 1000 ? tcRev[mi] : 0);
+        // tpe/tca 業績都缺時用合計列補
+        if (r === 0 && totRev[mi] != null && totRev[mi] > 1000) r = totRev[mi];
         if (r > 0) kpiTrend[b].rev[mi] = r;
         const total = kpiTrend[b].data[mi];
         if (total > 0 && r > 0) kpiTrend[b].aov[mi] = Math.round(r / total);
@@ -1459,9 +1481,9 @@ async function initAutoFetch() {
       catch(e) { return null; }
     };
     const [tpRow, tcRow, revRow, tgtRow] = await Promise.all([
-      getRow('D20:AB20'), // 台北新客
-      getRow('D21:AB21'), // 台中新客
-      getRow('D23:AB23'), // 新客業績
+      getRow('D21:AB21'), // 台北新客
+      getRow('D22:AB22'), // 台中新客
+      getRow('D24:AB24'), // 新客業績
       getRow('D26:AB26'), // 目標
     ]);
     for (let mi = 0; mi < 12; mi++) {
@@ -1471,12 +1493,11 @@ async function initAutoFetch() {
       const qRev = cnv(revRow, qc), wRev = cnv(revRow, wc);
       const qTgt = cnv(tgtRow, qc), wTgt = cnv(tgtRow, wc);
       // 台北+台中都有值才更新新客數（避免舊月份格式不同時蓋錯）
-      // 且績效表（fetchPerfData）尚未提供有效值才介入，避免蓋掉更準確的資料
-      if (qTp != null && qTc != null && !(kpiTrend.qi.data[mi] > 0)) {
+      if (qTp != null && qTc != null) {
         kpiTrend.qi.tp[mi] = qTp; kpiTrend.qi.tc[mi] = qTc;
         kpiTrend.qi.data[mi] = qTp + qTc; anyUpdated = true;
       }
-      if (wTp != null && wTc != null && !(kpiTrend.wo.data[mi] > 0)) {
+      if (wTp != null && wTc != null) {
         kpiTrend.wo.tp[mi] = wTp; kpiTrend.wo.tc[mi] = wTc;
         kpiTrend.wo.data[mi] = wTp + wTc; anyUpdated = true;
       }
@@ -1824,7 +1845,7 @@ function renderPerfGrid(mi) {
       rev    = td.rev[mi];
     }
     const aov = (actual && rev) ? Math.round(rev / actual) : null;
-    if (actual == null || actual === 0 && !isAll) {
+    if ((actual == null || actual === 0) && (rev == null || rev === 0) && !isAll) {
       return `<div class="card">
         <div style="margin-bottom:10px;">${btag(b)}</div>
         <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0 14px;align-items:start;">
