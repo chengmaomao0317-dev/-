@@ -1176,7 +1176,11 @@ async function syncPerfData() {
   // 自動偵測月份數：1月=6欄，2月起=5欄，totalCols=6+5*(n-1) → n=(totalCols-6)/5+1
   // Apps Script 應使用 getLastColumn() 動態抓範圍，無需每月更新
   const totalCols = (w詢問||[]).length;
-  const numMonths = totalCols <= 6 ? 1 : 1 + Math.round((totalCols - 6) / 5);
+  // Jan=6cols, Feb~Aug(7months)=5cols each(35), Sep+(Jenny離職)=4cols each
+  let numMonths;
+  if (totalCols <= 6) { numMonths = 1; }
+  else if (totalCols <= 41) { numMonths = 1 + Math.round((totalCols - 6) / 5); }
+  else { numMonths = 8 + Math.round((totalCols - 41) / 4); }
   _numMonths = numMonths; // 更新全域，讓 getMonthIdxs() 和 allMidxs 動態使用
 
   function toGrid(data) {
@@ -1187,7 +1191,13 @@ async function syncPerfData() {
       if (mi === 0) {
         for (let si = 0; si < 6; si++) month[si] = data[offset + si] || 0;
         offset += 6;
+      } else if (mi >= 8) {
+        // Sep+(mi≥8)：Jenny離職，4人 → positions [0,1,3,4]
+        const map = [0,1,3,4];
+        for (let si = 0; si < 4; si++) month[map[si]] = data[offset + si] || 0;
+        offset += 4;
       } else {
+        // Feb~Aug(mi 1-7)：MO離職，5人 → positions [0,1,3,4,5]
         const map = [0,1,3,4,5];
         for (let si = 0; si < 5; si++) month[map[si]] = data[offset + si] || 0;
         offset += 5;
@@ -1255,7 +1265,8 @@ async function syncPerfData() {
   // 1月6欄(含MO)、2月起5欄，起始位移 = [0,6,11,16,21,26]
   // 動態生成偏移表（最多12個月）
   const _mOff=[0], _mLen=[6];
-  for(let i=1;i<12;i++){_mOff.push(_mOff[i-1]+_mLen[i-1]);_mLen.push(5);}
+  // Jan=6, Feb~Aug(mi1-7)=5, Sep+(mi≥8)=4（Jenny離職）
+  for(let i=1;i<12;i++){_mOff.push(_mOff[i-1]+_mLen[i-1]);_mLen.push(i>=8?4:5);}
   const sumM=(arr,mi)=>(arr||[]).slice(_mOff[mi],_mOff[mi]+_mLen[mi]).reduce((s,v)=>s+(v||0),0);
   if (!history['渥'][2026]) history['渥'][2026]={p:Array(12).fill(null),n:Array(12).fill(null)};
   if (!history['綺'][2026]) history['綺'][2026]={p:Array(12).fill(null),n:Array(12).fill(null)};
