@@ -1299,6 +1299,22 @@ async function fetchFunnelData() {
     parseMonthRows(r?.table?.rows||[], 'wo', 9, true, 19); // append=true
     console.log('[漏斗] 原渥新品項10月月別載入成功');
   } catch(e) { console.warn('[漏斗] 原渥新品項10月漏斗載入失敗:', e.message); }
+  // 11月（mi=10）：B~AF，月別數據在 AA~AF（colOff=25）
+  try {
+    const r = await gvizJSONP('行銷新客轉換概況', 'B3:AF22');
+    parseMonthRows(r?.table?.rows||[], 'qi', 10, false, 25);
+    console.log('[漏斗] 原綺11月月別載入成功，品項數:', Object.keys(funnelDataMonthly.qi[10]||{}).length);
+  } catch(e) { console.warn('[漏斗] 原綺11月漏斗載入失敗:', e.message); }
+  try {
+    const r = await gvizJSONP('行銷新客轉換概況', 'B24:AF41');
+    parseMonthRows(r?.table?.rows||[], 'wo', 10, false, 25);
+    console.log('[漏斗] 原渥11月月別載入成功，品項數:', Object.keys(funnelDataMonthly.wo[10]||{}).length);
+  } catch(e) { console.warn('[漏斗] 原渥11月漏斗載入失敗:', e.message); }
+  try {
+    const r = await gvizJSONP('行銷新客轉換概況', 'B48:AF52');
+    parseMonthRows(r?.table?.rows||[], 'wo', 10, true, 25); // append=true
+    console.log('[漏斗] 原渥新品項11月月別載入成功');
+  } catch(e) { console.warn('[漏斗] 原渥新品項11月漏斗載入失敗:', e.message); }
 }
 
 async function initAutoFetch() {
@@ -2955,7 +2971,8 @@ function openReportModal(b) {
   const hasData = r => !r.isVendor && ((r.inq||0)+(r.inq2||0) > 0 || (r.clients||0) > 0);
 
   // 是否有漏斗資料（月份別優先，其次累計）
-  const monthFunnel = (funnelDataMonthly[b][mi] && Object.keys(funnelDataMonthly[b][mi]).length > 0) ? funnelDataMonthly[b][mi] : null;
+  const _mfd = funnelDataMonthly[b][mi];
+  const monthFunnel = (_mfd && Object.values(_mfd).some(f => f && (f.inq > 0 || f.book > 0 || f.stay > 0))) ? _mfd : null;
   const hasFunnel = monthFunnel ? true : Object.keys(funnelData[b]).length > 0;
   const activeFunnel = monthFunnel || funnelData[b];
 
