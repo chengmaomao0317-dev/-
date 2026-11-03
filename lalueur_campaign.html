@@ -2208,6 +2208,10 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
       {"date":"2026-10-31","month":"2026-10","activity":"美容九宮格","act_price":9000,"client_type":"舊客","client_name":"張喬安","subtotal":9000,"ext_revenue":0,"store":"忠孝店","period":"20260901-20261031"},
       // 忠孝 10/31 方宗墓 (九宮格9000, visit_total=9000)
       {"date":"2026-10-31","month":"2026-10","activity":"美容九宮格","act_price":9000,"client_type":"舊客","client_name":"方宗墓","subtotal":9000,"ext_revenue":0,"store":"忠孝店","period":"20260901-20261031"},
+      // 忠孝 11/2 陳翁毅 (雙拼C 童顏10000發+P4×4盒, visit_total=9999)
+      {"date":"2026-11-02","month":"2026-11","activity":"雙拼C","act_price":9999,"client_type":"舊客","client_name":"陳翁毅","subtotal":9999,"ext_revenue":0,"store":"忠孝店","period":"20261101-20261130"},
+      // 忠孝 11/2 吳雅婷 (童顏B 童顏5000發+P4×1盒, visit_total=4999)
+      {"date":"2026-11-02","month":"2026-11","activity":"童顏B","act_price":4999,"client_type":"舊客","client_name":"吳雅婷","subtotal":4999,"ext_revenue":0,"store":"忠孝店","period":"20261101-20261130"},
       // 站前 9/22
       {"date":"2026-09-22","month":"2026-09","activity":"課程童顏V臉","act_price":41400,"client_type":"舊客","client_name":"陳麗珍","subtotal":41400,"ext_revenue":0,"store":"站前店","period":"20260901-20261031"},
       {"date":"2026-09-22","month":"2026-09","activity":"課程滿額贈$35000","act_price":35000,"client_type":"舊客","client_name":"陳麗珍","subtotal":41400,"ext_revenue":41400,"store":"站前店","period":"20260901-20261031"},
@@ -3157,6 +3161,12 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
       {"date":"2026-10-31","month":"2026-10","activity":"美容九宮格","act_price":9000,"client_type":"舊客","client_name":"葉芷萱","subtotal":9000,"ext_revenue":0,"store":"站前店","period":"20260901-20261031"},
       // 館前 10/31 錢楹芝 (九宮格4999, visit_total=4999)
       {"date":"2026-10-31","month":"2026-10","activity":"美容九宮格","act_price":4999,"client_type":"舊客","client_name":"錢楹芝","subtotal":4999,"ext_revenue":0,"store":"站前店","period":"20260901-20261031"},
+      // 館前 11/2 楊子妍 (新客, 體驗音波999 FIRST + 音波課程訂金2000, visit_total=2999)
+      {"date":"2026-11-02","month":"2026-11","activity":"體驗音波","act_price":999,"client_type":"新客","client_name":"楊子妍","subtotal":2999,"ext_revenue":2000,"store":"站前店","period":"20261101-20261130"},
+      {"date":"2026-11-02","month":"2026-11","activity":"音波課程訂金","act_price":2000,"client_type":"新客","client_name":"楊子妍","subtotal":2000,"ext_revenue":999,"store":"站前店","period":"20261101-20261130"},
+      // 館前 11/2 李雨宸 (新客, 體驗音波999 FIRST + 音波課程訂金2000, visit_total=2999)
+      {"date":"2026-11-02","month":"2026-11","activity":"體驗音波","act_price":999,"client_type":"新客","client_name":"李雨宸","subtotal":2999,"ext_revenue":2000,"store":"站前店","period":"20261101-20261130"},
+      {"date":"2026-11-02","month":"2026-11","activity":"音波課程訂金","act_price":2000,"client_type":"新客","client_name":"李雨宸","subtotal":2000,"ext_revenue":999,"store":"站前店","period":"20261101-20261130"},
       // 大安 10/2 莊凱琍
       {"date":"2026-10-02","month":"2026-10","activity":"美容九宮格","act_price":4999,"client_type":"舊客","client_name":"莊凱琍","subtotal":4999,"ext_revenue":0,"store":"大安店","period":"20260901-20261031"},
       // 大安 10/3 蘇瑜葆
@@ -6517,7 +6527,13 @@ const PROD_RAW=[
   {"date": "2026-10-31", "month": "2026-10", "activity": "加購皮秒油", "act_price": 780, "client_type": "舊客", "client_name": "林哲筠", "subtotal": 780, "ext_revenue": 0, "store": "大安店", "period": "20260901-20261031"},
   {"date": "2026-10-31", "month": "2026-10", "activity": "加購皮秒油", "act_price": 780, "client_type": "舊客", "client_name": "林哲筠", "subtotal": 780, "ext_revenue": 0, "store": "大安店", "period": "20260901-20261031"},
   {"date": "2026-10-31", "month": "2026-10", "activity": "加購皮秒油", "act_price": 780, "client_type": "舊客", "client_name": "林哲筠", "subtotal": 780, "ext_revenue": 0, "store": "大安店", "period": "20260901-20261031"},
-  {"date": "2026-10-31", "month": "2026-10", "activity": "週年慶產品滿額贈$10000", "act_price": 0, "client_type": "舊客", "client_name": "林哲筠", "subtotal": 0, "ext_revenue": 0, "store": "大安店", "period": "20260901-20261031"}
+  {"date": "2026-10-31", "month": "2026-10", "activity": "週年慶產品滿額贈$10000", "act_price": 0, "client_type": "舊客", "client_name": "林哲筠", "subtotal": 0, "ext_revenue": 0, "store": "大安店", "period": "20260901-20261031"},
+  // 板橋 11/2 陳芊好 (純消耗+純產品: 防曬霜×3條買二送一=$1760, PROD_visit_total=1760, 一種類型, 全為活動業績無衍伸)
+  {"date": "2026-11-02", "month": "2026-11", "activity": "雙11-門市產品買二送一", "act_price": 1760, "client_type": "舊客", "client_name": "陳芊好", "subtotal": 1760, "ext_revenue": 0, "store": "板橋店", "period": "20261101-20261130"},
+  // 館前 11/2 楊子妍 (新客, 課程體驗音波999+訂金2000, 雙11產品蜂巢皮秒2瓶=$780, PROD_visit_total=3779)
+  {"date": "2026-11-02", "month": "2026-11", "activity": "雙11-門市產品買二送一", "act_price": 780, "client_type": "新客", "client_name": "楊子妍", "subtotal": 3779, "ext_revenue": 2999, "store": "站前店", "period": "20261101-20261130"},
+  // 館前 11/2 李雨宸 (新客, 課程體驗音波999+訂金2000, 雙11產品蜂巢皮秒1瓶=$780, PROD_visit_total=3779)
+  {"date": "2026-11-02", "month": "2026-11", "activity": "雙11-門市產品買二送一", "act_price": 780, "client_type": "新客", "client_name": "李雨宸", "subtotal": 3779, "ext_revenue": 2999, "store": "站前店", "period": "20261101-20261130"}
 ];
 
 // ─── 產品 historical group spec ──────────────────────────────────────────────
@@ -6957,6 +6973,7 @@ function rA(act, data, gk){
   const id='a'+act.k.replace(/[^a-zA-Z0-9]/g,'_');
   const periodHtml='';
   const ncHtml=act.nc?'<div class="anc">👥 <span style="color:#94a3b8;font-size:10px">新舊客</span> <span style="color:#374151;font-weight:600">'+act.nc+'</span></div>':'';
+  const descHtml=act.ds?'<div class="aname-desc">📦 '+act.ds+'</div>':'';
   const _prM=act.pr?act.pr.match(/(\d{4})\/(\d{2})\/(\d{2}).*?(\d{4})\/(\d{2})\/(\d{2})/):null;
   const _pSD=_prM?_prM[1]+'-'+_prM[2]+'-'+_prM[3]:null;
   const _pED=_prM?_prM[4]+'-'+_prM[5]+'-'+_prM[6]:null;
@@ -6978,7 +6995,7 @@ function rA(act, data, gk){
     return'<div class="act-section">'
       +'<div class="act-header" onclick="tA(\''+id+'\')">'
       +'<div class="act-header-left">'+badge(act.p,gk,act.pl)
-      +'<div><div class="aname">'+act.lb+'</div>'+periodHtml+ncHtml+'</div></div>'
+      +'<div><div class="aname">'+act.lb+'</div>'+periodHtml+ncHtml+descHtml+'</div></div>'
       +'<div style="display:flex;align-items:center;gap:8px">'+periodBtn+qs
       +'<div class="achev open" id="ac-'+id+'">▼</div></div></div>'
       +'<div class="act-body open" id="'+id+'" style="padding:16px 20px">'
@@ -7031,7 +7048,7 @@ function rA(act, data, gk){
   return'<div class="act-section">'
     +'<div class="act-header" onclick="tA(\''+id+'\')">'
     +'<div class="act-header-left">'+badge(act.p,gk,act.pl)
-    +'<div><div class="aname">'+act.lb+'</div>'+periodHtml+ncHtml+'</div></div>'
+    +'<div><div class="aname">'+act.lb+'</div>'+periodHtml+ncHtml+descHtml+'</div></div>'
     +'<div style="display:flex;align-items:center;gap:8px">'+periodBtn+qs
     +'<div class="achev open" id="ac-'+id+'">▼</div></div></div>'
     +'<div class="act-body open" id="'+id+'">'+body+'</div></div>';
