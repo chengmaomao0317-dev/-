@@ -2826,6 +2826,8 @@ const RAW=[{"date": "2026-05-23", "month": "2026-05", "sheet": "115523 SPA VIP",
       {"date":"2026-10-31","month":"2026-10","activity":"課程滿額贈$35000","act_price":0,"client_type":"新客","client_name":"曹駱素精","subtotal":70000,"ext_revenue":70000,"store":"東門店","period":"20260901-20261031"},
       // 東門 10/31 賀宜袖 (體驗美胸1299, visit_total=1299)
       {"date":"2026-10-31","month":"2026-10","activity":"體驗美胸","act_price":1299,"client_type":"舊客","client_name":"賀宜袖","subtotal":1299,"ext_revenue":0,"store":"東門店","period":"20260901-20261031"},
+      // 東門 11/4 賴威琳 (舊客, 雙拼C9999, visit_total=9999)
+      {"date":"2026-11-04","month":"2026-11","activity":"雙拼C","act_price":9999,"client_type":"舊客","client_name":"賴威琳","subtotal":9999,"ext_revenue":0,"store":"東門店","period":"20261101-20261130"},
       // 站前(館前) 9/26 蘇珈玉
       {"date":"2026-09-26","month":"2026-09","activity":"升等音波差額","act_price":40000,"client_type":"舊客","client_name":"蘇珈玉","subtotal":40000,"ext_revenue":0,"store":"站前店","period":"20260901-20261031"},
       {"date":"2026-09-26","month":"2026-09","activity":"課程滿額贈$35000","act_price":0,"client_type":"舊客","client_name":"蘇珈玉","subtotal":40000,"ext_revenue":40000,"store":"站前店","period":"20260901-20261031"},
@@ -3719,7 +3721,11 @@ const YQ_RAW=[
       {"date":"2026-10-30","month":"2026-10","activity":"週年慶A+B","act_price":15000,"client_type":"舊客","client_name":"葉芳好","subtotal":16499,"ext_revenue":1499,"store":"台中原綺","period":"20260831-20261031"},
       {"date":"2026-10-30","month":"2026-10","activity":"肉毒除皺一區加購$1499","act_price":1499,"client_type":"舊客","client_name":"葉芳好","subtotal":16499,"ext_revenue":15000,"store":"台中原綺","period":"20260831-20261031"},
       // 台中原綺 10/31 廖唯芬 (A+B$15000, visit_total=15000)
-      {"date":"2026-10-31","month":"2026-10","activity":"週年慶A+B","act_price":15000,"client_type":"舊客","client_name":"廖唯芬","subtotal":15000,"ext_revenue":0,"store":"台中原綺","period":"20260831-20261031"},];
+      {"date":"2026-10-31","month":"2026-10","activity":"週年慶A+B","act_price":15000,"client_type":"舊客","client_name":"廖唯芬","subtotal":15000,"ext_revenue":0,"store":"台中原綺","period":"20260831-20261031"},
+      // 台中原綺 11/4 陳勵儀 (舊客, 皮秒療程套組15000, visit_total=15000)
+      {"date":"2026-11-04","month":"2026-11","activity":"皮秒療程套組","act_price":15000,"client_type":"舊客","client_name":"陳勵儀","subtotal":15000,"ext_revenue":0,"store":"台中原綺","period":"20261101-20261130"},
+      // 台北原綺 11/4 黃湘婷 (舊客, 皮秒A3999, visit_total=3999)
+      {"date":"2026-11-04","month":"2026-11","activity":"皮秒A","act_price":3999,"client_type":"舊客","client_name":"黃湘婷","subtotal":3999,"ext_revenue":0,"store":"台北原綺","period":"20261101-20261130"},];
 
 // ─── 原綺 activity groups ────────────────────────────────────────────────
 const GS_YQ=[
@@ -6554,7 +6560,16 @@ const PROD_RAW=[
   // 板橋 11/3 呂翊菱 (新客, 體驗體雕999, 雙11纖萃×6盒5120+三代美白膠囊×1盒1180+珍波野×1盒1480, PROD_visit_total=8779)
   {"date": "2026-11-03", "month": "2026-11", "activity": "雙11-門市產品買二送一", "act_price": 5120, "client_type": "新客", "client_name": "呂翊菱", "subtotal": 8779, "ext_revenue": 3659, "store": "板橋店", "period": "20261101-20261130"},
   {"date": "2026-11-03", "month": "2026-11", "activity": "加購三代美白膠囊", "act_price": 1180, "client_type": "新客", "client_name": "呂翊菱", "subtotal": 8779, "ext_revenue": 7599, "store": "板橋店", "period": "20261101-20261130"},
-  {"date": "2026-11-03", "month": "2026-11", "activity": "加購珍波野", "act_price": 1480, "client_type": "新客", "client_name": "呂翊菱", "subtotal": 8779, "ext_revenue": 7299, "store": "板橋店", "period": "20261101-20261130"}
+  {"date": "2026-11-03", "month": "2026-11", "activity": "加購珍波野", "act_price": 1480, "client_type": "新客", "client_name": "呂翊菱", "subtotal": 8779, "ext_revenue": 7299, "store": "板橋店", "period": "20261101-20261130"},
+  // 板橋 11/4 李怡嘉 (純消耗+純產品: 雙11皮秒油×6瓶=$3120, PROD_visit_total=3120, 一種類型, 全為活動業績無衍伸)
+  {"date": "2026-11-04", "month": "2026-11", "activity": "雙11-門市產品買二送一", "act_price": 3120, "client_type": "舊客", "client_name": "李怡嘉", "subtotal": 3120, "ext_revenue": 0, "store": "板橋店", "period": "20261101-20261130"},
+  // 板橋 11/4 梁雅晴 (純消耗+純產品: 雙11皮秒油×3瓶=$1560, PROD_visit_total=1560, 一種類型, 全為活動業績無衍伸)
+  {"date": "2026-11-04", "month": "2026-11", "activity": "雙11-門市產品買二送一", "act_price": 1560, "client_type": "舊客", "client_name": "梁雅晴", "subtotal": 1560, "ext_revenue": 0, "store": "板橋店", "period": "20261101-20261130"},
+  // 板橋 11/4 陳怡安 (純消耗+純產品: 皮秒油×1瓶780+雙11水感面膜×3盒1760, PROD_visit_total=2540, 兩種類型)
+  {"date": "2026-11-04", "month": "2026-11", "activity": "加購皮秒油", "act_price": 780, "client_type": "舊客", "client_name": "陳怡安", "subtotal": 2540, "ext_revenue": 1760, "store": "板橋店", "period": "20261101-20261130"},
+  {"date": "2026-11-04", "month": "2026-11", "activity": "雙11-門市產品買二送一", "act_price": 1760, "client_type": "舊客", "client_name": "陳怡安", "subtotal": 2540, "ext_revenue": 780, "store": "板橋店", "period": "20261101-20261130"},
+  // 板橋 11/4 王敏如 (純消耗+純產品: 雙11淨潤慕斯×3瓶=$2560, PROD_visit_total=2560, 一種類型, 全為活動業績無衍伸)
+  {"date": "2026-11-04", "month": "2026-11", "activity": "雙11-門市產品買二送一", "act_price": 2560, "client_type": "舊客", "client_name": "王敏如", "subtotal": 2560, "ext_revenue": 0, "store": "板橋店", "period": "20261101-20261130"}
 ];
 
 // ─── 產品 historical group spec ──────────────────────────────────────────────
