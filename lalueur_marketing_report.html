@@ -3103,7 +3103,7 @@ function openReportModal(b) {
       const f = getFunnel(r.name);
       return `<tr>
         <td style="${C}font-size:13px;color:#222;">${r.name}</td>
-        <td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${hasFunnel ? (f ? (f.inq||'0') : dash) : (item.inq||'—')}</td>
+        <td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${hasFunnel ? (f ? ((f.inq||item.inq)||'0') : (item.inq||dash)) : (item.inq||'—')}</td>
         ${hasFunnel ? `<td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${f ? (f.book||'0') : dash}</td>` : ''}
         <td style="${C}text-align:center;font-size:13px;font-weight:600;color:#333;">${item.clients||'—'}</td>
         <td style="${C}text-align:center;">${convChip(item.inq ? item.clients/item.inq*100 : null)}</td>
