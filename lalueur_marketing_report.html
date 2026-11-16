@@ -973,7 +973,7 @@ function gvizJSONP(sheetTab, range, sheetId) {
       delete window[cbName];
       if (s.parentNode) s.remove();
       reject(new Error('Timeout'));
-    }, 3000);
+    }, 4000);
     window[cbName] = (resp) => {
       clearTimeout(timer);
       delete window[cbName];
@@ -1333,91 +1333,103 @@ async function initAutoFetch() {
   const monthsToFetch = Math.min(TAB_NAMES.length, _defaultMi + 1);
   let consecutiveAdFails = 0; // 連續找不到廣告 tab 的月數，超過 2 就停止（避免等到天荒地老）
   for (let mi = 0; mi < monthsToFetch; mi++) {
+    // 同月份 6 個請求並行發出，比逐一等待快約 5-6 倍
+    const safe = (fn, label) => fn().catch(e => { errors.push(`${label}：${e.message}`); return null; });
+    const [woResp, woMediaResp, qiResp, qiMediaResp, qiRevResp, woRevResp] = await Promise.all([
+      safe(() => gvizJSONP(TAB_NAMES[mi], BRAND_RANGES['wo']),      `原渥${mi+1}月廣告`),
+      safe(() => gvizJSONP(TAB_NAMES[mi], 'B33:K70'),               `原渥${mi+1}月媒體花費`),
+      safe(() => gvizJSONP(TAB_NAMES[mi], BRAND_RANGES['qi']),      `原綺${mi+1}月廣告`),
+      safe(() => gvizJSONP(TAB_NAMES[mi], 'C31:H33'),               `原綺${mi+1}月媒體合計`),
+      safe(() => gvizJSONP(MONTHLY_TABS[mi], 'H6:H9'),              `原綺${mi+1}月業績`),
+      safe(() => gvizJSONP(MONTHLY_TABS[mi], 'H18:H33'),            `原渥${mi+1}月業績`),
+    ]);
+
     let thisMonthGotAd = false;
-    for (const brand of ['wo','qi']) {
-      try {
-        const resp = await gvizJSONP(TAB_NAMES[mi], BRAND_RANGES[brand]);
-        thisMonthGotAd = true; // 至少一個品牌的廣告 tab 成功讀取
-        // 解析台北/台中新客數（總覽 tab 用）
-        const data = parseProdFromGviz(resp);
-        if (data.length > 0) { prodData[brand][mi] = data; anyUpdated = true; }
-        // 解析廣告成效完整指標（各媒體廣告成效 tab 用）
-        const adsData = parseAdsMetricsFromGviz(resp, brand);
-            // 原渥各媒體花費：列位置依月份不同，抓 B33:K70 掃標籤定位（B=0,C=1,D=2,G=5,H=6,K=9）
-        if (brand === 'wo') {
-          try {
-            const lr = await gvizJSONP(TAB_NAMES[mi], 'B33:K70');
-            const lrRows = lr?.table?.rows || [];
-            for (const row of lrRows) {
-              if (!row?.c) continue;
-              const label = String(row.c[0]?.v ?? '').trim();
-              const kVal  = +(row.c[9]?.v ?? 0);
-              if (label === 'LINE@')  { adsData.mediaChannels.lineat  = kVal; }
-              else if (label === '口碑') { adsData.mediaChannels.koubei = kVal; }
-              else if (label === 'SEO')  { adsData.mediaChannels.seo    = kVal; }
-              // 合計列：覆蓋 Meta/Google 花費（比 parseAdsMetricsFromGviz 的最後一列更準確）
-              else if (['合計','小計','總計','廣告合計','媒體花費合計'].includes(label)) {
-                adsData.mediaChannels.metaTpe   = +(row.c[1]?.v ?? 0); // C 台北 Meta
-                adsData.mediaChannels.metaTca   = +(row.c[2]?.v ?? 0); // D 台中 Meta
-                adsData.mediaChannels.googleTpe = +(row.c[5]?.v ?? 0); // G 台北 Google
-                adsData.mediaChannels.googleTca = +(row.c[6]?.v ?? 0); // H 台中 Google
-              }
-            }
-          } catch(e) { errors.push(`原渥${mi+1}月媒體花費：${e.message}`); }
+
+    // 處理 wo 廣告
+    if (woResp) {
+      thisMonthGotAd = true;
+      const data = parseProdFromGviz(woResp);
+      if (data.length > 0) { prodData['wo'][mi] = data; anyUpdated = true; }
+      const adsData = parseAdsMetricsFromGviz(woResp, 'wo');
+      // 原渥各媒體花費：列位置依月份不同，抓 B33:K70 掃標籤定位（B=0,C=1,D=2,G=5,H=6,K=9）
+      if (woMediaResp) {
+        const lrRows = woMediaResp?.table?.rows || [];
+        for (const row of lrRows) {
+          if (!row?.c) continue;
+          const label = String(row.c[0]?.v ?? '').trim();
+          const kVal  = +(row.c[9]?.v ?? 0);
+          if (label === 'LINE@')  { adsData.mediaChannels.lineat  = kVal; }
+          else if (label === '口碑') { adsData.mediaChannels.koubei = kVal; }
+          else if (label === 'SEO')  { adsData.mediaChannels.seo    = kVal; }
+          // 合計列：覆蓋 Meta/Google 花費（比 parseAdsMetricsFromGviz 的最後一列更準確）
+          else if (['合計','小計','總計','廣告合計','媒體花費合計'].includes(label)) {
+            adsData.mediaChannels.metaTpe   = +(row.c[1]?.v ?? 0); // C 台北 Meta
+            adsData.mediaChannels.metaTca   = +(row.c[2]?.v ?? 0); // D 台中 Meta
+            adsData.mediaChannels.googleTpe = +(row.c[5]?.v ?? 0); // G 台北 Google
+            adsData.mediaChannels.googleTca = +(row.c[6]?.v ?? 0); // H 台中 Google
+          }
         }
-        if (brand === 'qi') {
-          // qi 合計列 B 欄可能為空，gviz 抓 B7:AA31 時會跳過該列
-          // 另外抓 C31:H33（起始欄為 C，有值不會被跳過），取 C+D 最大的列 = 合計列
-          try {
-            const qr = await gvizJSONP(TAB_NAMES[mi], 'C31:H33');
-            const qRows = qr?.table?.rows || [];
-            let bestMeta = 0, bestQRow = null;
-            for (const qrow of qRows) {
-              if (!qrow?.c) continue;
-              const mc = +(qrow.c[0]?.v ?? 0) + +(qrow.c[1]?.v ?? 0); // C+D
-              if (mc > bestMeta) { bestMeta = mc; bestQRow = qrow; }
-            }
-            if (bestQRow && bestMeta > 0) {
-              // C31:H33 → idx0=C, idx1=D, idx2=E, idx3=F, idx4=G, idx5=H
-              adsData.mediaChannels.metaTpe   = +(bestQRow.c[0]?.v ?? 0);
-              adsData.mediaChannels.metaTca   = +(bestQRow.c[1]?.v ?? 0);
-              adsData.mediaChannels.googleTpe = +(bestQRow.c[4]?.v ?? 0);
-              adsData.mediaChannels.googleTca = +(bestQRow.c[5]?.v ?? 0);
-            }
-          } catch(e) { errors.push(`原綺${mi+1}月媒體合計：${e.message}`); }
-        }
-        if (Object.keys(adsData.products).length > 0 || Object.keys(adsData.mediaChannels).length > 0) {
-          adsMonthlyData[brand][mi] = adsData;
-          // 從廣告成效 tab 同步花費（各媒體合計列已有雙品牌總花費，與本月總花費顯示一致）
-          const mc = adsData.mediaChannels;
-          const computedSpend = (mc.metaTpe||0)+(mc.metaTca||0)+(mc.googleTpe||0)+(mc.googleTca||0)+(mc.lineat||0)+(mc.koubei||0)+(mc.seo||0);
-          if (computedSpend > 0) { kpiTrend[brand].spend26[mi] = computedSpend; anyUpdated = true; }
-        }
-      } catch(e) {
-        errors.push(`${brand} ${mi+1}月：${e.message}`);
+      }
+      if (Object.keys(adsData.products).length > 0 || Object.keys(adsData.mediaChannels).length > 0) {
+        adsMonthlyData['wo'][mi] = adsData;
+        const mc = adsData.mediaChannels;
+        const computedSpend = (mc.metaTpe||0)+(mc.metaTca||0)+(mc.googleTpe||0)+(mc.googleTca||0)+(mc.lineat||0)+(mc.koubei||0)+(mc.seo||0);
+        if (computedSpend > 0) { kpiTrend['wo'].spend26[mi] = computedSpend; anyUpdated = true; }
       }
     }
-    // 若連續兩個月廣告 tab 都不存在，停止嘗試後面的月份（避免大量 timeout）
+
+    // 處理 qi 廣告
+    if (qiResp) {
+      thisMonthGotAd = true;
+      const data = parseProdFromGviz(qiResp);
+      if (data.length > 0) { prodData['qi'][mi] = data; anyUpdated = true; }
+      const adsData = parseAdsMetricsFromGviz(qiResp, 'qi');
+      // qi 合計列 B 欄可能為空，gviz 抓 B7:AA31 時會跳過該列
+      // 另外抓 C31:H33（起始欄為 C，有值不會被跳過），取 C+D 最大的列 = 合計列
+      if (qiMediaResp) {
+        const qRows = qiMediaResp?.table?.rows || [];
+        let bestMeta = 0, bestQRow = null;
+        for (const qrow of qRows) {
+          if (!qrow?.c) continue;
+          const mc = +(qrow.c[0]?.v ?? 0) + +(qrow.c[1]?.v ?? 0); // C+D
+          if (mc > bestMeta) { bestMeta = mc; bestQRow = qrow; }
+        }
+        if (bestQRow && bestMeta > 0) {
+          // C31:H33 → idx0=C, idx1=D, idx2=E, idx3=F, idx4=G, idx5=H
+          adsData.mediaChannels.metaTpe   = +(bestQRow.c[0]?.v ?? 0);
+          adsData.mediaChannels.metaTca   = +(bestQRow.c[1]?.v ?? 0);
+          adsData.mediaChannels.googleTpe = +(bestQRow.c[4]?.v ?? 0);
+          adsData.mediaChannels.googleTca = +(bestQRow.c[5]?.v ?? 0);
+        }
+      }
+      if (Object.keys(adsData.products).length > 0 || Object.keys(adsData.mediaChannels).length > 0) {
+        adsMonthlyData['qi'][mi] = adsData;
+        const mc = adsData.mediaChannels;
+        const computedSpend = (mc.metaTpe||0)+(mc.metaTca||0)+(mc.googleTpe||0)+(mc.googleTca||0)+(mc.lineat||0)+(mc.koubei||0)+(mc.seo||0);
+        if (computedSpend > 0) { kpiTrend['qi'].spend26[mi] = computedSpend; anyUpdated = true; }
+      }
+    }
+
+    // 若連續數個月廣告 tab 都不存在，且已過當月，才停止（避免前期月份缺 tab 就誤中斷）
     if (!thisMonthGotAd) {
       consecutiveAdFails++;
-      if (consecutiveAdFails >= 2) break;
+      if (consecutiveAdFails >= 3 && mi >= _defaultMi) break;
     } else {
       consecutiveAdFails = 0;
     }
-    // 從月份報表 tab 抓新客業績
-    // 原綺：H6=台北, H9=台中
-    try {
-      const rqi = await gvizJSONP(MONTHLY_TABS[mi], 'H6:H9');
-      const rrows = rqi?.table?.rows || [];
+
+    // 月業績（原綺）
+    if (qiRevResp) {
+      const rrows = qiRevResp?.table?.rows || [];
       const tpe = +(rrows[0]?.c?.[0]?.v ?? 0);
       const tca = +(rrows[3]?.c?.[0]?.v ?? 0); // H9 is index 3 in H6:H9 range
       if (tpe || tca) { adsRevenue.qi[mi] = { tpe, tca }; anyUpdated = true; }
-    } catch(e) { errors.push(`原綺${mi+1}月業績：${e.message}`); }
-    // 原渥：H18+H21+H24+H27 = 台北（各分店）
+    }
+    // 月業績（原渥）：H18+H21+H24+H27 = 台北（各分店）
     //   1~2月：H30=台中；3月起：H30 追加台北板橋，H33=台中
-    try {
-      const rwo = await gvizJSONP(MONTHLY_TABS[mi], 'H18:H33');
-      const wr = rwo?.table?.rows || [];
+    if (woRevResp) {
+      const wr = woRevResp?.table?.rows || [];
       const n = i => +(wr[i]?.c?.[0]?.v ?? 0);
       const base = n(0) + n(3) + n(6) + n(9); // H18+H21+H24+H27
       let tpe, tca;
@@ -1427,7 +1439,7 @@ async function initAutoFetch() {
         tpe = base + n(12); tca = n(15);
       }
       if (tpe || tca) { adsRevenue.wo[mi] = { tpe, tca }; anyUpdated = true; }
-    } catch(e) { errors.push(`原渥${mi+1}月業績：${e.message}`); }
+    }
   }
 
   // 去年同期新客數＋花費：從 2025 年度新客目標 Sheet 抓
@@ -2973,7 +2985,8 @@ function openReportModal(b) {
   // 是否有漏斗資料（月份別優先，其次累計）
   const _mfd = funnelDataMonthly[b][mi];
   const monthFunnel = (_mfd && Object.values(_mfd).some(f => f && (f.inq > 0 || f.book > 0 || f.stay > 0))) ? _mfd : null;
-  const hasFunnel = monthFunnel ? true : Object.keys(funnelData[b]).length > 0;
+  // hasFunnel=true 只要漏斗 sheet 有載入（月別 or 累計），避免月別全零時右側轉換效率欄消失
+  const hasFunnel = monthFunnel ? true : ((_mfd && Object.keys(_mfd).length > 0) || Object.keys(funnelData[b]).length > 0);
   const activeFunnel = monthFunnel || funnelData[b];
 
   // 取漏斗資料（廣告品項名 → 漏斗品項名，依品牌選用對照表）
